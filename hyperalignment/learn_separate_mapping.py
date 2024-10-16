@@ -97,7 +97,7 @@ def train_separate_mapper(args):
         bar.set_postfix(to_log)
 
         # save every some epochs for safety
-        if (epoch+1) in [1, 5, 10, 20, 40, 100, 200] and args.saving:
+        if (epoch+1) in [1, 2, 5, 10, 20, 40, 100, 200] and args.saving:
             dump = {
                 "model": model.state_dict(),
                 "optimizer": optimizer.state_dict(),

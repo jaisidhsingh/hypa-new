@@ -177,7 +177,7 @@ def run(args, input_config):
                 flop_counter = suppress
 
         # make sure that we save
-        if (epoch+1) in [1, 5, 10, 20, 40, 100, 200] and args.saving:
+        if (epoch+1) in [1, 2, 5, 10, 20, 40, 100, 200] and args.saving:
             logs.update({"args": args.__dict__})
             dump = {
                 "optimizer": optimizer.state_dict(),
