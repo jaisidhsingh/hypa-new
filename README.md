@@ -2,4 +2,4 @@
 
 - [ ] Weight scaling during initialisation
 - [ ] Image-Net default
-- [ ] Fix ckpt paths in `hyperalignment/src/run_eval.py`
+- [x] Fix ckpt paths in `hyperalignment/src/run_eval.py`
