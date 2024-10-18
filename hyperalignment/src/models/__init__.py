@@ -122,8 +122,10 @@ class MultiMapperHypernet(nn.Module):
             [f * cond_emb_dim for f in self.hidden_layer_factors], 
             param_shapes[1][0]
         )
-        self.rescale_weight_prediction_params(rescale_factor)
-        self.rescale_factor = rescale_factor
+        if rescale_factor != 0.0:
+            self.rescale_weight_prediction_params(rescale_factor)
+        
+        self.rescale_factor = rescale_factor     
     
     def rescale_weight_prediction_params(self, rescale_factor):
         # rescale the `weight` tensor data by `scale_factor` and set the bias to 0

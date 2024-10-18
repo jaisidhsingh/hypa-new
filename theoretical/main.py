@@ -3,6 +3,7 @@ import clip
 import timm
 import wandb
 import gdown
+import argparse
 import numpy as np
 from tqdm import tqdm
 from contextlib import suppress
@@ -55,7 +56,8 @@ def main(args):
     bar = tqdm(total=total_steps)
     logit_scale = torch.tensor(np.log(100.0)).to(args.device)
 
-    wandb.init() # TODO
+    if args.use_wandb:
+        wandb.init(project="perturbations", entity="hyperalignment", config=vars(args))
     training_logs = {}
 
     ckpt_save_folder = "static_unconditional_checkpoints"
@@ -124,3 +126,25 @@ def main(args):
             torch.save(ckpt, save_path)
 
     print("All done.")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--device", type=str, default="cuda")
+    parser.add_argument("--use-wandb", type=bool, default=False)
+    parser.add_argument("--experiment-name", type=str, default="default_experiment")
+    parser.add_argument("--checkpoint-folder", type=str, default="checkpoints")
+    parser.add_argument("--image-encoder", type=str, default="vit_base_patch16_224")
+    parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
+    parser.add_argument("--feature-dataset", type=str, default="cc3m300k_id_vitr_var")
+    parser.add_argument("--image-embed-dim", type=int, default=768)
+    parser.add_argument("--text-embed-dim", type=int, default=768)
+    parser.add_argument("--batch-size", type=int, default=2048)
+    parser.add_argument("--learning-rate", type=float, default=1e-3)
+    parser.add_argument("--weight-decay", type=float, default=0.1)
+    parser.add_argument("--num-epochs", type=int, default=10)
+    parser.add_argument("--warmup-steps", type=int, default=50)
+    parser.add_argument("--logit-scale", type=float, default=100.0)
+    parser.add_argument("--random-seed", type=int, default=0)
+    args = parser.parse_args()
+    main(args)

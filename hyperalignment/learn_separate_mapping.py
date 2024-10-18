@@ -80,7 +80,7 @@ def train_separate_mapper(args):
     os.makedirs(logs_save_folder, exist_ok=True)
 
     if args.use_wandb:
-        wandb.init(project="hyperalignment", config=vars(args))
+        wandb.init(project="separate-mappers", entity="hyperalignment", config=vars(args))
     
     # training loop
     for epoch in range(args.num_epochs):
