@@ -19,7 +19,7 @@ class ImageClassificationDataset(Dataset):
 	def get_class_names(self):
 		if self.dataset_name == "imagenet":
 			class_names = {}
-			path = "./imagenet_class_mapping.txt"
+			path = "/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/src/data/imagenet_class_mapping.txt"
 
 			with open(path) as f:
 				for line in f.readlines():
