@@ -31,11 +31,17 @@ class UnconditionalDataset(Dataset):
         image_embedding = torch.from_numpy(self.image_embeddings[idx, ...])
         text_embedding = torch.from_numpy(self.text_embeddings[idx, ...])
         return image_embedding, text_embedding
-    
 
-def main(args):
+
+def init_model(args):
+    torch.manual_seed(args.random_seed)
     model = MlpMapper(768, [], 384)
     model = model.to(args.device)
+    return model 
+
+
+def main(args):
+    model = init_model(args)
 
     seeds = [int(x) for x in args.seeds.split(",")]
 
@@ -60,7 +66,7 @@ def main(args):
         wandb.init(project="perturbations", entity="hyperalignment", config=vars(args))
     training_logs = {}
 
-    ckpt_save_folder = "static_unconditional_checkpoints"
+    ckpt_save_folder = f"{args.checkpoint_folder}/static_unconditional_checkpoints"
     os.makedirs(ckpt_save_folder, exist_ok=True)
     perturbations = get_perturbations_at_stats(dataset.stats, seeds)
 
@@ -117,7 +123,7 @@ def main(args):
             bar.set_description(f"Epoch {epoch+1}, step: {step+1}")
             bar.update(1)
 
-        if epoch+1 in [1, 5, 10, 20, 40, 100, 200]:
+        if epoch+1 % args.save_every == 0:
             ckpt = {
                 "model": model.state_dict(),
                 "logs": training_logs
@@ -130,21 +136,29 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    # global
+    parser.add_argument("--perturbation", type=str, default="static", choices=["static", "dynamic"])
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--use-wandb", type=bool, default=False)
-    parser.add_argument("--experiment-name", type=str, default="default_experiment")
-    parser.add_argument("--checkpoint-folder", type=str, default="checkpoints")
+    # model
     parser.add_argument("--image-encoder", type=str, default="vit_base_patch16_224")
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
-    parser.add_argument("--feature-dataset", type=str, default="cc3m300k_id_vitr_var")
-    parser.add_argument("--image-embed-dim", type=int, default=768)
-    parser.add_argument("--text-embed-dim", type=int, default=768)
-    parser.add_argument("--batch-size", type=int, default=2048)
+    parser.add_argument("--logit-scale", type=float, default=100.0)
+    # paths
+    parser.add_argument("--image-embeddings-path", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/image_embeddings/multi_mapper/cc3m595k_multi_mapper_ie_30/dim_384/vit_small_patch16_224/embeddings.npy")
+    parser.add_argument("--text-embeddings-path", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/text_embeddings/multi_mapper/cc3m595k_multi_mapper_ie_30/dim_768/sentence-t5-base/embeddings.npy")
+    parser.add_argument("--checkpoint-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/theoretical")
+    # training
+    parser.add_argument("--num-epochs", type=int, default=10)
+    parser.add_argument("--batch-size", type=int, default=int(pow(2, 14)))
     parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=0.1)
-    parser.add_argument("--num-epochs", type=int, default=10)
+    parser.add_argument("--scheduler", type=str, default="cosine")
     parser.add_argument("--warmup-steps", type=int, default=50)
-    parser.add_argument("--logit-scale", type=float, default=100.0)
+    parser.add_argument("--save-every", type=int, default=1)
+    # seeding
     parser.add_argument("--random-seed", type=int, default=0)
+    parser.add_argument("--seeds", type=str, default="0,1,2,3,4")
+
     args = parser.parse_args()
     main(args)
