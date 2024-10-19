@@ -92,7 +92,7 @@ def run(args, input_config):
     flop_counter = FlopCounterMode(model) if args.flop_counter == "custom" else suppress
 
     if args.use_wandb:
-        wandb.init(project="hnet-init-scaling", name="working-test-0", entity="hyperalignment", config=vars(args))
+        wandb.init(project="hnet-init-scaling", name=args.experiment_name, entity="hyperalignment", config=vars(args))
 
     # training loop
     for epoch in range(args.num_epochs):
