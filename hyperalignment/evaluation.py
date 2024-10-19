@@ -146,6 +146,7 @@ def load_separate_ckpt(args, model):
     path = os.path.join(folder, "separate", args.image_encoder, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
     ckpt = torch.load(path)["model"]
     model.mapper.load_state_dict(ckpt)
+    model.mapper = model.mapper.to(args.device)
     model.mapper.eval()
     return model
 
@@ -154,8 +155,9 @@ def load_mm_ckpt(args, model):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper"
     path = os.path.join(folder, args.exp_name, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
     [weight, bias] = torch.load(path)["mapper_params"][args.encoder_index]
-    model.mapper.layers[0].weight.data = weight
-    model.mapper.layers[0].bias.data = bias
+    model.mapper.layers[0].weight.data = weight.to(args.device)
+    model.mapper.layers[0].bias.data = bias.to(args.device)
+    model.mapper = model.mapper.to(args.device)
     model.mapper.eval()
     return model
 
