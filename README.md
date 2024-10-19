@@ -26,3 +26,14 @@
 5. Warmup steps = 500
 6. FLOPs for 1 training epoch = 73151.62 GFlops
 7. `nan` loss values when weights are scaled at init (find optimal scaling factors).
+
+
+## ImageNet eval
+
+All evals done at epoch 1:
+
+- `separate`: 3.16
+- `ie_30_mlp_c_32`: 23.70
+- `ie_30_mlp_c_32_norm`: 23.70 
+- `ie_30_mlp_c_32_cosine`: 23.10 
+- `ie_30_mlp_c_32_norm_cosine`: 

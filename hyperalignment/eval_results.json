@@ -1,1 +1,93 @@
-{"benchmarks_implemented_currently": ["mscoco", "cifar10", "cifar100", "imagenet1k"], "vit_small_patch16_224": {"imagenet1k": 3.16, "config": {"device": "cuda", "exp_name": "vit_small_patch16_224", "seed": 0, "run_type": "sep", "epoch": 1, "encoder_index": 0, "benchmarks": "imagenet1k", "clip_version": "off", "image_embed_dim": 384, "text_embed_dim": 768, "text_encoder": "sentence-t5-base", "image_encoder": "vit_small_patch16_224"}}, "ie_30_mlp_c_32": {"imagenet1k": 23.74, "config": {"device": "cuda", "exp_name": "ie_30_mlp_c_32", "seed": 0, "run_type": "mm", "epoch": 1, "encoder_index": 0, "benchmarks": "imagenet1k", "clip_version": "off", "image_embed_dim": 384, "text_embed_dim": 768, "text_encoder": "sentence-t5-base", "image_encoder": "vit_small_patch16_224"}}, "ie_30_mlp_c_32_norm": {"imagenet1k": 23.74, "config": {"device": "cuda", "exp_name": "ie_30_mlp_c_32_norm", "seed": 0, "run_type": "mm", "epoch": 1, "encoder_index": 0, "benchmarks": "imagenet1k", "clip_version": "off", "image_embed_dim": 384, "text_embed_dim": 768, "text_encoder": "sentence-t5-base", "image_encoder": "vit_small_patch16_224"}}, "ie_30_mlp_c_32_cosine": {"imagenet1k": 23.05, "config": {"device": "cuda", "exp_name": "ie_30_mlp_c_32_cosine", "seed": 0, "run_type": "mm", "epoch": 1, "encoder_index": 0, "benchmarks": "imagenet1k", "clip_version": "off", "image_embed_dim": 384, "text_embed_dim": 768, "text_encoder": "sentence-t5-base", "image_encoder": "vit_small_patch16_224"}}, "ie_30_mlp_c_32_norm_cosine": {"imagenet1k": 23.06, "config": {"device": "cuda", "exp_name": "ie_30_mlp_c_32_norm_cosine", "seed": 0, "run_type": "mm", "epoch": 1, "encoder_index": 0, "benchmarks": "imagenet1k", "clip_version": "off", "image_embed_dim": 384, "text_embed_dim": 768, "text_encoder": "sentence-t5-base", "image_encoder": "vit_small_patch16_224"}}}
+{
+    "benchmarks_implemented_currently": [
+        "mscoco",
+        "cifar10",
+        "cifar100",
+        "imagenet1k"
+    ],
+    "vit_small_patch16_224": {
+        "imagenet1k": 3.16,
+        "config": {
+            "device": "cuda",
+            "exp_name": "vit_small_patch16_224",
+            "seed": 0,
+            "run_type": "sep",
+            "epoch": 1,
+            "encoder_index": 0,
+            "benchmarks": "imagenet1k",
+            "clip_version": "off",
+            "image_embed_dim": 384,
+            "text_embed_dim": 768,
+            "text_encoder": "sentence-t5-base",
+            "image_encoder": "vit_small_patch16_224"
+        }
+    },
+    "ie_30_mlp_c_32": {
+        "imagenet1k": 23.74,
+        "config": {
+            "device": "cuda",
+            "exp_name": "ie_30_mlp_c_32",
+            "seed": 0,
+            "run_type": "mm",
+            "epoch": 1,
+            "encoder_index": 0,
+            "benchmarks": "imagenet1k",
+            "clip_version": "off",
+            "image_embed_dim": 384,
+            "text_embed_dim": 768,
+            "text_encoder": "sentence-t5-base",
+            "image_encoder": "vit_small_patch16_224"
+        }
+    },
+    "ie_30_mlp_c_32_norm": {
+        "imagenet1k": 23.74,
+        "config": {
+            "device": "cuda",
+            "exp_name": "ie_30_mlp_c_32_norm",
+            "seed": 0,
+            "run_type": "mm",
+            "epoch": 1,
+            "encoder_index": 0,
+            "benchmarks": "imagenet1k",
+            "clip_version": "off",
+            "image_embed_dim": 384,
+            "text_embed_dim": 768,
+            "text_encoder": "sentence-t5-base",
+            "image_encoder": "vit_small_patch16_224"
+        }
+    },
+    "ie_30_mlp_c_32_cosine": {
+        "imagenet1k": 23.05,
+        "config": {
+            "device": "cuda",
+            "exp_name": "ie_30_mlp_c_32_cosine",
+            "seed": 0,
+            "run_type": "mm",
+            "epoch": 1,
+            "encoder_index": 0,
+            "benchmarks": "imagenet1k",
+            "clip_version": "off",
+            "image_embed_dim": 384,
+            "text_embed_dim": 768,
+            "text_encoder": "sentence-t5-base",
+            "image_encoder": "vit_small_patch16_224"
+        }
+    },
+    "ie_30_mlp_c_32_norm_cosine": {
+        "imagenet1k": 23.06,
+        "config": {
+            "device": "cuda",
+            "exp_name": "ie_30_mlp_c_32_norm_cosine",
+            "seed": 0,
+            "run_type": "mm",
+            "epoch": 1,
+            "encoder_index": 0,
+            "benchmarks": "imagenet1k",
+            "clip_version": "off",
+            "image_embed_dim": 384,
+            "text_embed_dim": 768,
+            "text_encoder": "sentence-t5-base",
+            "image_encoder": "vit_small_patch16_224"
+        }
+    }
+}
