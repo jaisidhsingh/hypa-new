@@ -219,7 +219,6 @@ if __name__ == "__main__":
     parser.add_argument("--use-wandb", type=bool, default=False)
     # model args
     parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
-    parser.add_argument("--scheduler", type=str, default="off")
     parser.add_argument("--largest-image-dim", type=int, default=1536)
     parser.add_argument("--largest-text-dim", type=int, default=768)
     parser.add_argument("--image-embed-dims", type=str, default="384,768,1024")
@@ -230,29 +229,27 @@ if __name__ == "__main__":
     parser.add_argument("--normalize-output", type=bool, default=False)
     parser.add_argument("--rescale-factor", type=float, default=10.0)
     # training args
-    parser.add_argument("--num-epochs", type=int, default=20)
+    parser.add_argument("--num-epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--encoder-batch-size", type=int, default=10)
     parser.add_argument("--learning-rate", type=float, default=1e-2)
     parser.add_argument("--weight-decay", type=float, default=0.0)
-    parser.add_argument("--clip-grad-norm", type=float, default=-1)
+    parser.add_argument("--scheduler", type=str, default="off")
     parser.add_argument("--warmup-steps", type=int, default=500)
-    parser.add_argument("--saving", type=bool, default=True)
-    parser.add_argument("--scaling-ablation", type=bool, default=False)
     parser.add_argument("--cooldown-steps", type=int, default=500)
     parser.add_argument("--flop-counter", type=str, default="custom")
+    parser.add_argument("--clip-grad-norm", type=float, default=-1)
+    parser.add_argument("--saving", type=bool, default=True)
+    parser.add_argument("--scaling-ablation", type=bool, default=False)
 
     args = parser.parse_args()
 
-    if args.scaling_ablation:
-        if args.hidden_layer_factors == "0":
-            args.experiment_name = f"linear_multi-mapper_num_ie-{args.num_image_encoders}.{args.feature_dataset}_epochs-{args.num_epochs}"
-        else:
-            ext = args.hidden_layer_factors.replace(",", "-")
-            args.experiment_name = f"mlp-{ext}_multi_mapper_num_ie-{args.num_image_encoders}.{args.feature_dataset}_epochs-{args.num_epochs}"
-        main(args)
-    else:
-        print(args.experiment_name)
-        print(args.normalize_output)
-        main(args)
+    print("Experiment name:", args.experiment_name)
+    print("------------------------------------------------------------")
+    print("Hyper-net decoder hidden dims:", [int(x)*args.hnet_cond_emb_dim for x in args.hidden_layer_factors.split(",")])
+    print("Cond emb dim:", args.hnet_cond_emb_dim)
+    print("Scaled initiation is on:", args.rescale_factor != 0.0)
+    print("Weights are normalized when predicted:", args.normalize_output)
+    print("Scheduler:", args.scheduler)
 
+    main(args)
