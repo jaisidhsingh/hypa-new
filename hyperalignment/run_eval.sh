@@ -7,7 +7,7 @@ python3 evaluation.py \
     --benchmarks="imagenet1k";
 
 python3 evaluation.py \
-    --exp-name="mlp_c_32" \
+    --exp-name="ie_30_mlp_c_32" \
     --seed=0 \
     --run-type="mm" \
     --epoch=1 \
@@ -15,7 +15,7 @@ python3 evaluation.py \
     --benchmarks="imagenet1k";
 
 python3 evaluation.py \
-    --exp-name="mlp_c_32_norm" \
+    --exp-name="ie_30_mlp_c_32_norm" \
     --seed=0 \
     --run-type="mm" \
     --epoch=1 \
@@ -23,7 +23,15 @@ python3 evaluation.py \
     --benchmarks="imagenet1k";
 
 python3 evaluation.py \
-    --exp-name="mlp_c_32_norm_init" \
+    --exp-name="ie_30_mlp_c_32_cosine" \
+    --seed=0 \
+    --run-type="mm" \
+    --epoch=1 \
+    --encoder-index=0 \
+    --benchmarks="imagenet1k";
+
+python3 evaluation.py \
+    --exp-name="ie_30_mlp_c_32_norm_cosine" \
     --seed=0 \
     --run-type="mm" \
     --epoch=1 \
