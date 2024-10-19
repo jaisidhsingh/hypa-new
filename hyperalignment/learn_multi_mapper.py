@@ -216,6 +216,7 @@ if __name__ == "__main__":
     parser.add_argument("--experiment-type", type=str, default="multi_mapper")
     parser.add_argument("--experiment-name", type=str, default="multi_mapper_test_0_fixed")
     parser.add_argument("--random-seed", type=int, default=0)
+    parser.add_argument("--use-wandb", type=bool, default=False)
     # model args
     parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
     parser.add_argument("--scheduler", type=str, default="off")
