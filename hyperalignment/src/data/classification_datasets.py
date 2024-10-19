@@ -1,7 +1,6 @@
 import os
 from torch.utils.data import Dataset
 from torchvision import datasets as torch_datasets
-from src.data.imagenet_class_mapping import IMAGENET_CLASS_NAMES
 
 
 class ImageClassificationDataset(Dataset):
