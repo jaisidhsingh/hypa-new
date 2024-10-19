@@ -7,11 +7,8 @@ class ImageClassificationDataset(Dataset):
 	def __init__(self, kwargs):
 		self.helper_map = {
 			"cifar10": torch_datasets.CIFAR10,
+			"cifar100": torch_datasets.CIFAR100,
 			"imagenet": torch_datasets.ImageFolder,
-			# "oxford_pets": torch_datasets.OxfordIIITPet,
-			# "food_101": torch_datasets.Food101,
-			# "stanford_cars": torch_datasets.StanfordCars,
-			# "flowers_102": torch_datasets.Flowers102,
 		}
 		self.dataset_name = kwargs["feature_dataset"]
 		kwargs.pop("feature_dataset")
@@ -22,7 +19,7 @@ class ImageClassificationDataset(Dataset):
 	def get_class_names(self):
 		if self.dataset_name == "imagenet":
 			class_names = {}
-			path = os.path.abspath("/home/mila/s/sparsha.mishra/projects/Hyper-Alignment/hyperalignment/src/data/imagenet_class_mapping.txt")
+			path = os.path.abspath("./imagenet_class_mapping.txt")
 
 			with open(path) as f:
 				for line in f.readlines():

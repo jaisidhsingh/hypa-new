@@ -15,7 +15,7 @@
 3. Dataset = CC-595k (595375 samples)
 4. Num encoders = 30
 5. FLOPs for 1 training epoch = 73151.62 GFlops
-6. `nan` loss values when weights are scaled at init.
+6. `nan` loss values when weights are scaled at init (find optimal scaling factors).
 
 **Linear Warmup then Cosine Decay**
 
@@ -25,3 +25,4 @@
 4. Num encoders = 30
 5. Warmup steps = 500
 6. FLOPs for 1 training epoch = 73151.62 GFlops
+7. `nan` loss values when weights are scaled at init (find optimal scaling factors).
