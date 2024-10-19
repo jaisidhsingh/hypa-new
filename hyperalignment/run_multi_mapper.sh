@@ -1,6 +1,6 @@
 # c=32, mlp decoder, no output norm, no init scaling
 python3 learn_multi_mapper.py \
-    --experiment-name="mlp_c_32" \
+    --experiment-name="ie_30_mlp_c_32" \
     --hidden-layer-factors="4,16" \
     --hnet-cond-emb-dim=32 \
     --normalize-output=False \
@@ -8,7 +8,7 @@ python3 learn_multi_mapper.py \
 
 # c=32, mlp decoder, output norm, no init scaling
 python3 learn_multi_mapper.py \
-    --experiment-name="mlp_c_32_norm" \
+    --experiment-name="ie_30_mlp_c_32_norm" \
     --hidden-layer-factors="4,16" \
     --hnet-cond-emb-dim=32 \
     --normalize-output=True \
@@ -16,7 +16,7 @@ python3 learn_multi_mapper.py \
 
 # c=32, mlp decoder, output norm, init scaling
 python3 learn_multi_mapper.py \
-    --experiment-name="mlp_c_32_norm_init" \
+    --experiment-name="ie_30_mlp_c_32_norm_init" \
     --hidden-layer-factors="4,16" \
     --hnet-cond-emb-dim=8 \
     --normalize-output=True \
