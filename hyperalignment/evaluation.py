@@ -144,7 +144,7 @@ def load_separate_ckpt(args, model):
     path = os.path.join(folder, "separate", args.image_encoder, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
     ckpt = torch.load(path)["model"]
     model.mapper.load_state_dict(ckpt)
-    model.eval()
+    model.mapper.eval()
     return model
 
 
@@ -154,7 +154,7 @@ def load_mm_ckpt(args, model):
     [weight, bias] = torch.load(path)["mapper_params"][args.encoder_index]
     model.mapper.layers[0].weight.data = weight
     model.mapper.layers[0].bias.data = bias
-    model.eval()
+    model.mapper.eval()
     return model
 
 
@@ -235,7 +235,7 @@ if __name__ == "__main__":
             metrics[bench] = metric 
     
     metrics.update({"config": vars(args)})
-    result = {exp_name: metrics}
+    result = {args.exp_name: metrics}
 
     with open(result_save_file, "r") as f:
         saved_results = json.load(f)
