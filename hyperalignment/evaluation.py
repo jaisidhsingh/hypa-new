@@ -246,7 +246,7 @@ if __name__ == "__main__":
 
     saved_results.update(result)
 
-    with open(result_save_file, "w") as f:
+    with open(result_save_file, "w+") as f:
         json.dump(saved_results, f)
     
     print("All done and saved.")
