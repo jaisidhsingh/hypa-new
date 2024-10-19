@@ -80,11 +80,14 @@ def train_separate_mapper(args):
     os.makedirs(logs_save_folder, exist_ok=True)
 
     if args.use_wandb:
-        wandb.init(project="separate-mappers", entity="hyperalignment", config=vars(args))
+        wandb.init(project="separate-mappers", name="working-test-0", entity="hyperalignment", config=vars(args))
     
     # training loop
     for epoch in range(args.num_epochs):
-        train_logs = trainer.train_one_epoch(model, train_loader, criterion, optimizer, scheduler, scaler, epoch)
+        train_logs, flop_count_results = trainer.train_one_epoch(model, train_loader, criterion, optimizer, scheduler, scaler, epoch)
+
+        if epoch == 0:
+            print(flop_count_results)
 
         logs[f"epoch_{epoch+1}"] = {"train": train_logs}
 
@@ -102,6 +105,7 @@ def train_separate_mapper(args):
                 "model": model.state_dict(),
                 "optimizer": optimizer.state_dict(),
                 "logs": logs,
+                "one_epoch_flop_count": flop_count_results
             }
 
             torch.save(dump, os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt"))

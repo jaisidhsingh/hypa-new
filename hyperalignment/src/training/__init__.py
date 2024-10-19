@@ -235,58 +235,62 @@ class SeparateTrainer():
     def train_one_epoch(self, model, loader, criterion, optimizer, scheduler, scaler, epoch):
         model.train()
         # optimizer.train()
-        autocast = torch.cuda.amp.autocast if self.device == "cuda" else suppress
+        autocast = torch.amp.autocast if self.device == "cuda" else suppress
         logs = {"avg_loss": 0, "accuracy": 0}
         correct, total = 0, 0
 
-        # flop_counter = FlopCounterMode(model)
+        flop_counter = FlopCounterMode(model)
         for idx, (image_features, text_features) in enumerate(loader):
-            # with flop_counter:
-            step = int(epoch * len(loader)) + idx + 1
-            batch_size = image_features.shape[0]
+            with flop_counter:
+                step = int(epoch * len(loader)) + idx + 1
+                batch_size = image_features.shape[0]
 
-            image_features = image_features.float()
-            image_features = image_features.view(batch_size, self.args.image_embed_dim)
+                image_features = image_features.float()
+                image_features = image_features.view(batch_size, self.args.image_embed_dim)
 
-            text_features = text_features.float().to(self.device)
-            text_features = text_features.view(batch_size, self.args.text_embed_dim)
+                text_features = text_features.float().to(self.device)
+                text_features = text_features.view(batch_size, self.args.text_embed_dim)
 
-            if scheduler is not None:
-                scheduler(step)
+                if scheduler is not None:
+                    scheduler(step)
 
-            optimizer.zero_grad()
+                optimizer.zero_grad()
 
-            with autocast():
-                mapped_text_features = model(text_features)
-                mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
-                loss, in_batch_corrects = criterion.compute_loss_and_accuracy(
-                    model.logit_scale,
-                    image_features,
-                    mapped_text_features
-                )
-                logs["avg_loss"] += loss.item()
+                with autocast():
+                    mapped_text_features = model(text_features)
+                    mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
+                    loss, in_batch_corrects = criterion.compute_loss_and_accuracy(
+                        model.logit_scale,
+                        image_features,
+                        mapped_text_features
+                    )
+                    logs["avg_loss"] += loss.item()
 
-            correct += in_batch_corrects
-            total += batch_size
-            accuracy = round(correct/total * 100, 2)
-            logs["accuracy"] = accuracy
+                correct += in_batch_corrects
+                total += batch_size
+                accuracy = round(correct/total * 100, 2)
+                logs["accuracy"] = accuracy
 
-            if self.args.use_wandb:
-                wandb.log({"loss": loss.item(), "accuracy": accuracy})
+                if self.args.use_wandb:
+                    wandb.log({"loss": loss.item(), "accuracy": accuracy})
 
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
 
-            with torch.no_grad():
-                model.logit_scale.clamp_(0, math.log(100))
-                
-            del image_features
-            del text_features
-            del mapped_text_features
+                with torch.no_grad():
+                    model.logit_scale.clamp_(0, math.log(100))
+                    
+                del image_features
+                del text_features
+                del mapped_text_features
 
-        logs["avg_loss"] /= idx+1
-        return logs
+                if epoch == 0:
+                    saved_flop_counter_results = flop_counter.results
+                    flop_counter = suppress
+
+            logs["avg_loss"] /= idx+1
+        return logs, saved_flop_counter_results
 
     @torch.no_grad()
     def val_one_epoch(self, model, loader, criterion):

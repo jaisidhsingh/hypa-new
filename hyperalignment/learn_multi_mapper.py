@@ -92,7 +92,7 @@ def run(args, input_config):
     flop_counter = FlopCounterMode(model) if args.flop_counter == "custom" else suppress
 
     if args.use_wandb:
-        wandb.init(project="hnet-init-scaling", entity="hyperalignment", config=vars(args))
+        wandb.init(project="hnet-init-scaling", name="working-test-0", entity="hyperalignment", config=vars(args))
 
     # training loop
     for epoch in range(args.num_epochs):
@@ -187,7 +187,7 @@ def run(args, input_config):
             }
             save_path = os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt")
             torch.save(dump, save_path)
-            print("Saved")
+            print(f"Checkpoint saved at epoch {epoch+1}.")
         
     print("All done.")
 
