@@ -112,11 +112,13 @@ def image_classification_eval(model, loader, progress_bar=True, device="cuda", u
     class_prompt = [f"a photo of a {c}" for c in loader.dataset.classes]
     
     if using_clip:
-        class_prompt = clip.tokenize(class_prompt)
+        class_prompt = clip.tokenize(class_prompt).to(device)
+
     class_features = model.encode_text(class_prompt).to(device)
 
     for idx, (images, labels) in enumerate(loader):
         batch_size = images.shape[0]
+        labels = labels.long().to(device)
 
         if using_clip:
             captions = clip.tokenize(captions).to(device)
