@@ -130,7 +130,7 @@ class MultiMapperHypernet(nn.Module):
     def rescale_weight_prediction_params(self, rescale_factor):
         # rescale the `weight` tensor data by `scale_factor` and set the bias to 0
         num_layers = self.to_weight.num_layers
-        for i in range(num_layers):
+        for i in range(num_layers-1, num_layers):
             if hasattr(self.to_weight.layers[i], "weight") and hasattr(self.to_weight.layers[i], "bias"):
                 self.to_weight.layers[i].bias.data.fill_(0.)
                 self.to_weight.layers[i].weight.data /= rescale_factor

@@ -137,7 +137,7 @@ def run(args, input_config):
                     assert len(corrects) == N, "Error: number of encoders != number of mappers predicted and evaluated."
                 
                 # update metric trackers
-                running_loss += loss.item()
+                running_loss = loss.item()
                 total += B
                 for j, c in zip(encoder_indices, corrects):
                     correct_store[j] += c
@@ -160,7 +160,9 @@ def run(args, input_config):
                     optimizer.step()
                 
                 # add to logs
-                logs[f"epoch_{epoch+1}"] = {"avg_loss": round(running_loss / (idx+1), 2), "accuracies": accuracies}
+                logs[f"epoch_{epoch+1}"] = {"loss": running_loss}
+                for k in range(len(accuracies)):
+                    logs[f"epoch_{epoch+1}"][f"acc_{k}"] = accuracies[k]
 
                 # optional wandb logging
                 if args.use_wandb:
