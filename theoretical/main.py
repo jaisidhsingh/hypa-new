@@ -145,8 +145,8 @@ if __name__ == "__main__":
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
     parser.add_argument("--logit-scale", type=float, default=100.0)
     # paths
-    parser.add_argument("--image-embeddings-path", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/image_embeddings/multi_mapper/cc3m595k_multi_mapper_ie_30/dim_384/vit_small_patch16_224/embeddings.npy")
-    parser.add_argument("--text-embeddings-path", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/text_embeddings/multi_mapper/cc3m595k_multi_mapper_ie_30/dim_768/sentence-t5-base/embeddings.npy")
+    parser.add_argument("--image-embeddings-path", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_384/vit_small_patch16_224/embeddings.npy")
+    parser.add_argument("--text-embeddings-path", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/text_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_768/sentence-t5-base/embeddings.npy")
     parser.add_argument("--checkpoint-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/theoretical")
     # training
     parser.add_argument("--num-epochs", type=int, default=10)
