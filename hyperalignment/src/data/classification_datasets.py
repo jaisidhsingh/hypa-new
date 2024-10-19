@@ -1,6 +1,7 @@
 import os
 from torch.utils.data import Dataset
 from torchvision import datasets as torch_datasets
+from src.data.imagenet_class_mapping import IMAGENET_CLASS_NAMES
 
 
 class ImageClassificationDataset(Dataset):
@@ -21,12 +22,12 @@ class ImageClassificationDataset(Dataset):
 			class_names = {}
 			path = os.path.abspath("./imagenet_class_mapping.txt")
 
-			with open(path) as f:
-				for line in f.readlines():
-					entry = line.split(" ")
-					key = entry[0]
-					value = entry[-1]
-					class_names[key] = value[:-1].lower().replace("_", " ")
+			# with open(path) as f:
+			for line in IMAGENET_CLASS_NAMES: #f.readlines():
+				entry = line.split(" ")
+				key = entry[0]
+				value = entry[-1]
+				class_names[key] = value[:-1].lower().replace("_", " ")
 
 			self.classes = [class_names[c] for c in self.dataset_helper.classes]
 		else:
