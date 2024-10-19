@@ -1,8 +1,8 @@
 # Latest repository for project
 
-- [ ] Weight scaling during initialisation
-- [ ] Image-Net default
+- [x] Weight scaling during initialisation
 - [x] Fix ckpt paths in `hyperalignment/src/run_eval.py`
+- [ ] Image-Net default
 
 ## Hyper-net info
 
@@ -14,11 +14,8 @@
 2. learning rate = 1e-2
 3. Dataset = CC-595k (595375 samples)
 4. Num encoders = 30
-5. FLOPs for 1 training epoch = 
-    - Weight normalization OFF + Init scaling OFF = 73151.62 GFlops
-    - Weight normalization ON + Init scaling OFF = 73151.62 GFlops
-    - Weight normalization ON + Init scaling ON = 41492.08 GFlops -- incorrect
-    - Weight normalization OFF + Init scaling ON = 
+5. FLOPs for 1 training epoch = 73151.62 GFlops
+6. `nan` loss values when weights are scaled at init.
 
 **Linear Warmup then Cosine Decay**
 
@@ -26,8 +23,5 @@
 2. learning rate = 1e-2
 3. Dataset = CC-595k (595375 samples)
 4. Num encoders = 30
-5. FLOPs for 1 training epoch = 
-    - Weight normalization OFF + Init scaling OFF = 73151.62 GFlops
-    - Weight normalization ON + Init scaling OFF = 73151.62 GFlops
-    - Weight normalization ON + Init scaling ON = 41492.08 GFlops -- incorrect
-    - Weight normalization OFF + Init scaling ON = 
+5. Warmup steps = 500
+6. FLOPs for 1 training epoch = 73151.62 GFlops
