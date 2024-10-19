@@ -20,14 +20,14 @@ class ImageClassificationDataset(Dataset):
 	def get_class_names(self):
 		if self.dataset_name == "imagenet":
 			class_names = {}
-			path = os.path.abspath("./imagenet_class_mapping.txt")
+			path = "./imagenet_class_mapping.txt"
 
-			# with open(path) as f:
-			for line in IMAGENET_CLASS_NAMES: #f.readlines():
-				entry = line.split(" ")
-				key = entry[0]
-				value = entry[-1]
-				class_names[key] = value[:-1].lower().replace("_", " ")
+			with open(path) as f:
+				for line in f.readlines():
+					entry = line.split(" ")
+					key = entry[0]
+					value = entry[-1]
+					class_names[key] = value[:-1].lower().replace("_", " ")
 
 			self.classes = [class_names[c] for c in self.dataset_helper.classes]
 		else:
