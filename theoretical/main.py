@@ -1,8 +1,6 @@
 import os
-import clip
-import timm
+import sys
 import wandb
-import gdown
 import argparse
 import numpy as np
 from tqdm import tqdm
@@ -22,7 +20,7 @@ class UnconditionalDataset(Dataset):
     def __init__(self, image_embeddings_path, text_embeddings_path, seeds):
         self.image_embeddings = np.load(image_embeddings_path)
         self.text_embeddings = np.load(text_embeddings_path)
-        self.stats = get_embedding_stats
+        self.stats = get_embedding_stats(self.image_embeddings)
 
     def __len__(self):
         return self.image_embeddings.shape[0]
@@ -56,14 +54,14 @@ def main(args):
     else:
         scheduler = cosine_lr(optimizer, args.learning_rate, args.warmup_steps, total_steps)
 
-    scaler = torch.amp.GradScaler()
-    autocast = torch.amp.autocast if args.device == "cuda" else suppress
+    scaler = torch.cuda.amp.GradScaler()
+    autocast = torch.cuda.amp.autocast if args.device == "cuda" else suppress
 
     bar = tqdm(total=total_steps)
     logit_scale = torch.tensor(np.log(100.0)).to(args.device)
 
     if args.use_wandb:
-        wandb.init(project="perturbations", entity="hyperalignment", config=vars(args))
+        wandb.init(project="perturbations", name=args.exp_name, entity="hyperalignment", config=vars(args))
     training_logs = {}
 
     ckpt_save_folder = f"{args.checkpoint_folder}/static_unconditional_checkpoints"
@@ -88,6 +86,12 @@ def main(args):
                 shuffle_seed = step % args.shuffle_control 
                 image_embeddings = perturb_embeddings_dynamically(image_embeddings, seeds, perturbations, shuffle_seed=shuffle_seed)
 
+            image_embeddings = image_embeddings.to(args.device)
+
+            # debug_norm = image_embeddings.norm(dim=-1)
+            # print(debug_norm[0, :])
+            # sys.exit(0)
+
             text_embeddings = text_embeddings.to(args.device)
             labels = torch.arange(batch_size, dtype=torch.long).to(args.device)
 
@@ -97,7 +101,7 @@ def main(args):
             optimizer.zero_grad()
 
             with autocast():
-                mapped_text_embeddings = model(image_embeddings)
+                mapped_text_embeddings = model(text_embeddings).to(args.device)
                 sim = logit_scale.exp() * torch.einsum("bnd,cd->nbc", image_embeddings, mapped_text_embeddings)
                 correct += sim[0].argmax(dim=-1).eq(labels).sum().item()
                 total += batch_size
@@ -114,10 +118,11 @@ def main(args):
             scaler.step(optimizer)
             scaler.update()
 
-            logs = {"loss": running_loss, "accuracy": accuracy}
+            logs = {"train_loss": running_loss, "train_accuracy": accuracy}
             training_logs[f"epoch_{epoch+1}"] = logs
 
-            wandb.log(logs, step=step)
+            if args.use_wandb:
+                wandb.log(logs, step=step)
 
             bar.set_postfix(logs)
             bar.set_description(f"Epoch {epoch+1}, step: {step+1}")
@@ -140,6 +145,7 @@ if __name__ == "__main__":
     parser.add_argument("--perturbation", type=str, default="static", choices=["static", "dynamic"])
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--use-wandb", type=bool, default=False)
+    parser.add_argument("--exp-name", type=str, default="uncond-static-1+5")
     # model
     parser.add_argument("--image-encoder", type=str, default="vit_base_patch16_224")
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
@@ -150,15 +156,16 @@ if __name__ == "__main__":
     parser.add_argument("--checkpoint-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/theoretical")
     # training
     parser.add_argument("--num-epochs", type=int, default=10)
-    parser.add_argument("--batch-size", type=int, default=int(pow(2, 14)))
+    parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--learning-rate", type=float, default=1e-3)
-    parser.add_argument("--weight-decay", type=float, default=0.1)
+    parser.add_argument("--weight-decay", type=float, default=0.0)
     parser.add_argument("--scheduler", type=str, default="cosine")
     parser.add_argument("--warmup-steps", type=int, default=50)
     parser.add_argument("--save-every", type=int, default=1)
     # seeding
     parser.add_argument("--random-seed", type=int, default=0)
     parser.add_argument("--seeds", type=str, default="0,1,2,3,4")
+    parser.add_argument("--shuffle-control", type=int, default="42")
 
     args = parser.parse_args()
     main(args)

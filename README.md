@@ -33,7 +33,7 @@
 All evals done at epoch 1:
 
 - `separate`: 3.16
-- `ie_30_mlp_c_32`: 23.70
-- `ie_30_mlp_c_32_norm`: 23.70 
-- `ie_30_mlp_c_32_cosine`: 23.10 
-- `ie_30_mlp_c_32_norm_cosine`: 
+- `ie_30_mlp_c_32`: 23.74
+- `ie_30_mlp_c_32_norm`: 23.74 
+- `ie_30_mlp_c_32_cosine`: 23.05 
+- `ie_30_mlp_c_32_norm_cosine`: 23.06 
