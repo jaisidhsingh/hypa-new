@@ -131,11 +131,13 @@ class MultiMapperHypernet(nn.Module):
         # rescale the `weight` tensor data by `scale_factor` and set the bias to 0
         num_layers = self.to_weight.num_layers
         for i in range(num_layers):
-            self.to_weight.layers[i].bias.data.fill_(0.)
-            self.to_weight.layers[i].weight.data /= rescale_factor
+            if hasattr(self.to_weight.layers[i], "weight") and hasattr(self.to_weight.layers[i], "bias"):
+                self.to_weight.layers[i].bias.data.fill_(0.)
+                self.to_weight.layers[i].weight.data /= rescale_factor
 
-            self.to_bias.layers[i].weight.data /= rescale_factor
-            self.to_bias.layers[i].bias.data.fill_(0.)
+            if hasattr(self.to_bias.layers[i], "weight") and hasattr(self.to_bias.layers[i], "bias"):
+                self.to_bias.layers[i].weight.data /= rescale_factor
+                self.to_bias.layers[i].bias.data.fill_(0.)
 
         print("Rescaled parameters of `self.to_weight` and `self.to_bias`.")
 
