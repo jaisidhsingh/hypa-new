@@ -251,5 +251,6 @@ if __name__ == "__main__":
     print("Scaled initiation is on:", args.rescale_factor != 0.0)
     print("Weights are normalized when predicted:", args.normalize_output)
     print("Scheduler:", args.scheduler)
+    print("Checkpoints will be saved:", args.saving)
 
     main(args)
