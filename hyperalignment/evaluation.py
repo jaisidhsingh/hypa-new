@@ -207,9 +207,8 @@ if __name__ == "__main__":
         "cifar100": eval_classification,
         "imagenet1k": eval_classification,
     }
-    [exp_name, run_type, epoch, encoder_index, benchmarks] = sys.argv[1:]
 
-    benchmarks = benchmarks.split(",")
+    benchmarks = args.benchmarks.split(",")
     metrics = {}
     result_save_file = "./eval_results.json"
 
