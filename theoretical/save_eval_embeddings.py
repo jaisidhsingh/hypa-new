@@ -68,7 +68,7 @@ def get_classification_embeddings(args, model, loader, add_perturbation=False):
 
 def main(args):
     torch.manual_seed(args.random_seed)
-    image_encoder = model_configs.ID_multi_mapper_configs["384"][args.encoder_index]
+    image_encoder = model_configs.ID_multi_mapper_configs[384][args.encoder_index]
     model = CustomVLM(image_encoder, args.text_encoder)
     model.mapper = MlpMapper(768, [], 384).to(args.device)
 
