@@ -173,10 +173,15 @@ def eval_retrieval(args, model, transform):
     return recalls
 
 
-def eval_classification(args, model, transform):
+def eval_classification(args, model, transform, dataset):
+    root_mapping = {
+        "imagenet1k": "/home/mila/s/sparsha.mishra/scratch/imagenet/val_torchvision/val",
+        "cifar10": "/home/mila/s/sparsha.mishra/scratch/cifar10_torchvision",
+        "cifar100": "/home/mila/s/sparsha.mishra/scratch/cifar-100-python",
+    }
     kwargs = {
-        "feature_dataset": "imagenet",
-        "root": "/home/mila/s/sparsha.mishra/scratch/imagenet/val_torchvision/val",
+        "feature_dataset": dataset,
+        "root": root_mapping[dataset],
         "transform": transform
     }
     dataset = ImageClassificationDataset(kwargs)
