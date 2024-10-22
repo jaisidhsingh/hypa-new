@@ -64,7 +64,7 @@ def main(args):
         wandb.init(project="perturbations", name=args.exp_name, entity="hyperalignment", config=vars(args))
     training_logs = {}
 
-    ckpt_save_folder = f"{args.checkpoint_folder}/static_unconditional_checkpoints"
+    ckpt_save_folder = f"{args.checkpoint_folder}/unconditional_checkpoints/{args.exp_name}/seed_{args.random_seed}"
     os.makedirs(ckpt_save_folder, exist_ok=True)
     perturbations = get_perturbations_at_stats(dataset.stats, seeds)
 
@@ -128,7 +128,7 @@ def main(args):
             bar.set_description(f"Epoch {epoch+1}, step: {step+1}")
             bar.update(1)
 
-        if epoch+1 % args.save_every == 0:
+        if epoch+1 in range(1, 11):
             ckpt = {
                 "model": model.state_dict(),
                 "logs": training_logs

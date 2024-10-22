@@ -7,7 +7,7 @@ class ImageClassificationDataset(Dataset):
 	def __init__(self, kwargs):
 		self.helper_map = {
 			"cifar10": torch_datasets.CIFAR10,
-			"imagenet": torch_datasets.ImageFolder,
+			"imagenet1k": torch_datasets.ImageFolder,
 			# "oxford_pets": torch_datasets.OxfordIIITPet,
 			# "food_101": torch_datasets.Food101,
 			# "stanford_cars": torch_datasets.StanfordCars,

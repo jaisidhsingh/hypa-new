@@ -80,8 +80,9 @@ class MlpMapper(nn.Module):
 		return F.normalize(x, dim=-1)
 
 
-class CustomVLM():
+class CustomVLM(nn.Module):
     def  __init__(self, image_encoder_name, text_encoder_name):
+        super().__init__()
         self.device = "cuda"
         self.image_encoder = ImageEncoder(image_encoder_name)
         self.image_encoder.model = self.image_encoder.model.to(self.device)
@@ -100,6 +101,9 @@ class CustomVLM():
     def encode_text_unmapped(self, x):
         x = self.text_encoder.encode_text(x)
         return x
+
+    def forward(self, x):
+        return self.encode_image(x)
 
 
 class MultiMapperHypernet(nn.Module):
