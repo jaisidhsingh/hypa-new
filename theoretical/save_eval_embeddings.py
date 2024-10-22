@@ -4,6 +4,7 @@ import argparse
 import numpy as np
 from tqdm import tqdm
 from torch.utils.data import DataLoader
+import torchvision.datasets as torch_datasets
 
 
 from src.models import MlpMapper, CustomVLM
@@ -96,12 +97,15 @@ def main(args):
         "cifar10": "/home/mila/s/sparsha.mishra/scratch/cifar10_torchvision",
         "cifar100": "/home/mila/s/sparsha.mishra/scratch/cifar-100-python",
     }
+    args.dataset = "cifar10"
     kwargs = {
         "feature_dataset": args.dataset,
         "root": root_mapping[args.dataset],
         "transform": model.image_encoder.transform
     }
     dataset = ImageClassificationDataset(kwargs)
+    print(len(dataset))
+    dataset = torch_datasets.CIFAR10(root=root_mapping["cifar10"], train=False, download=True, transform=model.image_encoder.transform)
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=4, pin_memory=True)
 
     embeddings = get_classification_embeddings(args, model, loader, add_perturbation=args.add_perturbation)
@@ -134,11 +138,12 @@ def class_embeddings_across_epochs(args):
             "cifar100": "/home/mila/s/sparsha.mishra/scratch/cifar-100-python",
         }
         kwargs = {
-            "feature_dataset": args.dataset,
-            "root": root_mapping[args.dataset],
+            "feature_dataset": "cifar10",
+            "root": root_mapping["cifar10"],
             "transform": model.image_encoder.transform
         }
         dataset = ImageClassificationDataset(kwargs)
+        print(len(dataset))
         class_embeddings = get_class_name_embeddings(model, dataset)
         print(class_embeddings.shape)
         output[epoch] = class_embeddings
@@ -153,7 +158,7 @@ if __name__ == "__main__":
     parser.add_argument("--use-wandb", type=bool, default=False)
     parser.add_argument("--add-perturbation", type=bool, default=False)
     parser.add_argument("--exp-name", type=str, default="uncond-static-1+5")
-    parser.add_argument("--dataset", type=str, default="imagenet1k")
+    parser.add_argument("--dataset", type=str, default="cifar10")
     # model
     parser.add_argument("--encoder-index", type=int, default=0)
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
@@ -169,4 +174,4 @@ if __name__ == "__main__":
     parser.add_argument("--seeds", type=str, default="0,1,2,3,4")
 
     args = parser.parse_args()
-    class_embeddings_across_epochs(args)
+    main(args)
