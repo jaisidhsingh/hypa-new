@@ -62,7 +62,7 @@ def get_classification_embeddings(args, model, loader, add_perturbation=False):
         for k, v in embeddings["image"].items():
             embeddings["image"][k] = perturb_embeddings_statically(v, seeds, perturbations)
 
-    print(f"Created embedding store of {len(embeddings["image"].keys())} classes. Saved embeddings for each class have dim: {embeddings["image"][0].shape}")
+    print(f"""Created embedding store of {len(embeddings["image"].keys())} classes. Saved embeddings for each class have dim: {embeddings["image"][0].shape}""")
     return embeddings
 
 
