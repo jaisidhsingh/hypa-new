@@ -17,6 +17,7 @@ from src.data.classification_datasets import ImageClassificationDataset
 #   c. the distance of the class_prompt_embeddings from the og cluster centroid as a fraction of the average hausdort distance 
 """
 
+
 def get_class_name_embeddings(model, dataset):
     class_prompts = [f"a photo of a {c}" for c in dataset.classes]
     class_embeddings = model.encode_text(class_prompts)
