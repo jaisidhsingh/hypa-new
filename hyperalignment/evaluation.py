@@ -185,6 +185,7 @@ def eval_classification(args, model, transform, dataset):
         "transform": transform
     }
     dataset = ImageClassificationDataset(kwargs)
+    print(dataset.classes[0])
     loader = DataLoader(dataset, batch_size=1024, num_workers=4, pin_memory=True)
     using_clip = args.clip_version != "off"
     accuracy = image_classification_eval(model, loader, using_clip=using_clip, device=args.device)
@@ -233,14 +234,14 @@ if __name__ == "__main__":
         
         for bench in benchmarks:
             eval_fn = benchmark_mapping[bench]
-            metric = eval_fn(args, model, model.image_encoder.transform)
+            metric = eval_fn(args, model, model.image_encoder.transform, bench)
             metrics[bench] = metric
 
     else:
         model, preprocess = clip.load(args.clip_version, device=args.device)
         for bench in benchmarks:
             eval_fn = benchmark_mapping[bench]
-            metric = eval_fn(args, model, preprocess)
+            metric = eval_fn(args, model, preprocess, bench)
             metrics[bench] = metric 
     
     metrics.update({"config": vars(args)})

@@ -8,16 +8,19 @@ class ImageClassificationDataset(Dataset):
 		self.helper_map = {
 			"cifar10": torch_datasets.CIFAR10,
 			"cifar100": torch_datasets.CIFAR100,
-			"imagenet": torch_datasets.ImageFolder,
+			"imagenet1k": torch_datasets.ImageFolder,
 		}
 		self.dataset_name = kwargs["feature_dataset"]
 		kwargs.pop("feature_dataset")
 		self.classes = None
+		if "cifar" in self.dataset_name:
+			kwargs["download"] = True
+			kwargs["train"] = False
 		self.dataset_helper = self.helper_map[self.dataset_name](**kwargs)
 		class_names = self.get_class_names()
 
 	def get_class_names(self):
-		if self.dataset_name == "imagenet":
+		if "imagenet" in self.dataset_name:
 			class_names = {}
 			path = "/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/src/data/imagenet_class_mapping.txt"
 
