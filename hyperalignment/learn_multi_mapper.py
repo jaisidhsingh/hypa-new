@@ -1,4 +1,5 @@
 import os
+import sys
 import math
 import wandb
 import torch
@@ -12,7 +13,7 @@ warnings.simplefilter("ignore")
 
 from src.data.embedding_datasets import MultiMapperEmbeddings
 from src.data import init_encoder_loader, init_indices_loader
-from src.models import MultiMapperHypernet
+from src.models import MultiMapperHypernet, MlpMapper
 from src.configs.data_configs import data_configs
 from src.configs.model_configs import model_configs
 from src.training.schedulers import *
@@ -30,6 +31,16 @@ def predict_params_for_saving(model, info):
             outputs.append([w, b])
 
     return outputs
+
+
+def view_stds(hnet):
+    mapper = MlpMapper(768, [], 768)
+
+    mapper_std = mapper.layers[0].weight.data.std()
+    hnet_std = [hnet.to_weight.layers[x].weight.data.std() for x in [0, 2, -1]]
+    print("For mapper, std of params is", mapper_std)
+    print("For hnet decoder, stds of params are", hnet_std)
+    sys.exit(0)
 
 
 def run(args, input_config):
@@ -51,6 +62,8 @@ def run(args, input_config):
         hidden_layer_factors=hidden_layer_factors, rescale_factor=args.rescale_factor
     ).to(args.device)
     print("Hyper-network loaded.")
+
+    view_stds(model)
 
     if args.flop_counter == "calflops":
         hnet_flops = get_hypnet_flops(model, kwargs={"cond_id": [0], "image_embed_dim": 768})
@@ -229,7 +242,7 @@ if __name__ == "__main__":
     parser.add_argument("--num-image-encoders", type=int, default=30)
     parser.add_argument("--logit-scale", type=float, default=100.0)
     parser.add_argument("--normalize-output", type=bool, default=False)
-    parser.add_argument("--rescale-factor", type=float, default=10.0)
+    parser.add_argument("--rescale-factor", type=float, default=0.0)
     # training args
     parser.add_argument("--num-epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=512)

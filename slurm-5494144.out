@@ -1,0 +1,95 @@
+
+======== GPU REPORT ========
+
+==============NVSMI LOG==============
+
+Timestamp                                 : Wed Oct 23 07:51:00 2024
+Driver Version                            : 560.35.03
+CUDA Version                              : 12.6
+
+Attached GPUs                             : 1
+GPU 00000000:14:00.0
+    Accounting Mode                       : Enabled
+    Accounting Mode Buffer Size           : 4000
+    Accounted Processes
+        Process ID                        : 3961603
+            GPU Utilization               : 2 %
+            Memory Utilization            : 0 %
+            Max memory usage              : 788 MiB
+            Time                          : 3329 ms
+            Is Running                    : 0
+        Process ID                        : 3961990
+            GPU Utilization               : 3 %
+            Memory Utilization            : 0 %
+            Max memory usage              : 788 MiB
+            Time                          : 1700 ms
+            Is Running                    : 0
+        Process ID                        : 3962409
+            GPU Utilization               : 3 %
+            Memory Utilization            : 0 %
+            Max memory usage              : 788 MiB
+            Time                          : 1827 ms
+            Is Running                    : 0
+        Process ID                        : 3962645
+            GPU Utilization               : 7 %
+            Memory Utilization            : 0 %
+            Max memory usage              : 2516 MiB
+            Time                          : 2558 ms
+            Is Running                    : 0
+        Process ID                        : 3962782
+            GPU Utilization               : 1 %
+            Memory Utilization            : 0 %
+            Max memory usage              : 788 MiB
+            Time                          : 1781 ms
+            Is Running                    : 0
+        Process ID                        : 3963371
+            GPU Utilization               : 7 %
+            Memory Utilization            : 0 %
+            Max memory usage              : 2516 MiB
+            Time                          : 2464 ms
+            Is Running                    : 0
+        Process ID                        : 3963861
+            GPU Utilization               : 4 %
+            Memory Utilization            : 0 %
+            Max memory usage              : 2516 MiB
+            Time                          : 2452 ms
+            Is Running                    : 0
+        Process ID                        : 3964132
+            GPU Utilization               : 7 %
+            Memory Utilization            : 0 %
+            Max memory usage              : 2516 MiB
+            Time                          : 2331 ms
+            Is Running                    : 0
+        Process ID                        : 3964329
+            GPU Utilization               : 8 %
+            Memory Utilization            : 0 %
+            Max memory usage              : 2516 MiB
+            Time                          : 2434 ms
+            Is Running                    : 0
+        Process ID                        : 3964568
+            GPU Utilization               : 7 %
+            Memory Utilization            : 0 %
+            Max memory usage              : 2516 MiB
+            Time                          : 2506 ms
+            Is Running                    : 0
+
+Wed Oct 23 07:51:01 2024       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 560.35.03              Driver Version: 560.35.03      CUDA Version: 12.6     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Quadro RTX 8000                On  |   00000000:14:00.0 Off |                    0 |
+| 33%   28C    P8             23W /  260W |       1MiB /  46080MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
