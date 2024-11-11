@@ -1,10 +1,8 @@
 import timm
 import numpy as np
 from typing import *
-from .lora_hnet import LoraHypnet
 import torch
 import torch.nn as nn
-from torch import Tensor
 import torch.nn.functional as F
 from sentence_transformers import SentenceTransformer
 
@@ -222,6 +220,7 @@ class OuterProdParamDecoder(nn.Module):
 class OuterProdHypNet(nn.Module):
     def __init__(self, param_shapes, cond_emb_dim, num_cond_embs, image_embed_dims, hidden_layer_factors, rescale_factor=10):
         super().__init__()
+        print("Initialising hypernetwork which uses outer product.")
         self.image_embed_dims = image_embed_dims
         self.param_shapes = param_shapes # `param_shapes = [[D_out, D_in], [D_out]]`
         self.hidden_layer_factors = hidden_layer_factors

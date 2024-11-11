@@ -13,7 +13,7 @@ warnings.simplefilter("ignore")
 
 from src.data.embedding_datasets import MultiMapperEmbeddings
 from src.data import init_encoder_loader, init_indices_loader
-from src.models import MultiMapperHypernet, MlpMapper
+from src.models import MultiMapperHypernet, MlpMapper, OuterProdHypNet
 from src.configs.data_configs import data_configs
 from src.configs.model_configs import model_configs
 from src.training.schedulers import *
@@ -56,14 +56,18 @@ def run(args, input_config):
         hidden_layer_factors = []
 
     # load in hyper-network
-    model = MultiMapperHypernet(
+    model_ref = MultiMapperHypernet
+    if args.use_outer_prod:
+        model_ref = OuterProdHypNet
+
+    model = model_ref(
         param_shapes, cond_emb_dim=args.hnet_cond_emb_dim,
         num_cond_embs=args.num_image_encoders, image_embed_dims=image_embed_dims,
         hidden_layer_factors=hidden_layer_factors, rescale_factor=args.rescale_factor
     ).to(args.device)
     print("Hyper-network loaded.")
 
-    view_stds(model)
+    # view_stds(model)
 
     if args.flop_counter == "calflops":
         hnet_flops = get_hypnet_flops(model, kwargs={"cond_id": [0], "image_embed_dim": 768})
@@ -243,6 +247,7 @@ if __name__ == "__main__":
     parser.add_argument("--logit-scale", type=float, default=100.0)
     parser.add_argument("--normalize-output", type=bool, default=False)
     parser.add_argument("--rescale-factor", type=float, default=0.0)
+    parser.add_argument("--use-outer-prod", type=bool, default=False)
     # training args
     parser.add_argument("--num-epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=512)

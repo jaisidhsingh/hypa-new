@@ -1,6 +1,6 @@
 # c=32, mlp decoder, no output norm, no init scaling
 python3 learn_multi_mapper.py \
-    --experiment-name="ie_30_mlp_c_32" \
+    --experiment-name="ie_30_mlp_c_32_outer" \
     --hidden-layer-factors="4,16" \
     --hnet-cond-emb-dim=32 \
     --scheduler="off" \
