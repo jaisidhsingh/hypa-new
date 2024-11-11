@@ -16,6 +16,7 @@ class ImageClassificationDataset(Dataset):
 		if "cifar" in self.dataset_name:
 			kwargs["download"] = True
 			kwargs["train"] = False
+
 		self.dataset_helper = self.helper_map[self.dataset_name](**kwargs)
 		class_names = self.get_class_names()
 

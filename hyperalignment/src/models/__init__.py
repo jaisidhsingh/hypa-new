@@ -201,3 +201,105 @@ class MultiMapperHypernet(nn.Module):
             pred_bias = pred_bias * (1 / pred_bias[0].numel()) ** 0.5
         
         return pred_weight, pred_bias
+
+
+class OuterProdParamDecoder(nn.Module):
+    def __init__(self, input_dim, output_dims):
+        super().__init__()
+        self.input_dim = input_dim
+        self.output_dims = output_dims # (dest_dim, src_dim)
+
+        self.decoder = nn.ModuleList([
+            nn.Linear(input_dim, output_dims[0]),
+            nn.Linear(input_dim, output_dims[1])
+        ])
+    
+    def forward(self, x):
+        out1, out2 = self.decoder[0](x), self.decoder[1](x)
+        return torch.einsum("bi,bj->bij", out1, out2)
+
+
+class OuterProdHypNet(nn.Module):
+    def __init__(self, param_shapes, cond_emb_dim, num_cond_embs, image_embed_dims, hidden_layer_factors, rescale_factor=10):
+        super().__init__()
+        self.image_embed_dims = image_embed_dims
+        self.param_shapes = param_shapes # `param_shapes = [[D_out, D_in], [D_out]]`
+        self.hidden_layer_factors = hidden_layer_factors
+
+        self.cond_embs = nn.Embedding(num_cond_embs, cond_emb_dim)
+        self.shape_embs = nn.Embedding(len(image_embed_dims), cond_emb_dim)
+
+        self.to_weight = OuterProdParamDecoder(cond_emb_dim, [param_shapes[0][0], param_shapes[0][1]])
+        self.to_bias = OuterProdParamDecoder(cond_emb_dim, [param_shapes[1][0], 1])
+
+    def forward(self, cond_id, image_embed_dim, normalize_output=False):
+        if type(cond_id) != list:
+            cond_id = [cond_id]
+
+        cond_id = torch.tensor(cond_id).long().to(self.cond_embs.weight.device) 
+        num_conds = len(cond_id)
+        cond_emb = self.cond_embs(cond_id) # shape: [num_conds, cond_emb_dim]
+        if num_conds == 1:
+            cond_emb = cond_emb.unsqueeze(0)
+
+        shape_id = torch.tensor([self.image_embed_dims.index(image_embed_dim)]).long().to(self.cond_embs.weight.device)
+        shape_emb = self.shape_embs(shape_id) # shape: [1, cond_emb_dim]
+        shape_emb = shape_emb.repeat((num_conds, 1)) # shape: [num_conds, cond_emb_dim]
+
+        final_cond_emb = cond_emb + shape_emb
+
+        pred_weight = self.to_weight(final_cond_emb)
+        pred_bias = self.to_bias(final_cond_emb).squeeze(-1)
+
+        pred_weight = pred_weight[:, :image_embed_dim, :]
+        pred_bias = pred_bias[:, :image_embed_dim]
+
+        if normalize_output:
+            pred_weight = pred_weight * (1 / pred_weight[0].numel()) ** 0.5
+            pred_bias = pred_bias * (1 / pred_bias[0].numel()) ** 0.5
+        
+        return pred_weight, pred_bias
+
+
+    def rescale_weight_prediction_params(self, rescale_factor):
+        # rescale the `weight` tensor data by `scale_factor` and set the bias to 0
+        num_layers = self.to_weight.num_layers
+        for i in [-1]:
+            if hasattr(self.to_weight.layers[i], "weight") and hasattr(self.to_weight.layers[i], "bias"):
+                self.to_weight.layers[i].bias.data.fill_(0.)
+                self.to_weight.layers[i].weight.data /= rescale_factor
+
+            if hasattr(self.to_bias.layers[i], "weight") and hasattr(self.to_bias.layers[i], "bias"):
+                self.to_bias.layers[i].weight.data /= rescale_factor
+                self.to_bias.layers[i].bias.data.fill_(0.)
+
+        print("Rescaled parameters of `self.to_weight` and `self.to_bias`.")
+
+
+    def compute_loss(self, logit_scale, image_features, text_features):
+        logit_scale = logit_scale.exp().to(image_features.device)
+        
+        batch_size = image_features.shape[0]
+        num_mappers = text_features.shape[0]
+
+        labels = torch.arange(batch_size, dtype=torch.long).to(image_features.device).unsqueeze(0)
+        labels = labels.repeat((num_mappers, 1))
+        
+        image_features = torch.permute(image_features, (1, 0, 2))
+        logits1 = logit_scale * torch.einsum("nbd,ncd->nbc", image_features, text_features)
+
+        preds = [logits1[i, :, :].argmax(dim=-1) for i in range(num_mappers)]
+        corrects = [(preds[i] == labels[i, :]).sum().item() for i in range(num_mappers)]
+
+        logits2 = logit_scale * torch.einsum("nbd,ncd->nbc", text_features, image_features)
+
+        loss = (F.cross_entropy(logits1, labels) + F.cross_entropy(logits2, labels))/2
+        return loss.mean(), corrects
+
+
+    def map_features(self, weights, biases, features):
+        batch_size = features.shape[0]
+        x = torch.einsum("nit,bt->nbi", weights, features)
+        x = x + biases.unsqueeze(1).repeat((1, batch_size, 1))
+        x = x / x.norm(dim=-1, keepdim=True)
+        return x
