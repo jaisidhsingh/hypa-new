@@ -27,8 +27,8 @@ def main(args):
 
     hnet = MultiMapperHypernet(
         param_shapes, cond_emb_dim=args.hnet_cond_emb_dim,
-        num_cond_embs=args.num_image_encoders, image_embed_dims=image_embed_dims,
-        hidden_layer_factors=hidden_layer_factors, rescale_factor=args.rescale_factor
+        num_cond_embs=args.hnet_ckpt_num_ie, image_embed_dims=image_embed_dims,
+        hidden_layer_factors=hidden_layer_factors, rescale_factor=0.0
     )
 
     ckpt_path = os.path.joint(args.ckpt_folder, args.hnet_ckpt_name, f"ckpt_{args.hnet_ckpt_epoch}.pt")
