@@ -15,6 +15,9 @@
 3. Dataset = CC-595k (595375 samples)
 4. Num encoders = 30
 5. Warmup steps = 500
+
+- For `num_ie=30` = 73151.62 GFLOPs
+- For `num_ie=12` = 29260.64 GFLOPs 
 6. FLOPs for 1 training epoch = 73151.62 GFlops
 
 
