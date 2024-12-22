@@ -16,10 +16,8 @@
 4. Num encoders = 30
 5. Warmup steps = 500
 
-- For `num_ie=30` = 73151.62 GFLOPs
-- For `num_ie=12` = 29260.64 GFLOPs 
-6. FLOPs for 1 training epoch = 73151.62 GFlops
-
+- For `num_ie=12` = 29260.64 GFLOPs
+- For `num_ie=30` = 73151.62 GFLOPs -- which is exactly 2.5 * FLOPs for `num_ie=12`.
 
 ## ImageNet eval
 

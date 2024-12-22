@@ -245,7 +245,7 @@ if __name__ == "__main__":
     parser.add_argument("--hnet-cond-emb-dim", type=int, default=8)
     parser.add_argument("--num-image-encoders", type=int, default=30)
     parser.add_argument("--logit-scale", type=float, default=100.0)
-    parser.add_argument("--normalize-output", type=bool, default=False)
+    parser.add_argument("--normalize-output", type=bool, default=True)
     parser.add_argument("--rescale-factor", type=float, default=0.0)
     parser.add_argument("--use-outer-prod", type=bool, default=False)
     # training args
