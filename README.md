@@ -25,25 +25,27 @@ All evals done at epoch 1 for `vit_small_patch16_224`:
 
 - `separate`: 3.16
 - `ie_30_mlp_c_32`: 23.74
-- `ie_30_mlp_c_32_norm`: 23.74 
-- `ie_30_mlp_c_32_cosine`: 23.05 
+- `ie_30_mlp_c_32_norm`: 23.74
+- `ie_30_mlp_c_32_cosine`: 23.05
 - `ie_30_mlp_c_32_norm_cosine`: 23.06
 - `ie_30_mlp_c_32_norm_cosine_init`: 22.58
 
 ## Todos for OOD Auto-decoding
-Optimize a newly initialized conditional embedding over the dataset for 1 epoch.
+Optimize a newly initialized conditional embedding over the dataset for 1 epoch. Used the hypnetwork trained with 12 encoders for this.
 
-- [ ] Run `flexvit-384` separate mapper training.
+- [x] Run `flexvit-384` separate mapper training.
     1. Training a 768->384 mapper takes 37 x 843.96 GFLOPs per epoch, 10 epochs take 312,265 GFLOPs.
     2. Cifar-10 eval: 46.1 (1st epoch) -- 82.5 (10th epoch)
     3. Cifar-100 eval: 10.2 (1st epoch) -- 39.0 (10th epoch)
     4. ImageNet eval: ~2.0 (1st epoch) -- 23.8 (10th epoch)
 
-- [ ] Eval aut-decoded cond emb
-    1. Optimizing the cond emb takes 74422 x 2.42 GFLOPs per epoch = 180,101 GFLOPs.
+- [x] Eval auto-decoded cond emb
+    1. Optimizing the cond emb takes 74422 x 2.42 (hmm) GFLOPs per epoch = 180,101 GFLOPs.
     2. Cifar-10 eval: 84.6
     3. Cifar-100 eval: 43.2
     4. ImageNet eval: 25.8
     5. Instead of using all 595k samples, lets see with just
         - 8k samples: Cifar-10: 11.6
-        - 80k samples: Cifar-10:
+        - 80k samples: Cifar-10: 32.8
+    6. Considering 1 epoch over full dataset, OOD is 1.73 times more efficient, can find a `num_samples` bound for 2x efficiency.
+    7. Need to run this with hypernetwork that has seen 30 encoders, maybe that can train in less data.
