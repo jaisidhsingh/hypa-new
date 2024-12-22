@@ -65,7 +65,7 @@ def train_separate_mapper(args):
         "batch_size": args.batch_size,
         "num_epochs": args.num_epochs,
         "steps_per_epoch": len(train_loader),
-        "flops_per_epoch": total_flops[0] * total_flops[1]
+        # "flops_per_epoch": total_flops[0] * total_flops[1]
     }
 
     # trackers
