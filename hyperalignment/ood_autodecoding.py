@@ -69,19 +69,13 @@ def main(args):
             image_embeddings = image_embeddings.to(args.device)
             text_embeddings = text_embeddings.to(args.device)
 
-            print(image_embeddings.shape, text_embeddings.shape)
-
             optimizer.zero_grad()
             cond_emb = embedding(torch.tensor([0]).to(args.device))
             pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
 
-            print(pred_weight.shape, pred_bias.shape)
-            
             pred_weight = pred_weight.squeeze(0)
             pred_bias = pred_bias.squeeze(0)
             mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
-
-            print(mapped_text_embeddings.shape)
 
             loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
             
@@ -94,7 +88,6 @@ def main(args):
 
             running_loss = loss.item()
             bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
-            sys.exit(0)
         
         bar.update(1)
         store[f"epoch_{epoch+1}"] = {"model": embedding.state_dict(), "loss": running_loss, "accuracy": accuracy}
@@ -129,7 +122,7 @@ if __name__ == "__main__":
     parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
     # training settings
     parser.add_argument("--num-epochs", type=int, default=10)
-    parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--batch-size", type=int, default=16384)
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--logit-scale", type=float, default=100.0)
