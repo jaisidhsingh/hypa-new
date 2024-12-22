@@ -40,11 +40,11 @@ def train_separate_mapper(args):
     model = model.to(args.device)
     print("Mapper loaded.")
 
-    # count FLOPs done in one step
-    if args.flop_counter == "calflops":
-        total_flops = get_mapper_flops(model, (args.batch_size, args.text_embed_dim), include_backward=True)
-        total_flops = total_flops
-        print(f"FLOPs per step = {total_flops[0]} x 10^({math.log10(total_flops[1])})")
+    # # count FLOPs done in one step
+    # if args.flop_counter == "calflops":
+    #     total_flops = get_mapper_flops(model, (args.batch_size, args.text_embed_dim), include_backward=True)
+    #     total_flops = total_flops
+    #     print(f"FLOPs per step = {total_flops[0]} x 10^({math.log10(total_flops[1])})")
 
     # CLIP settings
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
