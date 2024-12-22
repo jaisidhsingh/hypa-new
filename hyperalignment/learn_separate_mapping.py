@@ -167,7 +167,7 @@ if __name__ == "__main__":
     # ]
     # for model in models:
     #     args.image_encoder = model
-    #     args.experiment_name = model
+    args.experiment_name = args.image_encoder
     #     train_separate_mapper(args)
     train_separate_mapper(args)
     print("All done.")
