@@ -105,7 +105,7 @@ def train_separate_mapper(args):
                 "model": model.state_dict(),
                 "optimizer": optimizer.state_dict(),
                 "logs": logs,
-                "one_epoch_flop_count": flop_count_results
+                # "one_epoch_flop_count": flop_count_results
             }
 
             torch.save(dump, os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt"))
