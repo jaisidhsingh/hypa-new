@@ -49,12 +49,13 @@ data_configs.joint_embedding_dataset_configs = lambda args: {
 data_configs.separate_embedding_dataset_configs = lambda args: {
 	# "image_embeddings_path": f"{args.results_folder}/image_embeddings/{args.feature_dataset}/dim_{args.image_embed_dim}.pt",
 	# "text_embeddings_path": f"{args.results_folder}/text_embeddings/{args.feature_dataset}/dim_{args.text_embed_dim}.pt",
-    "image_embeddings_path": f"{args.results_folder}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{args.image_encoder}/embeddings.npy",
-    "text_embeddings_path": f"{args.results_folder}/text_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.text_embed_dim}/{args.text_encoder}/embeddings.npy",
+    "image_embeddings_path": f"{args.results_folder}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{args.image_encoder}/memmap.npy",
+    "text_embeddings_path": f"{args.results_folder}/text_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.text_embed_dim}/{args.text_encoder}/memmap.npy",
 	"image_embed_dim": args.image_embed_dim,
 	"text_embed_dim": args.text_embed_dim,
 	"image_encoder": args.image_encoder,
 	"text_encoder": args.text_encoder,
+    "num_samples": 595375,
 	"feature_dataset": args.feature_dataset
 }
 
