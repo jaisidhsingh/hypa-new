@@ -96,10 +96,12 @@ def main(args):
                 bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
                 bar.update(1)
         
-            if epoch == 0:
-                saved_flop_counts = deepcopy(flop_counter)
-                print(saved_flop_counts.results)
-                flop_counter = suppress
+                if epoch == 0:
+                    saved_flop_counts = deepcopy(flop_counter)
+                    print(saved_flop_counts.results)
+                    flop_counter = suppress
+                
+                sys.exit(0)
         
         # pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
         # store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
