@@ -31,7 +31,7 @@ def main(args):
         hidden_layer_factors=hidden_layer_factors, rescale_factor=0.0
     )
 
-    ckpt_path = os.path.join(args.ckpt_folder, args.hnet_ckpt_name, f"ckpt_{args.hnet_ckpt_epoch}.pt")
+    ckpt_path = os.path.join(args.hnet_ckpt_folder, args.hnet_ckpt_name, f"ckpt_{args.hnet_ckpt_epoch}.pt")
     hnet.load_state_dict(torch.load(ckpt_path)["model"])
     hnet = hnet.to(args.device)
     print("Initialized hypernetwork (decoder) with saved checkpoint:", args.hnet_ckpt_name)
