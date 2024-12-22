@@ -28,4 +28,8 @@ All evals done at epoch 1:
 - `ie_30_mlp_c_32_norm`: 23.74 
 - `ie_30_mlp_c_32_cosine`: 23.05 
 - `ie_30_mlp_c_32_norm_cosine`: 23.06
-- `ie_30_mlp_c_32_norm_cosine_init`: 22.58 
+- `ie_30_mlp_c_32_norm_cosine_init`: 22.58
+
+## Todos for OOD Auto-decoding
+- [ ] Run `flexvit-384` separate mapper training.
+- [ ] Eval aut-decoded cond emb
