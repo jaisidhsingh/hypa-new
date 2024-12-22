@@ -3,6 +3,7 @@ import sys
 import math
 import argparse
 import warnings
+from tqdm import tqdm
 warnings.simplefilter("ignore")
 
 import torch
@@ -58,8 +59,12 @@ def main(args):
     image_embed_dim = args.image_embed_dim
     logit_scale = torch.tensor(math.log(args.logit_scale)).to(args.device)
 
+    bar = tqdm(total=args.num_epochs)
+    store = {}
+
     for epoch in range(args.num_epochs):
         running_loss = 0.0
+        correct, total = 0, 0
         for idx, (image_embeddings, text_embeddings) in enumerate(loader):
             image_embeddings = image_embeddings.to(args.device)
             text_embeddings = text_embeddings.to(args.device)
@@ -78,16 +83,26 @@ def main(args):
 
             print(mapped_text_embeddings.shape)
 
-            loss = criterion(logit_scale, image_embeddings, mapped_text_embeddings)
+            loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
+            
+            correct += corrects
+            total += image_embeddings.shape[0]
+            accuracy = round(correct/total * 100, 2)
+
             loss.backward()
             optimizer.step()
 
-            running_loss += loss.item()
-
-            sys.exit(0)
+            running_loss = loss.item()
+            bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
         
-        running_loss /= idx+1
-        print(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}")
+        bar.update(1)
+        store[f"epoch_{epoch+1}"] = {"model": embedding.state_dict(), "loss": running_loss, "accuracy": accuracy}
+
+    store["config"] = vars(args)
+    save_path = os.path.join(args.hnet_ckpt_folder, "ood_attempt_1.pt")
+    torch.save(store, save_path)
+
+    print("Done!")
 
 
 if __name__ == "__main__":
