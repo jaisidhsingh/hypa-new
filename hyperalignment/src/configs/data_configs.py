@@ -47,10 +47,10 @@ data_configs.joint_embedding_dataset_configs = lambda args: {
 # This is a function to be called, i.e., `config = data_configs.separate_embedding_dataset_configs(args)`
 # Accessed in `hyperalignment/experiments/learn_separate_mapping.py`
 data_configs.separate_embedding_dataset_configs = lambda args: {
-	"image_embeddings_path": f"{args.results_folder}/image_embeddings/{args.feature_dataset}/dim_{args.image_embed_dim}.pt",
-	"text_embeddings_path": f"{args.results_folder}/text_embeddings/{args.feature_dataset}/dim_{args.text_embed_dim}.pt",
-    # "image_embeddings_path": f"{args.results_folder}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{args.image_encoder}/embeddings.npy",
-    # "text_embeddings_path": f"{args.results_folder}/text_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.text_embed_dim}/{args.text_encoder}/embeddings.npy",
+	# "image_embeddings_path": f"{args.results_folder}/image_embeddings/{args.feature_dataset}/dim_{args.image_embed_dim}.pt",
+	# "text_embeddings_path": f"{args.results_folder}/text_embeddings/{args.feature_dataset}/dim_{args.text_embed_dim}.pt",
+    "image_embeddings_path": f"{args.results_folder}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{args.image_encoder}/embeddings.npy",
+    "text_embeddings_path": f"{args.results_folder}/text_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.text_embed_dim}/{args.text_encoder}/embeddings.npy",
 	"image_embed_dim": args.image_embed_dim,
 	"text_embed_dim": args.text_embed_dim,
 	"image_encoder": args.image_encoder,

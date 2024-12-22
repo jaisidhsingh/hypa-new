@@ -22,9 +22,7 @@ def main(args):
     image_embed_dims = [int(x) for x in args.image_embed_dims.split(",")]
     hidden_layer_factors = [int(x) for x in args.hidden_layer_factors.split(",")]
 
-    embedding = torch.empty((1, args.hnet_cond_emb_dim))
-    embedding = nn.Parameter(embedding)
-    nn.init.normal_(embedding, mean=0, std=1/math.sqrt(args.hnet_cond_emb_dim))
+    embedding = nn.Embedding(1, args.hnet_cond_emb_dim)
     print("Initialized embedding to auto-decode.")
 
     hnet = MultiMapperHypernet(
@@ -50,10 +48,8 @@ def main(args):
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True)
     print("Loaded dataset for OOD image encoder.")
 
-    optimizer = torch.optim.Adam([embedding], lr=args.learning_rate)
+    optimizer = torch.optim.Adam(embedding.parameters(), lr=args.learning_rate)
     criterion = ClipLoss()
-
-    sys.exit(0)
 
     image_embed_dim = args.image_embed_dim
 
@@ -62,6 +58,9 @@ def main(args):
         for idx, (image_embeddings, text_embeddings) in enumerate(loader):
             image_embeddings = image_embeddings.to(args.device)
             text_embeddings = text_embeddings.to(args.device)
+
+            print(image_embeddings.shape, text_embeddings.shape)
+            sys.exit(0)
 
             optimizer.zero_grad()
             pred_weight, pred_bias = hnet(embedding, image_embed_dim, normalize_output=True, nolookup=True)
@@ -95,6 +94,7 @@ if __name__ == "__main__":
     parser.add_argument("--image-embed-dims", type=str, default="384,768,1024")
     parser.add_argument("--hidden-layer-factors", type=str, default="4,16")
     # OOD image encoder settings
+    parser.add_argument("--results-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results")
     parser.add_argument("--image-encoder", type=str, default="flexivit_small.300ep_in1k")
     parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
