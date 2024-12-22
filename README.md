@@ -44,3 +44,6 @@ Optimize a newly initialized conditional embedding over the dataset for 1 epoch.
     2. Cifar-10 eval: 84.6
     3. Cifar-100 eval: 43.2
     4. ImageNet eval: 25.8
+    5. Instead of using all 595k samples, lets see with just
+        - 8k samples: Cifar-10: 11.6
+        - 80k samples: Cifar-10:
