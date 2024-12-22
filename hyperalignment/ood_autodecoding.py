@@ -23,6 +23,7 @@ def main(args):
 
     embedding = nn.Parameter(torch.empty(1, args.hnet_cond_emb_dim))
     nn.init.normal_(embedding, mean=0, std=1/math.sqrt(args.hnet_cond_emb_dim))
+    embedding.requires_grad = True
     embedding = embedding.to(args.device)
     print("Initialized embedding to auto-decode.")
 
