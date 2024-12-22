@@ -102,3 +102,6 @@ if __name__ == "__main__":
     parser.add_arugment("--batch-size", type=int, default=32)
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--learning-rate", type=float, default=1e-3)
+
+    args = parser.parse_args()
+    main(args)
