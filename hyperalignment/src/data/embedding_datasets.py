@@ -56,10 +56,10 @@ class JointEmbeddings(Dataset):
 
 class SeparateEmbeddings(Dataset):
     def __init__(self, data_config):
-        self.image_embeddings = torch.load(data_config["image_embeddings_path"])[data_config["image_embed_dim"]][data_config["image_encoder"]].cpu()
-        self.text_embeddings = torch.load(data_config["text_embeddings_path"])[data_config["text_embed_dim"]][data_config["text_encoder"]].cpu()
-        # self.image_embeddings = np.load(data_config["image_embeddings_path"])
-        # self.text_embeddings = np.load(data_config["text_embeddings_path"])
+        # self.image_embeddings = torch.load(data_config["image_embeddings_path"])[data_config["image_embed_dim"]][data_config["image_encoder"]].cpu()
+        # self.text_embeddings = torch.load(data_config["text_embeddings_path"])[data_config["text_embed_dim"]][data_config["text_encoder"]].cpu()
+        self.image_embeddings = np.load(data_config["image_embeddings_path"])
+        self.text_embeddings = np.load(data_config["text_embeddings_path"])
         
         self.image_embed_dim = data_config["image_embed_dim"]
         self.text_embed_dim = data_config["text_embed_dim"]
@@ -69,10 +69,10 @@ class SeparateEmbeddings(Dataset):
         return self.image_embeddings.shape[0]
     
     def __getitem__(self, idx):
-        image_embedding = self.image_embeddings[idx].view(1, self.image_embed_dim)
-        text_embedding = self.text_embeddings[idx].view(1, self.text_embed_dim)
-        # image_embedding = torch.from_numpy(self.image_embeddings[idx]).view(1, self.image_embed_dim)
-        # text_embedding = torch.from_numpy(self.text_embeddings[idx]).view(1, self.text_embed_dim)
+        # image_embedding = self.image_embeddings[idx].view(1, self.image_embed_dim)
+        # text_embedding = self.text_embeddings[idx].view(1, self.text_embed_dim)
+        image_embedding = torch.from_numpy(self.image_embeddings[idx]).view(self.image_embed_dim)
+        text_embedding = torch.from_numpy(self.text_embeddings[idx]).view(self.text_embed_dim)
         return image_embedding, text_embedding
 
 
