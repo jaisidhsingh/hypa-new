@@ -200,6 +200,7 @@ def run(args, input_config):
             logs.update({"args": args.__dict__})
             dump = {
                 "optimizer": optimizer.state_dict(),
+                "model": model.state_dict(),
                 "logs": logs,
                 "mapper_params": predict_params_for_saving(model, encoder_info),
                 "one_epoch_flop_count": saved_flop_counter.results

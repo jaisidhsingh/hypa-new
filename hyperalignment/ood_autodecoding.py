@@ -2,6 +2,8 @@ import os
 import sys
 import math
 import argparse
+import warnings
+warnings.simplefilter("ignore")
 
 import torch
 import torch.nn as nn
