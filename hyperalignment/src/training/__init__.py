@@ -1,4 +1,5 @@
 from collections.abc import MappingView
+from copy import deepcopy
 import math
 import wandb
 import torch
@@ -286,7 +287,8 @@ class SeparateTrainer():
                 del mapped_text_features
 
                 if epoch == 0:
-                    saved_flop_counter_results = flop_counter #.results
+                    saved_flop_counter_results = deepcopy(flop_counter) #.results
+                    saved_flop_counter_results = saved_flop_counter_results.results
                     flop_counter = suppress
 
             logs["avg_loss"] /= idx+1
