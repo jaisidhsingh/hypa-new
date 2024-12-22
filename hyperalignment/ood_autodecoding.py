@@ -4,6 +4,7 @@ import math
 import argparse
 import warnings
 from tqdm import tqdm
+from contextlib import suppress
 warnings.simplefilter("ignore")
 
 import torch
@@ -14,6 +15,7 @@ from src.data import *
 from src.models import *
 from src.training.loss_functions import ClipLoss
 from src.configs.data_configs import data_configs
+from src.utils.backward_flops import FlopCounterMode
 
 def main(args):
     torch.manual_seed(args.random_seed)
@@ -62,40 +64,49 @@ def main(args):
     bar = tqdm(total=int(args.num_epochs * len(loader)))
     store = {}
 
+    flop_counter = FlopCounterMode(embedding)
+
     for epoch in range(args.num_epochs):
         running_loss = 0.0
         correct, total = 0, 0
-        for idx, (image_embeddings, text_embeddings) in enumerate(loader):
-            image_embeddings = image_embeddings.to(args.device)
-            text_embeddings = text_embeddings.to(args.device)
 
-            optimizer.zero_grad()
-            cond_emb = embedding(torch.tensor([0]).to(args.device))
-            pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
+        with flop_counter:
+            for idx, (image_embeddings, text_embeddings) in enumerate(loader):
+                image_embeddings = image_embeddings.to(args.device)
+                text_embeddings = text_embeddings.to(args.device)
 
-            pred_weight = pred_weight.squeeze(0)
-            pred_bias = pred_bias.squeeze(0)
-            mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
+                optimizer.zero_grad()
+                cond_emb = embedding(torch.tensor([0]).to(args.device))
+                pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
 
-            loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
-            
-            correct += corrects
-            total += image_embeddings.shape[0]
-            accuracy = round(correct/total * 100, 2)
+                pred_weight = pred_weight.squeeze(0)
+                pred_bias = pred_bias.squeeze(0)
+                mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
 
-            loss.backward()
-            optimizer.step()
+                loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
+                
+                correct += corrects
+                total += image_embeddings.shape[0]
+                accuracy = round(correct/total * 100, 2)
 
-            running_loss = round(loss.item(), 2)
-            bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
-            bar.update(1)
+                loss.backward()
+                optimizer.step()
+
+                running_loss = round(loss.item(), 2)
+                bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
+                bar.update(1)
         
-        pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
-        store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
+            if epoch == 0:
+                saved_flop_counts = deepcopy(flop_counter)
+                print(saved_flop_counts.results)
+                flop_counter = suppress
+        
+        # pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
+        # store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
 
-    store["config"] = vars(args)
-    save_path = os.path.join(args.hnet_ckpt_folder, "ood_attempt_1.pt")
-    torch.save(store, save_path)
+    # store["config"] = vars(args)
+    # save_path = os.path.join(args.hnet_ckpt_folder, "ood_attempt_1.pt")
+    # torch.save(store, save_path)
 
     print("Done!")
 
