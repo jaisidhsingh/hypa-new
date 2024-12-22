@@ -99,7 +99,7 @@ if __name__ == "__main__":
     parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
     # training settings
     parser.add_argument("--num-epochs", type=int, default=10)
-    parser.add_arugment("--batch-size", type=int, default=32)
+    parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--learning-rate", type=float, default=1e-3)
 
