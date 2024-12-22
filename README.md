@@ -31,8 +31,13 @@ All evals done at epoch 1 for `vit_small_patch16_224`:
 - `ie_30_mlp_c_32_norm_cosine_init`: 22.58
 
 ## Todos for OOD Auto-decoding
+Optimize a newly initialized conditional embedding over the dataset for 1 epoch.
+
 - [ ] Run `flexvit-384` separate mapper training.
     1. Training a 768->384 mapper takes 37x843.96 GFLOPs per epoch.
+    2. Cifar-10 eval: 46.1 (1st epoch) --  (10th epoch)
+    3. Cifar-100 eval: 10.2 (1st epoch) -- (10th epoch)
+    4. ImageNet eval: ~2.0 (1st epoch) --
 - [ ] Eval aut-decoded cond emb
     1. Cifar-10 eval: 84.6
     2. Cifar-100 eval: 43.2
