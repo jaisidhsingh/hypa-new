@@ -50,8 +50,8 @@ def main(args):
     hnet.eval()
     print("Freezed hypernetwork parameters.")
 
-    # Initialise the embedding to be learnt as the avg of the hnet's embeddings
-    embedding.weight.data = hnet.cond_embs.weight.data.mean(dim=0).unsqueeze(0)
+    # Initialise the embedding to be learnt as the avg of the hnet's embeddings (of the same family)
+    embedding.weight.data = hnet.cond_embs.weight.data[:4, :].mean(dim=0).unsqueeze(0)
     
     dataset_config = data_configs.separate_embedding_dataset_configs(args)
     dataset = SeparateEmbeddings(dataset_config)
@@ -116,7 +116,7 @@ def main(args):
         store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
 
     store["config"] = vars(args)
-    save_path = os.path.join(args.hnet_ckpt_folder, "ood_attempt_10k_avg.pt")
+    save_path = os.path.join(args.hnet_ckpt_folder, "ood_attempt_10k_avg_f.pt")
     torch.save(store, save_path)
 
     print("Done!")
