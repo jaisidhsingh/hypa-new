@@ -59,7 +59,7 @@ def main(args):
     image_embed_dim = args.image_embed_dim
     logit_scale = torch.tensor(math.log(args.logit_scale)).to(args.device)
 
-    bar = tqdm(total=args.num_epochs)
+    bar = tqdm(total=int(args.num_epochs * len(loader)))
     store = {}
 
     for epoch in range(args.num_epochs):
@@ -86,10 +86,10 @@ def main(args):
             loss.backward()
             optimizer.step()
 
-            running_loss = loss.item()
+            running_loss = round(loss.item(), 2)
             bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
+            bar.update(1)
         
-        bar.update(1)
         store[f"epoch_{epoch+1}"] = {"model": embedding.state_dict(), "loss": running_loss, "accuracy": accuracy}
 
     store["config"] = vars(args)
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     parser.add_argument("--num-epochs", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=16384)
     parser.add_argument("--num-workers", type=int, default=4)
-    parser.add_argument("--learning-rate", type=float, default=1e-3)
+    parser.add_argument("--learning-rate", type=float, default=1e-1)
     parser.add_argument("--logit-scale", type=float, default=100.0)
 
     args = parser.parse_args()
