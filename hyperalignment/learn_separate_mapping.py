@@ -72,11 +72,11 @@ def train_separate_mapper(args):
     bar = tqdm(total=args.num_epochs)
 
     # saving preparation
-    ckpt_save_folder = os.path.join(args.checkpoint_folder, args.experiment_type, "separate", args.experiment_name, f"seed_{args.random_seed}")
+    ckpt_save_folder = os.path.join(args.checkpoint_folder, "separate", args.experiment_name, f"seed_{args.random_seed}")
     os.makedirs(ckpt_save_folder, exist_ok=True)
 
     # logs and results saving
-    logs_save_folder = os.path.join(args.logs_folder, args.experiment_type, "separate", args.experiment_name, f"seed_{args.random_seed}")
+    logs_save_folder = os.path.join(args.logs_folder, "separate", args.experiment_name, f"seed_{args.random_seed}")
     os.makedirs(logs_save_folder, exist_ok=True)
 
     if args.use_wandb:
