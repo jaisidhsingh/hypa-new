@@ -32,6 +32,7 @@ All evals done at epoch 1 for `vit_small_patch16_224`:
 
 ## Todos for OOD Auto-decoding
 - [ ] Run `flexvit-384` separate mapper training.
+    1. Training a 768->384 mapper takes 37x843.96 GFLOPs per epoch.
 - [ ] Eval aut-decoded cond emb
     1. Cifar-10 eval: 84.6
     2. Cifar-100 eval: 43.2
