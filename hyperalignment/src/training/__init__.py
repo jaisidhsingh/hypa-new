@@ -256,7 +256,7 @@ class SeparateTrainer():
 
                 optimizer.zero_grad()
 
-                with autocast():
+                with autocast(self.device):
                     mapped_text_features = model(text_features)
                     mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
                     loss, in_batch_corrects = criterion.compute_loss_and_accuracy(
@@ -309,7 +309,7 @@ class SeparateTrainer():
             text_features = text_features.float().to(self.device)
             text_features = text_features.view(batch_size, self.args.text_embed_dim)
 
-            with autocast():
+            with autocast(self.device):
                 mapped_text_features = model(text_features)
                 mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
                 loss, in_batch_corrects = criterion.compute_loss_and_accuracy(
