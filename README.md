@@ -40,12 +40,19 @@ Optimize a newly initialized conditional embedding over the dataset for 1 epoch.
     4. ImageNet eval: ~2.0 (1st epoch) -- 23.8 (10th epoch)
 
 - [x] Eval auto-decoded cond emb
-    1. Optimizing the cond emb takes 74422 x 2.42 (hmm) GFLOPs per epoch = 180,101 GFLOPs.
-    2. Cifar-10 eval: 84.6
-    3. Cifar-100 eval: 43.2
-    4. ImageNet eval: 25.8
-    5. Instead of using all 595k samples, lets see with just
-        - 8k samples: Cifar-10: 11.6
-        - 80k samples: Cifar-10: 32.8
-    6. Considering 1 epoch over full dataset, OOD is 1.73 times more efficient, can find a `num_samples` bound for 2x efficiency.
-    7. Need to run this with hypernetwork that has seen 30 encoders, maybe that can train in less data.
+    1. Batch size = 8
+    2. Learning rate = 1e-4
+    3. No scheduler, works best with low batch size and low learning rate.
+    4. Will tinker with more h-params now that we have a good init method (see below).
+        - Cifar-10 eval: 84.6
+        - Cifar-100 eval: 43.2
+        - ImageNet eval: 25.8
+        - FLOPs used = 74422 x 2.42 GFLOPs per epoch = 180,101 GFLOPs.
+    5. Instead of using all 595k samples, lets do this with just 80k samples (10k steps) but we do `new_cond_emb = hnet.cond_embs.mean(dim=0)`
+        - Cifar-10: 84.5
+        - Cifar-100: 43.1
+        - ImageNet eval: 25.9
+        - FLOPs used = 10k x 2.42 GFLOPs = 24,200 GFLOPs
+        - Efficient w.r.t 10 epoch baseline = 12.9 times
+    6. If we init new cond emb as the avg of the embs of only those which belong to its dim-family, worse off results.
+    7. Need to run this with hypernetwork that has seen 30 encoders, maybe that can train in even less data and FLOPs.
