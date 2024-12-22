@@ -102,7 +102,7 @@ def main(args):
                 bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
                 bar.update(1)
 
-                if idx == 20000:
+                if idx == 9999:
                     break
         
                 # if epoch == 0:
@@ -116,7 +116,7 @@ def main(args):
         store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
 
     store["config"] = vars(args)
-    save_path = os.path.join(args.hnet_ckpt_folder, "ood_attempt_20k_avg.pt")
+    save_path = os.path.join(args.hnet_ckpt_folder, "ood_attempt_10k_avg.pt")
     torch.save(store, save_path)
 
     print("Done!")
