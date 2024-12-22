@@ -241,6 +241,7 @@ class SeparateTrainer():
         correct, total = 0, 0
 
         flop_counter = FlopCounterMode(model)
+        saved_flop_counter_results = None
         for idx, (image_features, text_features) in enumerate(loader):
             with flop_counter:
                 step = int(epoch * len(loader)) + idx + 1
@@ -290,6 +291,8 @@ class SeparateTrainer():
                     saved_flop_counter_results = deepcopy(flop_counter) #.results
                     saved_flop_counter_results = saved_flop_counter_results.flop_counts
                     # flop_counter = suppress
+                else:
+                    saved_flop_counter_results = None
 
             logs["avg_loss"] /= idx+1
         return logs, saved_flop_counter_results
