@@ -34,13 +34,13 @@ All evals done at epoch 1 for `vit_small_patch16_224`:
 Optimize a newly initialized conditional embedding over the dataset for 1 epoch.
 
 - [ ] Run `flexvit-384` separate mapper training.
-    1. Training a 768->384 mapper takes 37x843.96 GFLOPs per epoch.
+    1. Training a 768->384 mapper takes 37 x 843.96 GFLOPs per epoch, 10 epochs take 312,265 GFLOPs.
     2. Cifar-10 eval: 46.1 (1st epoch) -- 82.5 (10th epoch)
     3. Cifar-100 eval: 10.2 (1st epoch) -- 39.0 (10th epoch)
     4. ImageNet eval: ~2.0 (1st epoch) -- 23.8 (10th epoch)
 
 - [ ] Eval aut-decoded cond emb
-    1. Optimizing the cond emb takes GFLOPs per epoch.
+    1. Optimizing the cond emb takes 74422 x 2.42 GFLOPs per epoch = 180,101 GFLOPs.
     2. Cifar-10 eval: 84.6
     3. Cifar-100 eval: 43.2
     4. ImageNet eval: 25.8

@@ -45,7 +45,7 @@ def main(args):
 
     # freeze the hypernetwork which decodes the conditional embedding that we are optimizing
     for p in hnet.parameters():
-        p.requires_grad = False
+        p.requires_grad = True
     # set to eval mode 
     hnet.eval()
     print("Freezed hypernetwork parameters.")
@@ -55,7 +55,10 @@ def main(args):
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True)
     print("Loaded dataset for OOD image encoder.")
 
-    optimizer = torch.optim.Adam(embedding.parameters(), lr=args.learning_rate)
+    opts = [p for p in embedding.parameters()] + [p for p in hnet.parameters()]
+
+    # optimizer = torch.optim.Adam(embedding.parameters(), lr=args.learning_rate)
+    optimizer = torch.optim.Adam(opts, lr=args.learning_rate)
     criterion = ClipLoss(args)
 
     image_embed_dim = args.image_embed_dim
