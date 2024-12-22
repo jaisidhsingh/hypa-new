@@ -21,7 +21,9 @@ def main(args):
     image_embed_dims = [int(x) for x in args.image_embed_dims.split(",")]
     hidden_layer_factors = [int(x) for x in args.hidden_layer_factors.split(",")]
 
-    embedding = nn.Embedding(1, args.hnet_cond_emb_dim)
+    embedding = nn.Parameter(torch.empty(1, args.hnet_cond_emb_dim))
+    nn.init.normal_(embedding, mean=0, std=1/math.sqrt(args.hnet_cond_emb_dim))
+    embedding = embedding.to(args.device)
     print("Initialized embedding to auto-decode.")
 
     hnet = MultiMapperHypernet(
@@ -47,7 +49,7 @@ def main(args):
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True)
     print("Loaded dataset for OOD image encoder.")
 
-    optimizer = torch.optim.Adam(embedding.parameters(), lr=args.learning_rate)
+    optimizer = torch.optim.Adam([embedding], lr=args.learning_rate)
     criterion = ClipLoss(args)
 
     image_embed_dim = args.image_embed_dim
