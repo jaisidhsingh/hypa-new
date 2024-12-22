@@ -14,7 +14,6 @@ from src.models import *
 from src.training.loss_functions import ClipLoss
 from src.configs.data_configs import data_configs
 
-
 def main(args):
     torch.manual_seed(args.random_seed)
 
