@@ -48,9 +48,10 @@ def main(args):
     print("Loaded dataset for OOD image encoder.")
 
     optimizer = torch.optim.Adam(embedding.parameters(), lr=args.learning_rate)
-    criterion = ClipLoss()
+    criterion = ClipLoss(args)
 
     image_embed_dim = args.image_embed_dim
+    logit_scale = torch.tensor(math.log(args.logit_scale)).to(args.device)
 
     for epoch in range(args.num_epochs):
         running_loss = 0.0
@@ -59,20 +60,25 @@ def main(args):
             text_embeddings = text_embeddings.to(args.device)
 
             print(image_embeddings.shape, text_embeddings.shape)
-            sys.exit(0)
 
             optimizer.zero_grad()
             pred_weight, pred_bias = hnet(embedding, image_embed_dim, normalize_output=True, nolookup=True)
+
+            print(pred_weight.shape, pred_bias.shape)
             
             pred_weight = pred_weight.squeeze(0)
             pred_bias = pred_bias.squeeze(0)
             mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
 
-            loss = criterion(mapped_text_embeddings, image_embeddings)
+            print(mapped_text_embeddings.shape)
+
+            loss = criterion(logit_scale, image_embeddings, mapped_text_embeddings)
             loss.backward()
             optimizer.step()
 
             running_loss += loss.item()
+
+            sys.exit(0)
         
         running_loss /= idx+1
         print(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}")
@@ -104,6 +110,7 @@ if __name__ == "__main__":
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--learning-rate", type=float, default=1e-3)
+    parser.add_argument("--logit-scale", type=float, default=100.0)
 
     args = parser.parse_args()
     main(args)
