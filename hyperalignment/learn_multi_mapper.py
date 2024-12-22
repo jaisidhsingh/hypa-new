@@ -1,7 +1,7 @@
 import os
 import sys
 import math
-import wandb
+# import wandb
 import torch
 import argparse
 import warnings
@@ -108,8 +108,8 @@ def run(args, input_config):
 
     flop_counter = FlopCounterMode(model) if args.flop_counter == "custom" else suppress
 
-    if args.use_wandb:
-        wandb.init(project="hnet-init-scaling", name=args.experiment_name, entity="hyperalignment", config=vars(args))
+    # if args.use_wandb:
+        # wandb.init(project="hnet-init-scaling", name=args.experiment_name, entity="hyperalignment", config=vars(args))
 
     # training loop
     for epoch in range(args.num_epochs):
@@ -182,8 +182,8 @@ def run(args, input_config):
                     logs[f"epoch_{epoch+1}"][f"acc_{k}"] = accuracies[k]
 
                 # optional wandb logging
-                if args.use_wandb:
-                    wandb.log(logs[f"epoch_{epoch+1}"], step=step)
+                # if args.use_wandb:
+                    # wandb.log(logs[f"epoch_{epoch+1}"], step=step)
             
                 # print the result of the current epoch
                 bar.update(1)
