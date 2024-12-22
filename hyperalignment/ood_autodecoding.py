@@ -21,9 +21,11 @@ def main(args):
     image_embed_dims = [int(x) for x in args.image_embed_dims.split(",")]
     hidden_layer_factors = [int(x) for x in args.hidden_layer_factors.split(",")]
 
-    embedding = nn.Parameter(torch.empty(1, args.hnet_cond_emb_dim))
-    nn.init.normal_(embedding, mean=0, std=1/math.sqrt(args.hnet_cond_emb_dim))
-    embedding.requires_grad = True
+    embedding = nn.Embedding(1, args.hnet_cond_emb_dim)
+    # nn.init.normal_(embedding, mean=0, std=1/math.sqrt(args.hnet_cond_emb_dim))
+    # embedding.requires_grad = True
+    for param in embedding.parameters():
+        param.requires_grad = True
     embedding = embedding.to(args.device)
     print("Initialized embedding to auto-decode.")
 
@@ -50,7 +52,7 @@ def main(args):
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True)
     print("Loaded dataset for OOD image encoder.")
 
-    optimizer = torch.optim.Adam([embedding], lr=args.learning_rate)
+    optimizer = torch.optim.Adam(embedding.parameters(), lr=args.learning_rate)
     criterion = ClipLoss(args)
 
     image_embed_dim = args.image_embed_dim
@@ -65,7 +67,8 @@ def main(args):
             print(image_embeddings.shape, text_embeddings.shape)
 
             optimizer.zero_grad()
-            pred_weight, pred_bias = hnet(embedding, image_embed_dim, normalize_output=True, nolookup=True)
+            cond_emb = embedding(torch.tensor([0]).to(args.device))
+            pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
 
             print(pred_weight.shape, pred_bias.shape)
             
