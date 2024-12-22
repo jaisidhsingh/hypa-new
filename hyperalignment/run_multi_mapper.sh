@@ -2,7 +2,7 @@
 # num_ie = 12
 python3 learn_multi_mapper.py \
     --experiment-name="ie_12_mlp_c_32_norm" \
-    --num-image-encodes=12 \
+    --num-image-encoders=12 \
     --hidden-layer-factors="4,16" \
     --hnet-cond-emb-dim=32 \
     --scheduler="off" \
@@ -13,7 +13,7 @@ python3 learn_multi_mapper.py \
 # num_ie = 30
 python3 learn_multi_mapper.py \
     --experiment-name="ie_30_mlp_c_32" \
-    --num-image-encodes=30 \
+    --num-image-encoders=30 \
     --hidden-layer-factors="4,16" \
     --hnet-cond-emb-dim=32 \
     --scheduler="off" \
