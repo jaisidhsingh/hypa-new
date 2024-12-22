@@ -83,10 +83,11 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--random-seed", type=int, default=0)
     # hnet settings
-    parser.add_argument("--hnet-ckpt-folder", type=str, default="x")
+    parser.add_argument("--hnet-ckpt-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper")
     parser.add_argument("--hnet-ckpt-epoch", type=int, default=1)
-    parser.add_argument("--hnet-ckpt-name", type=str, default="x")
+    parser.add_argument("--hnet-ckpt-name", type=str, default="ie_12_mlp_c_32_norm")
     parser.add_argument("--hnet-cond-emb-dim", type=int, default=32)
+    parser.add_argument("--hnet-ckpt-num-ie", type=int, default=12)
     parser.add_argument("--largest-image-dim", type=int, default=1024)
     parser.add_argument("--largest-text-dim", type=int, default=768)
     parser.add_argument("--image-embed-dims", type=str, default="384,768,1024")
