@@ -124,14 +124,14 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--results-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results")
     parser.add_argument("--logs-folder", type=str, default="/home/mila/s/sparsha.mishra/projects/Hyper-Alignment/logs")
-    parser.add_argument("--checkpoint-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hypa/checkpoints")
+    parser.add_argument("--checkpoint-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints")
     # model and dataset settings
-    parser.add_argument("--image-encoder", type=str, default="vit_base_patch16_224")
+    parser.add_argument("--image-encoder", type=str, default="flexivit_small.300ep_in1k")
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
-    parser.add_argument("--feature-dataset", type=str, default="cc3m300k_id_vitr_var")
+    parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
     parser.add_argument("--val-dataset", type=str, default="cc3mval_id_vitr_raw")
     parser.add_argument("--test-dataset", type=str, default="mscoco_val_id_vitr_var")
-    parser.add_argument("--image-embed-dim", type=int, default=768)
+    parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-embed-dim", type=int, default=768)
     parser.add_argument("--use-bias", type=bool, default=True)
     parser.add_argument("--logit-scale", type=float, default=100.0)
@@ -153,21 +153,21 @@ if __name__ == "__main__":
     # get args object
     args = parser.parse_args()
 
-    models = [
-        "vit_base_patch16_224"
-        # "vit_large_patch16_224.augreg_in21k_ft_in1k",
-        # "vit_large_patch14_clip_336.laion2b_ft_in12k_in1k", #
-        # "deit3_large_patch16_384.fb_in22k_ft_in1k", #
-        # "eva02_large_patch14_448.mim_m38m_ft_in22k_in1k", #
-        # "beit_large_patch16_384.in22k_ft_in22k_in1k", #
-        # "beitv2_large_patch16_224.in1k_ft_in22k_in1k", #
-        # "swin_base_patch4_window7_224.ms_in22k_ft_in1k", #
-        # "convnext_base.fb_in22k_ft_in1k", # 
-        # "convnextv2_base.fcmae_ft_in22k_in1k" #
-    ]
-    for model in models:
-        args.image_encoder = model
-        args.experiment_name = model
-        train_separate_mapper(args)
-
+    # models = [
+    #     # "vit_base_patch16_224"
+    #     # "vit_large_patch16_224.augreg_in21k_ft_in1k",
+    #     # "vit_large_patch14_clip_336.laion2b_ft_in12k_in1k", #
+    #     # "deit3_large_patch16_384.fb_in22k_ft_in1k", #
+    #     # "eva02_large_patch14_448.mim_m38m_ft_in22k_in1k", #
+    #     # "beit_large_patch16_384.in22k_ft_in22k_in1k", #
+    #     # "beitv2_large_patch16_224.in1k_ft_in22k_in1k", #
+    #     # "swin_base_patch4_window7_224.ms_in22k_ft_in1k", #
+    #     # "convnext_base.fb_in22k_ft_in1k", # 
+    #     # "convnextv2_base.fcmae_ft_in22k_in1k" #
+    # ]
+    # for model in models:
+    #     args.image_encoder = model
+    #     args.experiment_name = model
+    #     train_separate_mapper(args)
+    train_separate_mapper(args)
     print("All done.")
