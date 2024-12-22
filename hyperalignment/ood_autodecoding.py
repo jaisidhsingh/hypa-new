@@ -90,7 +90,7 @@ if __name__ == "__main__":
     parser.add_argument("--hnet-ckpt-name", type=str, default="ie_12_mlp_c_32_norm")
     parser.add_argument("--hnet-cond-emb-dim", type=int, default=32)
     parser.add_argument("--hnet-ckpt-num-ie", type=int, default=12)
-    parser.add_argument("--largest-image-dim", type=int, default=1024)
+    parser.add_argument("--largest-image-dim", type=int, default=1536)
     parser.add_argument("--largest-text-dim", type=int, default=768)
     parser.add_argument("--image-embed-dims", type=str, default="384,768,1024")
     parser.add_argument("--hidden-layer-factors", type=str, default="4,16")
