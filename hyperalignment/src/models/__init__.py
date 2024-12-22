@@ -168,15 +168,23 @@ class MultiMapperHypernet(nn.Module):
         x = x / x.norm(dim=-1, keepdim=True)
         return x
     
-    def forward(self, cond_id, image_embed_dim, normalize_output=False):
-        if type(cond_id) != list:
-            cond_id = [cond_id]
+    def forward(self, cond_id, image_embed_dim, normalize_output=False, nolookup=False):
+        if nolookup == False:
+            assert type(cond_id) in [list, int], "Conditional input is of the wrong type."
 
-        cond_id = torch.tensor(cond_id).long().to(self.cond_embs.weight.device) 
-        num_conds = len(cond_id)
-        cond_emb = self.cond_embs(cond_id) # shape: [num_conds, cond_emb_dim]
-        if num_conds == 1:
-            cond_emb = cond_emb.unsqueeze(0)
+            if type(cond_id) != list and type(cond_id) == int:
+                cond_id = [cond_id]
+
+            cond_id = torch.tensor(cond_id).long().to(self.cond_embs.weight.device) 
+            num_conds = len(cond_id)
+            cond_emb = self.cond_embs(cond_id) # shape: [num_conds, cond_emb_dim]
+            if num_conds == 1:
+                cond_emb = cond_emb.unsqueeze(0)
+        
+        else:
+            assert type(cond_id) in [torch.Tensor, torch.nn.Parameter], "Conditional input is of the wrong type."
+            num_conds = cond_id.shape[0]
+            cond_emb = cond_id
 
         shape_id = torch.tensor([self.image_embed_dims.index(image_embed_dim)]).long().to(self.cond_embs.weight.device)
         shape_emb = self.shape_embs(shape_id) # shape: [1, cond_emb_dim]
