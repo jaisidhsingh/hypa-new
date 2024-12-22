@@ -94,6 +94,7 @@ def main(args):
 
             running_loss = loss.item()
             bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
+            sys.exit(0)
         
         bar.update(1)
         store[f"epoch_{epoch+1}"] = {"model": embedding.state_dict(), "loss": running_loss, "accuracy": accuracy}
