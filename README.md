@@ -21,7 +21,7 @@
 
 ## ImageNet eval
 
-All evals done at epoch 1:
+All evals done at epoch 1 for `vit_small_patch16_224`:
 
 - `separate`: 3.16
 - `ie_30_mlp_c_32`: 23.74

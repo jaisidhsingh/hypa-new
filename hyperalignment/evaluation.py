@@ -154,7 +154,7 @@ def load_separate_ckpt(args, model):
 def load_ood_ckpt(args, model):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper"
     path = os.path.join(folder, args.ood_results_path)
-    weight, bias = torch.load(path)["mapper_params"]
+    [weight, bias] = torch.load(path)["mapper_params"]
     model.mapper.layers[0].weight.data = weight.to(args.device)
     model.mapper.layers[0].bias.data = bias.to(args.device)
     model.mapper = model.mapper.to(args.device)
