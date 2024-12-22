@@ -45,7 +45,7 @@ def main(args):
 
     # freeze the hypernetwork which decodes the conditional embedding that we are optimizing
     for p in hnet.parameters():
-        p.requires_grad = True
+        p.requires_grad = False #True
     # set to eval mode 
     hnet.eval()
     print("Freezed hypernetwork parameters.")
@@ -55,10 +55,10 @@ def main(args):
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True)
     print("Loaded dataset for OOD image encoder.")
 
-    opts = [p for p in embedding.parameters()] + [p for p in hnet.parameters()]
+    # opts = [p for p in embedding.parameters()] + [p for p in hnet.parameters()]
 
-    # optimizer = torch.optim.Adam(embedding.parameters(), lr=args.learning_rate)
-    optimizer = torch.optim.Adam(opts, lr=args.learning_rate)
+    optimizer = torch.optim.Adam(embedding.parameters(), lr=args.learning_rate)
+    # optimizer = torch.optim.Adam(opts, lr=args.learning_rate)
     criterion = ClipLoss(args)
 
     image_embed_dim = args.image_embed_dim
@@ -67,13 +67,13 @@ def main(args):
     bar = tqdm(total=int(args.num_epochs * len(loader)))
     store = {}
 
-    flop_counter = FlopCounterMode(embedding)
+    # flop_counter = FlopCounterMode(embedding)
 
     for epoch in range(args.num_epochs):
         running_loss = 0.0
         correct, total = 0, 0
 
-        with flop_counter:
+        if True:
             for idx, (image_embeddings, text_embeddings) in enumerate(loader):
                 image_embeddings = image_embeddings.to(args.device)
                 text_embeddings = text_embeddings.to(args.device)
@@ -98,20 +98,23 @@ def main(args):
                 running_loss = round(loss.item(), 2)
                 bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
                 bar.update(1)
-        
-                if epoch == 0:
-                    saved_flop_counts = deepcopy(flop_counter)
-                    print(saved_flop_counts.results)
-                    flop_counter = suppress
-                
-                sys.exit(0)
-        
-        # pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
-        # store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
 
-    # store["config"] = vars(args)
-    # save_path = os.path.join(args.hnet_ckpt_folder, "ood_attempt_1.pt")
-    # torch.save(store, save_path)
+                if idx == 297688:
+                    break
+        
+                # if epoch == 0:
+                #     saved_flop_counts = deepcopy(flop_counter)
+                #     print(saved_flop_counts.results)
+                #     flop_counter = suppress
+                
+                # sys.exit(0)
+        
+        pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
+        store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
+
+    store["config"] = vars(args)
+    save_path = os.path.join(args.hnet_ckpt_folder, "ood_attempt_1by2.pt")
+    torch.save(store, save_path)
 
     print("Done!")
 
