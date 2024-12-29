@@ -27,7 +27,8 @@ def cka(x1, x2):
     cka_calc = CKA(x1.device)
     linear_cka = cka_calc.linear_CKA(x1, x2)
     rbf_cka = cka_calc.kernel_CKA(x1, x2)
-    return {"linear_cka": linear_cka, "rbf_cka": rbf_cka}
+    out = torch.cat([linear_cka, rbf_cka], dim=1)
+    return out
 
 def plot_side_by_side(args):
     data = load_experiment_data(args)
