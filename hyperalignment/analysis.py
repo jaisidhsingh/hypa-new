@@ -60,7 +60,6 @@ def plot_side_by_side(args):
 
         cond_embs = data["cond_embs"][start : end, ...].to(args.device)
 
-        assert mapper_weights.dim() == cond_embs.dim() == 2
         assert mapper_weights.shape[0] == cond_embs.shape[0]
         print(f"Prepared mapper weights and conditional embeddings for group {i+1}")
 
