@@ -27,6 +27,7 @@ def cka(x1, x2):
     cka_calc = CKA(x1.device)
     linear_cka = cka_calc.linear_CKA(x1, x2)
     rbf_cka = cka_calc.kernel_CKA(x1, x2)
+    print(linear_cka.shape, rbf_cka.shape)
     out = torch.cat([linear_cka, rbf_cka], dim=1)
     return out
 
