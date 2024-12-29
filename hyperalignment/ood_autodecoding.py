@@ -109,7 +109,7 @@ def main(args):
         store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
 
     store["config"] = vars(args)
-    save_path = os.path.join(args.hnet_ckpt_folder, "ood_attempt_10k_avg_beit_768.pt")
+    save_path = os.path.join(args.hnet_ckpt_folder, args.save_path)
     torch.save(store, save_path)
 
     print("Done!")
@@ -119,6 +119,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--random-seed", type=int, default=0)
+    parser.add_argument("--save-path", type=str, default="x")
     # hnet settings
     parser.add_argument("--hnet-ckpt-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper")
     parser.add_argument("--hnet-ckpt-epoch", type=int, default=1)
