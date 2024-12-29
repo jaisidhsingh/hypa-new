@@ -10,6 +10,11 @@ def load_experiment_data(args):
     path = os.path.join(args.ckpt_folder, args.experiment_name, f"seed_{args.random_seed}", f"ckpt_{args.ckpt_epoch}.pt")
     data = torch.load(path)
     mappers = data["mapper_params"]
+
+    for k, v in data["model"].items():
+        if "cond_emb" in k:
+            print(k)
+
     cond_embs = data["model"]["cond_embs"]
     return {"mapper_weights": mappers, "cond_embs": cond_embs}
 
