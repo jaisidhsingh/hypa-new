@@ -4,9 +4,25 @@ import torch.nn.functional as F
 from pylab import plt
 import argparse
 import warnings
+import numpy as np
 from src.utils.check_cka import CKA
+from sklearn.metrics import mutual_info_score
 warnings.simplefilter("ignore")
 
+def compute_mutual_information(x, y, bins=20):
+    out = np.zeros((x.shape[0], y.shape[0]))
+    def int(x, y):
+        x_binned = np.digitize(x, bins=np.histogram_bin_edges(x, bins=bins))
+        y_binned = np.digitize(y, bins=np.histogram_bin_edges(y, bins=bins))
+    
+        mi = mutual_info_score(x_binned, y_binned)
+        return mi
+    
+    for i in range(x.shape[0]):
+        for j in range(y.shape[0]):
+            out[i][j] = int(x[i], y[j])
+
+    return out
 
 def load_experiment_data(args):
     path = os.path.join(args.ckpt_folder, args.experiment_name, f"seed_{args.random_seed}", f"ckpt_{args.ckpt_epoch}.pt")
@@ -60,7 +76,6 @@ def plot_intra_side_by_side(args):
                 c += 1
         
         mapper_weights = torch.stack(mapper_weights)
-        # mapper_weights = mapper_weights.view(mapper_weights.shape[0], -1).to(args.device)
 
         cond_embs = data["cond_embs"][start : end, ...].to(args.device)
 
@@ -74,6 +89,8 @@ def plot_intra_side_by_side(args):
         }
         mapper_grid = setting_to_fn[args.mapper_metric](mapper_weights, mapper_weights).cpu().numpy()
         cond_emb_grid = setting_to_fn[args.cond_emb_metric](cond_embs, cond_embs).cpu().numpy()
+        cond_emb_mi = compute_mutual_information(cond_embs.cpu().numpy(), cond_embs.cpu().numpy())
+        cond_emb_grid = np.concatenate([cond_emb_grid, cond_emb_mi], axis=1)
 
         axs[i, 0].imshow(mapper_grid)
         axs[i, 0].set_xlabel("Conn index")
@@ -87,7 +104,7 @@ def plot_intra_side_by_side(args):
         axs[i, 1].set_ylabel("CE index")
         axs[i, 1].set_xticks([])
         axs[i, 1].set_yticks([])
-        axs[i, 1].set_title(f"Group {i+1} CE\n{args.cond_emb_metric}")
+        axs[i, 1].set_title(f"Group {i+1} CE\n{args.cond_emb_metric}----|----Mutual Inf.")
         print(f"Plotting done for group {i+1}")
 
     plt.tight_layout()
@@ -105,26 +122,13 @@ def plot_cond_emb_distr(args):
 
     group_size = int(args.experiment_name.split("_")[1]) // 3
 
-    fig, axs = plt.subplots(3, 2, figsize=(args.plot_size, args.plot_size))
+    fig, axs = plt.subplots(1, 2, figsize=(args.plot_size, args.plot_size))
     ce_dim = int(args.experiment_name.split("_")[-1])
 
-    for i in range(3):
-        cond_embs = data["cond_embs"]
-        l1_norms = [torch.norm(ce, p=1).item() for ce in cond_embs]
-
-        axs[i, 0].imshow(cond_embs.cpu().numpy())
-        axs[i, 0].set_ylabel("CE index")
-        axs[i, 0].set_xlabel(f"CE dim = {ce_dim}")
-        axs[i, 0].set_xticks([])
-        axs[i, 0].set_yticks([])
-        axs[i, 0].set_title(f"Group {i+1} CEs")
-
-        axs[i, 1].plot([j for j in range(len(l1_norms))], l1_norms)
-        axs[i, 1].set_xlabel("CE index")
-        axs[i, 1].set_ylabel("L1 norm")
-        axs[i, 1].set_title(f"Group {i+1} CE L1 norms")
-        axs[i, 1].grid()
-        axs[i, 1].set_xticks([j for j in range(len(l1_norms))])
+    cond_embs = data["cond_embs"]
+    cossim = cosine_sim(cond_embs, cond_embs).cpu().numpy()
+    mi = np.zeros()
+ 
 
     plt.tight_layout()
     os.makedirs(args.plot_save_folder, exist_ok=True)
@@ -149,4 +153,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     args.plot_save_name = args.experiment_name + args.plot_save_name
-    plot_cond_emb_distr(args)
+    plot_intra_side_by_side(args)
