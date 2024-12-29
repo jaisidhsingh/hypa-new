@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 
  
 class CKA(object): # renamed CudaCKA to CKA
-    def __init__(self):
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+    def __init__(self, device):
+        self.device = device
     
     def centering(self, K):
         n = K.shape[0]

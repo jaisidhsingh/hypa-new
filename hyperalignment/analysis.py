@@ -28,7 +28,8 @@ def euc_dist(x1, x2):
     return torch.cdist(x1, x2)
 
 def cka(x1, x2):
-    cka_calc = CKA()
+    assert x1.device == x2.device
+    cka_calc = CKA(x1.device)
     linear_cka = cka_calc.linear_CKA(x1, x2)
     rbf_cka = cka_calc.rbf_CKA(x1, x2)
     return {"linear_cka": linear_cka, "rbf_cka": rbf_cka}
@@ -51,9 +52,9 @@ def plot_side_by_side(args):
                 c += 1
         
         mapper_weights = torch.stack(mapper_weights)
-        mapper_weights = mapper_weights.view(mapper_weights.shape[0], -1)
+        mapper_weights = mapper_weights.view(mapper_weights.shape[0], -1).to(args.device)
 
-        cond_embs = data["cond_embs"][start : end, ...]
+        cond_embs = data["cond_embs"][start : end, ...].to(args.device)
 
         assert mapper_weights.dim() == cond_embs.dim() == 2
         assert mapper_weights.shape[0] == cond_embs.shape[0]
@@ -89,6 +90,7 @@ def plot_side_by_side(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--ckpt-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper")
     parser.add_argument("--experiment-name", type=str, default="ie_12_mlp_c_32")
     parser.add_argument("--random-seed", type=int, default=0)
