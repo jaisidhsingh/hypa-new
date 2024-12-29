@@ -15,13 +15,16 @@ def load_experiment_data(args):
     cond_embs = data["model"]["cond_embs.weight"]
     return {"mapper_weights": mappers, "cond_embs": cond_embs}
 
+@torch.no_grad()
 def cosine_sim(x1, x2):
     sim = F.normalize(x1, p=2, dim=1) @ F.normalize(x2, p=2, dim=1).T
     return sim
 
+@torch.no_grad()
 def euc_dist(x1, x2):
     return torch.cdist(x1, x2)
 
+@torch.no_grad()
 def cka(x1, x2):
     assert x1.device == x2.device
     d = x1.shape[1]
@@ -36,6 +39,7 @@ def cka(x1, x2):
 
     return out
 
+@torch.no_grad()
 def plot_side_by_side(args):
     data = load_experiment_data(args)
     print(f"Loaded data for experiment: {args.experiment_name}")
@@ -68,18 +72,15 @@ def plot_side_by_side(args):
             "euc_dist": euc_dist,
             "cka": cka
         }
-        mapper_grid = setting_to_fn[args.mapper_metric](mapper_weights, mapper_weights)
-        cond_emb_grid = setting_to_fn[args.cond_emb_metric](cond_embs, cond_embs)
+        mapper_grid = setting_to_fn[args.mapper_metric](mapper_weights, mapper_weights).cpu().numpy()
+        cond_emb_grid = setting_to_fn[args.cond_emb_metric](cond_embs, cond_embs).cpu().numpy()
 
-        mapper_grid = mapper_grid.cpu().numpy()
-        cond_emb_grid = cond_emb_grid.cpu().numpy()
-
-        axs[i, 0].imshow(mapper_grid.cpu().numpy())
+        axs[i, 0].imshow(mapper_grid)
         axs[i, 0].set_xlabel("Mapper index")
         axs[i, 0].set_ylabel("Mapper index")
         axs[i, 0].set_title(f"Group {i+1} Intra Mapper {args.mapper_metric}\n Linear CKA -----|----- Kernel CKA")
 
-        axs[i, 1].imshow(cond_emb_grid.cpu().numpy())
+        axs[i, 1].imshow(cond_emb_grid)
         axs[i, 1].set_xlabel("Conditional Embedding index")
         axs[i, 1].set_ylabel("Conditional Embedding index")
         axs[i, 1].set_title(f"Group {i+1}\nIntra Conditional Embedding {args.cond_emb_metric}")
