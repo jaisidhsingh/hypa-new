@@ -30,9 +30,9 @@ def cka(x1, x2):
 
     for j in range(x1.shape[0]):
         for k in range(x2.shape[0]):
-            out[j][k] = cka.linear_CKA(x1[j].reshape(d, 1), x2[k].reshape(d, 1))
+            out[j][k] = cka.linear_CKA(x1[j], x2[k])
         for l in range(x2.shape[0]):
-            out[j][x2.shape[0] + l] = cka.kernel_CKA(x1[j].reshape(d, 1), x2[l].reshape(d, 1))
+            out[j][x2.shape[0] + l] = cka.kernel_CKA(x1[j], x2[l])
 
     return out
 
@@ -56,7 +56,7 @@ def plot_side_by_side(args):
                 c += 1
         
         mapper_weights = torch.stack(mapper_weights)
-        mapper_weights = mapper_weights.view(mapper_weights.shape[0], -1).to(args.device)
+        # mapper_weights = mapper_weights.view(mapper_weights.shape[0], -1).to(args.device)
 
         cond_embs = data["cond_embs"][start : end, ...].to(args.device)
 
