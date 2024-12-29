@@ -114,7 +114,7 @@ def plot_cond_emb_distr(args):
 
         axs[i, 0].imshow(cond_embs.cpu().numpy())
         axs[i, 0].set_ylabel("CE index")
-        axs[i, 0].set_xlabel("CE dim =", ce_dim)
+        axs[i, 0].set_xlabel(f"CE dim = {ce_dim}")
         axs[i, 0].set_xticks([])
         axs[i, 0].set_yticks([])
         axs[i, 0].set_title(f"Group {i+1} CEs")
