@@ -51,8 +51,9 @@ def plot_side_by_side(args):
                 mapper_weights[idx] = torch.cat([item[0], item[1].unsqueeze(-1)], dim=1)
                 c += 1
         
-        print(c, mapper_weights.shape)
+        print(c)
         mapper_weights = torch.stack(mapper_weights)
+        print(mapper_weights.shape)
         cond_embs = data["cond_embs"][start : end, ...]
         assert mapper_weights.shape[0] == cond_embs.shape[0]
 
