@@ -46,7 +46,7 @@ def plot_side_by_side(args):
 
     group_size = int(args.experiment_name.split("_")[1]) // 3
 
-    fig, axs = plt.subplots(3, 2, figsize=(10, 5))
+    fig, axs = plt.subplots(3, 2, figsize=(30, 30))
     for i in range(3):
         start = i * group_size
         end = i * group_size + group_size
@@ -76,14 +76,18 @@ def plot_side_by_side(args):
         cond_emb_grid = setting_to_fn[args.cond_emb_metric](cond_embs, cond_embs).cpu().numpy()
 
         axs[i, 0].imshow(mapper_grid)
-        axs[i, 0].set_xlabel("Mapper index")
-        axs[i, 0].set_ylabel("Mapper index")
-        axs[i, 0].set_title(f"Group {i+1} Intra Mapper {args.mapper_metric}\n Linear CKA -----|----- Kernel CKA")
+        axs[i, 0].set_xlabel("Conn index")
+        axs[i, 0].set_ylabel("Conn index")
+        axs[i, 0].set_xticks([])
+        axs[i, 0].set_yticks([])
+        axs[i, 0].set_title(f"Group {i+1} Conn\nLinear CKA -----|----- Kernel CKA")
 
         axs[i, 1].imshow(cond_emb_grid)
-        axs[i, 1].set_xlabel("Conditional Embedding index")
-        axs[i, 1].set_ylabel("Conditional Embedding index")
-        axs[i, 1].set_title(f"Group {i+1}\nIntra Conditional Embedding {args.cond_emb_metric}")
+        axs[i, 1].set_xlabel("CE index")
+        axs[i, 1].set_ylabel("CE index")
+        axs[i, 1].set_xticks([])
+        axs[i, 1].set_yticks([])
+        axs[i, 1].set_title(f"Group {i+1} CE\n{args.cond_emb_metric}")
         print(f"Plotting done for group {i+1}")
 
     plt.tight_layout()
