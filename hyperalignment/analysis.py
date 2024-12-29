@@ -3,7 +3,9 @@ import torch
 import torch.nn.functional as F
 from pylab import plt
 import argparse
+import warnings
 from src.utils.check_cka import CKA
+warnings.simplefilter("ignore")
 
 
 def load_experiment_data(args):
@@ -46,7 +48,7 @@ def plot_side_by_side(args):
         c = 0
         for idx, item in enumerate(mapper_weights):
             if item[1].dim() == 1:
-                mapper_weights[idx] = torch.cat([item[0], item[1].unsqueeze(-1)])
+                mapper_weights[idx] = torch.cat([item[0], item[1].unsqueeze(-1)], dim=1)
                 c += 1
         
         print(c, mapper_weights.shape)
