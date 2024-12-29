@@ -12,11 +12,6 @@ def load_experiment_data(args):
     path = os.path.join(args.ckpt_folder, args.experiment_name, f"seed_{args.random_seed}", f"ckpt_{args.ckpt_epoch}.pt")
     data = torch.load(path)
     mappers = data["mapper_params"]
-
-    # for k, v in data["model"].items():
-    #     if "cond_emb" in k:
-    #         print(k)
-
     cond_embs = data["model"]["cond_embs.weight"]
     return {"mapper_weights": mappers, "cond_embs": cond_embs}
 
@@ -31,11 +26,13 @@ def cka(x1, x2):
     assert x1.device == x2.device
     cka_calc = CKA(x1.device)
     linear_cka = cka_calc.linear_CKA(x1, x2)
-    rbf_cka = cka_calc.rbf_CKA(x1, x2)
+    rbf_cka = cka_calc.kernel_CKA(x1, x2)
     return {"linear_cka": linear_cka, "rbf_cka": rbf_cka}
 
 def plot_side_by_side(args):
     data = load_experiment_data(args)
+    print(f"Loaded data for experiment: {args.experiment_name}")
+
     group_size = int(args.experiment_name.split("_")[1]) // 3
 
     fig, axs = plt.subplots(3, 2, figsize=(10, 5))
@@ -58,6 +55,7 @@ def plot_side_by_side(args):
 
         assert mapper_weights.dim() == cond_embs.dim() == 2
         assert mapper_weights.shape[0] == cond_embs.shape[0]
+        print(f"Prepared mapper weights and conditional embeddings for group {i+1}")
 
         setting_to_fn = {
             "cosine_sim": cosine_sim,
@@ -79,6 +77,7 @@ def plot_side_by_side(args):
         axs[i, 1].set_xlabel("Conditional Embedding index")
         axs[i, 1].set_ylabel("Conditional Embedding index")
         axs[i, 1].set_title(f"Group {i+1}\nIntra Conditional Embedding {args.cond_emb_metric}")
+        print(f"Plotting done for group {i+1}")
 
     plt.tight_layout()
 
@@ -86,6 +85,7 @@ def plot_side_by_side(args):
     save_path = os.path.join(args.plot_save_folder, f"{args.plot_save_name}.pdf")
     
     plt.savefig(save_path, format="pdf")
+    print(f"Plot saved at: {save_path}")
 
 
 if __name__ == "__main__":
