@@ -175,7 +175,7 @@ def load_mm_ckpt(args, model):
     return model
 
 
-def eval_retrieval(args, model, transform):
+def eval_retrieval(args, model, transform, bench):
     config = data_configs.image_caption_dataset_configs["mscoco_val"]
     config.update({"transform": transform, "feature_dataset": "mscoco_val"})
 
