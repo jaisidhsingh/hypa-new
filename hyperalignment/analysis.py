@@ -24,6 +24,7 @@ def euc_dist(x1, x2):
 
 def cka(x1, x2):
     assert x1.device == x2.device
+    print(x1.shape)
     cka_calc = CKA(x1.device)
     linear_cka = cka_calc.linear_CKA(x1, x2)
     rbf_cka = cka_calc.kernel_CKA(x1, x2)
