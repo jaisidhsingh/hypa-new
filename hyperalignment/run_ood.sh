@@ -1,9 +1,9 @@
 python3 ood_autodecoding.py \
     --image-encoder="visformer_tiny.in1k" \
     --image-embed-dim=384 \
-    --learning-rate=1e-4 \
+    --learning-rate=1e-2 \
     --save-path="ood_attempt_10k_avg_visf_384.pt" \
-    --batch-size=8;
+    --batch-size=1024;
 
 python3 evaluation.py \
     --exp-name="visformer_tiny.in1k" \
