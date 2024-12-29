@@ -54,20 +54,24 @@ def plot_side_by_side(args):
     axs[1].set_title(f"Intra Conditional Embedding {args.cond_emb_metric}")
 
     plt.tight_layout()
+
+    os.makedirs(args.plot_save_folder, exist_ok=True)
     save_path = os.path.join(args.plot_save_folder, f"{args.plot_save_name}.pdf")
+    
     plt.savefig(save_path, format="pdf")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ckpt_folder", type=str, required=True)
-    parser.add_argument("--experiment_name", type=str, required=True)
-    parser.add_argument("--random_seed", type=int, required=True)
-    parser.add_argument("--ckpt_epoch", type=int, required=True)
-    parser.add_argument("--mapper_metric", type=str, required=True, choices=["cosine_sim", "euc_dist", "cka"])
-    parser.add_argument("--cond_emb_metric", type=str, required=True, choices=["cosine_sim", "euc_dist", "cka"])
-    parser.add_argument("--plot_save_folder", type=str, required=True)
-    parser.add_argument("--plot_save_name", type=str, required=True)
+    parser.add_argument("--ckpt-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper")
+    parser.add_argument("--experiment-name", type=str, default="ie_12_mlp_c_32")
+    parser.add_argument("--random-seed", type=int, default=0)
+    parser.add_argument("--ckpt-epoch", type=int, default=1)
+    parser.add_argument("--mapper-metric", type=str, default="cka", choices=["cosine_sim", "euc_dist", "cka"])
+    parser.add_argument("--cond-emb-metric", type=str, default="cosine_sim", choices=["cosine_sim", "euc_dist", "cka"])
+    parser.add_argument("--plot-save-folder", type=str, default="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/plots")
+    parser.add_argument("--plot-save-name", type=str, default="x")
 
     args = parser.parse_args()
+    args.plot_save_name = args.experiment_name
     plot_side_by_side(args)
