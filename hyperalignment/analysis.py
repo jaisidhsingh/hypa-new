@@ -148,7 +148,7 @@ if __name__ == "__main__":
     parser.add_argument("--mapper-metric", type=str, default="cka", choices=["cosine_sim", "euc_dist", "cka"])
     parser.add_argument("--cond-emb-metric", type=str, default="cosine_sim", choices=["cosine_sim", "euc_dist", "cka"])
     parser.add_argument("--plot-save-folder", type=str, default="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/plots")
-    parser.add_argument("--plot-save-name", type=str, default="_ce_mi")
+    parser.add_argument("--plot-save-name", type=str, default="")
     parser.add_argument("--plot-size", type=int, default=20)
 
     args = parser.parse_args()
