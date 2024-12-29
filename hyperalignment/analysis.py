@@ -24,12 +24,16 @@ def euc_dist(x1, x2):
 
 def cka(x1, x2):
     assert x1.device == x2.device
-    print(x1.shape)
-    cka_calc = CKA(x1.device)
-    linear_cka = cka_calc.linear_CKA(x1, x2)
-    rbf_cka = cka_calc.kernel_CKA(x1, x2)
-    print(linear_cka.shape, rbf_cka.shape)
-    out = torch.cat([linear_cka, rbf_cka], dim=1)
+    d = x1.shape[1]
+    cka = CKA(x1.device)
+    out = torch.zeros((x1.shape[0], 2 * x2.shape[0]))
+
+    for j in range(x1.shape[0]):
+        for k in range(x2.shape[0]):
+            out[j][k] = cka.linear_CKA(x1[j].reshape(d, 1), x2[k].reshape(d, 1))
+        for l in range(x2.shape[0]):
+            out[j][x2.shape[0] + l] = cka.kernel_CKA(x1[j].reshape(d, 1), x2[l].reshape(d, 1))
+
     return out
 
 def plot_side_by_side(args):
@@ -74,7 +78,7 @@ def plot_side_by_side(args):
         axs[i, 0].imshow(mapper_grid.cpu().numpy())
         axs[i, 0].set_xlabel("Mapper index")
         axs[i, 0].set_ylabel("Mapper index")
-        axs[i, 0].set_title(f"Group {i+1}\nIntra Mapper {args.mapper_metric}")
+        axs[i, 0].set_title(f"Group {i+1} Intra Mapper {args.mapper_metric}\n Linear CKA -----|----- Kernel CKA")
 
         axs[i, 1].imshow(cond_emb_grid.cpu().numpy())
         axs[i, 1].set_xlabel("Conditional Embedding index")
