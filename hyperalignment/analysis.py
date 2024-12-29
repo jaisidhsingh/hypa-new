@@ -40,7 +40,7 @@ def cka(x1, x2):
     return out
 
 @torch.no_grad()
-def plot_side_by_side(args):
+def plot_intra_side_by_side(args):
     data = load_experiment_data(args)
     print(f"Loaded data for experiment: {args.experiment_name}")
 
@@ -99,6 +99,41 @@ def plot_side_by_side(args):
     print(f"Plot saved at: {save_path}")
 
 
+def plot_cond_emb_distr(args):
+    data = load_experiment_data(args)
+    print(f"Loaded data for experiment: {args.experiment_name}")
+
+    group_size = int(args.experiment_name.split("_")[1]) // 3
+
+    fig, axs = plt.subplots(3, 2, figsize=(args.plot_size, args.plot_size))
+    ce_dim = int(args.experiment_name.split("_")[-1])
+
+    for i in range(3):
+        cond_embs = data["cond_embs"]
+        l1_norms = [torch.norm(ce, p=1).item() for ce in cond_embs]
+
+        axs[i, 0].imshow(cond_embs.cpu().numpy())
+        axs[i, 0].set_ylabel("CE index")
+        axs[i, 0].set_xlabel("CE dim =", ce_dim)
+        axs[i, 0].set_xticks([])
+        axs[i, 0].set_yticks([])
+        axs[i, 0].set_title(f"Group {i+1} CEs")
+
+        axs[i, 1].plot([j for j in range(len(l1_norms))], l1_norms)
+        axs[i, 1].set_xlabel("CE index")
+        axs[i, 1].set_ylabel("L1 norm")
+        axs[i, 1].set_title(f"Group {i+1} CE L1 norms")
+        axs[i, 1].grid()
+        axs[i, 1].set_xticks([j for j in range(len(l1_norms))])
+
+    plt.tight_layout()
+    os.makedirs(args.plot_save_folder, exist_ok=True)
+    save_path = os.path.join(args.plot_save_folder, f"{args.plot_save_name}.pdf")
+    
+    plt.savefig(save_path, format="pdf")
+    print(f"Plot saved at: {save_path}")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--device", type=str, default="cuda")
@@ -109,9 +144,9 @@ if __name__ == "__main__":
     parser.add_argument("--mapper-metric", type=str, default="cka", choices=["cosine_sim", "euc_dist", "cka"])
     parser.add_argument("--cond-emb-metric", type=str, default="cosine_sim", choices=["cosine_sim", "euc_dist", "cka"])
     parser.add_argument("--plot-save-folder", type=str, default="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/plots")
-    parser.add_argument("--plot-save-name", type=str, default="x")
+    parser.add_argument("--plot-save-name", type=str, default="_ce_dist")
     parser.add_argument("--plot-size", type=int, default=20)
 
     args = parser.parse_args()
-    args.plot_save_name = args.experiment_name
-    plot_side_by_side(args)
+    args.plot_save_name = args.experiment_name + args.plot_save_name
+    plot_cond_emb_distr(args)
