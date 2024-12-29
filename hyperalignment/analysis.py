@@ -44,17 +44,18 @@ def plot_side_by_side(args):
 
         mapper_weights = data["mapper_weights"][start : end]
 
-        print(len(mapper_weights))
         c = 0
         for idx, item in enumerate(mapper_weights):
             if item[1].dim() == 1:
                 mapper_weights[idx] = torch.cat([item[0], item[1].unsqueeze(-1)], dim=1)
                 c += 1
         
-        print(c)
         mapper_weights = torch.stack(mapper_weights)
-        print(mapper_weights.shape)
+        mapper_weights = mapper_weights.view(mapper_weights.shape[0], -1)
+
         cond_embs = data["cond_embs"][start : end, ...]
+
+        assert mapper_weights.dim() == cond_embs.dim() == 2
         assert mapper_weights.shape[0] == cond_embs.shape[0]
 
         setting_to_fn = {
