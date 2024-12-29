@@ -51,7 +51,7 @@ def main(args):
     print("Freezed hypernetwork parameters.")
 
     # Initialise the embedding to be learnt as the avg of the hnet's embeddings (of the same family)
-    embedding.weight.data = hnet.cond_embs.weight.data[4:, :].mean(dim=0).unsqueeze(0)
+    embedding.weight.data = hnet.cond_embs.weight.data[:, :].mean(dim=0).unsqueeze(0)
     
     dataset_config = data_configs.separate_embedding_dataset_configs(args)
     dataset = SeparateEmbeddings(dataset_config)
