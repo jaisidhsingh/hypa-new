@@ -1,9 +1,9 @@
 python3 ood_autodecoding.py \
     --image-encoder="maxvit_base_tf_224.in1k" \
     --image-embed-dim=768 \
-    --learning-rate=1e-4 \
+    --learning-rate=1e-5 \
     --save-path="ood_attempt_10k_avg_visf_384.pt" \
-    --batch-size=8;
+    --batch-size=4;
 
 python3 evaluation.py \
     --exp-name="maxvit_base_tf_224.in1k" \
