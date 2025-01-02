@@ -1,5 +1,5 @@
 python3 ood_autodecoding.py \
-    --image-encoder="diet3_small_patch16_224.fb_in22k_ft_in1k" \
+    --image-encoder="deit3_small_patch16_224.fb_in22k_ft_in1k" \
     --image-embed-dim=384 \
     --hnet-ckpt-name="ie_9_mlp_c_32_norm" \
     --hnet-ckpt-num-ie=9 \
