@@ -109,8 +109,12 @@ def main(args):
         store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
 
     store["config"] = vars(args)
-    save_path = os.path.join(args.hnet_ckpt_folder, args.save_path)
-    torch.save(store, save_path)
+    args.save_path = args.experiment_name + "_ood.pt"
+
+    save_folder = os.path.join(args.hnet_ckpt_folder, "ood_attempts")
+    os.makedirs(save_folder, exist_ok=True)
+
+    torch.save(store, os.path.join(save_folder, args.save_path))
 
     print("Done!")
 
