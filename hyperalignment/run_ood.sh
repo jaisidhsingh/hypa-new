@@ -2,6 +2,7 @@ python3 ood_autodecoding.py \
     --image-encoder="efficientvit_m5.r224_in1k" \
     --image-embed-dim=384 \
     --hnet-ckpt-name="ie_30_mlp_c_32_norm" \
+    --hnet-ckpt-num-ie=30 \
     --learning-rate=1e-4 \
     --save-path="x.pt" \
     --batch-size=8;
