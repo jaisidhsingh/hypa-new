@@ -214,7 +214,7 @@ def run(args, input_config):
 
 def main(args):
     full_configs = model_configs.ID_multi_mapper_configs
-    num_encoders_ablation = [12, 15, 18, 24, 30]
+    num_encoders_ablation = [9, 12, 15, 18, 21, 24, 27, 30]
     assert args.num_image_encoders in num_encoders_ablation, "Incompatible number selected for ablation!"
 
     num_encoders = args.num_image_encoders
