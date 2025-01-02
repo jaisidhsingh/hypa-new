@@ -1,8 +1,8 @@
 python3 ood_autodecoding.py \
     --image-encoder="visformer_tiny.in1k" \
     --image-embed-dim=384 \
-    --hnet-ckpt-name="ie_24_mlp_c_32_norm" \
-    --hnet-ckpt-num-ie=24 \
+    --hnet-ckpt-name="ie_18_mlp_c_32_norm" \
+    --hnet-ckpt-num-ie=18 \
     --learning-rate=1e-4 \
     --save-path="x.pt" \
     --batch-size=8;
