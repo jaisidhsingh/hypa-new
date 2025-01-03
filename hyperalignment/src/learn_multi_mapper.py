@@ -14,8 +14,8 @@ warnings.simplefilter("ignore")
 from data.embedding_datasets import MultiMapperEmbeddings
 from data import init_encoder_loader, init_indices_loader
 
-from models import MultiMapperHypernet
-from models.param_decoders import MlpMapper
+from models import ConditionalHyperNetwork
+from models.param_decoders import MLP
 
 from configs.data_configs import data_configs
 from configs.model_configs import model_configs
@@ -38,16 +38,6 @@ def predict_params_for_saving(model, info):
     return outputs
 
 
-def view_stds(hnet):
-    mapper = MlpMapper(768, [], 768)
-
-    mapper_std = mapper.layers[0].weight.data.std()
-    hnet_std = [hnet.to_weight.layers[x].weight.data.std() for x in [0, 2, -1]]
-    print("For mapper, std of params is", mapper_std)
-    print("For hnet decoder, stds of params are", hnet_std)
-    sys.exit(0)
-
-
 def run(args, input_config):
     torch.manual_seed(args.random_seed)
 
@@ -61,18 +51,12 @@ def run(args, input_config):
         hidden_layer_factors = []
 
     # load in hyper-network
-    model_ref = MultiMapperHypernet
-    if args.use_outer_prod:
-        model_ref = OuterProdHypNet
-
-    model = model_ref(
+    model = ConditionalHyperNetwork(
         param_shapes, cond_emb_dim=args.hnet_cond_emb_dim,
         num_cond_embs=args.num_image_encoders, image_embed_dims=image_embed_dims,
         hidden_layer_factors=hidden_layer_factors, rescale_factor=args.rescale_factor
     ).to(args.device)
     print("Hyper-network loaded.")
-
-    # view_stds(model)
 
     if args.flop_counter == "calflops":
         hnet_flops = get_hypnet_flops(model, kwargs={"cond_id": [0], "image_embed_dim": 768})
@@ -86,6 +70,7 @@ def run(args, input_config):
     dataset = MultiMapperEmbeddings(config)
     num_batches = math.ceil(len(dataset) / args.batch_size)
     num_encoder_batches = math.ceil(args.num_image_encoders / args.encoder_batch_size)
+    
     indices_loader = init_indices_loader(args, dataset)
     encoder_loader = init_encoder_loader(args, dataset)
     print("Dataset loaded.")

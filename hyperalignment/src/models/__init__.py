@@ -70,7 +70,7 @@ class CustomVLM():
         return x
 
 
-class MultiMapperHypernet(nn.Module):
+class ConditionalHyperNetwork(nn.Module):
     def __init__(self, param_shapes, cond_emb_dim, num_cond_embs, image_embed_dims, kwargs):
         super().__init__()
         self.image_embed_dims = image_embed_dims
