@@ -1,22 +1,59 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
+
+
+class MlpMapper(nn.Module):
+    def __init__(self, input_dim, intermediate_dims, output_dim, use_bias=True, logit_scale=100.0):
+        super().__init__()
+        self.input_dim = input_dim
+        self.intermediate_dims = intermediate_dims # list of ints
+        self.output_dim = output_dim
+        self.num_layers = len(intermediate_dims) + 1
+
+        self.layers = []
+        current_dim = input_dim
+        next_dims = intermediate_dims + [output_dim]
+
+        self.logit_scale = torch.tensor(np.log(logit_scale))
+
+        for i in range(self.num_layers):
+            self.layers.append(nn.Linear(current_dim, next_dims[i], bias=use_bias))
+            current_dim = next_dims[i]
+
+            if i != self.num_layers - 1:
+                self.layers.append(nn.GELU())
+
+        self.layers = nn.Sequential(*self.layers)
+
+    def forward(self, x):
+        x = self.layers(x)
+        return F.normalize(x, dim=-1)
+
+
+class MlpDecoder(nn.Module):
+    def __init__(self, out_shape, dim, hidden_layer_factors=[4, 16]):
+        super().__init__()
+        self.image_dim = out_shape[0]
+        self.text_dim = out_shape[1]
+
+        self.decoder = MlpMapper(
+            dim,
+            [f*dim for f in hidden_layer_factors],
+            self.image_dim * self.text_dim + self.image_dim 
+        )
+
+    def forward(self, x):
+        N = x.shape[0]
+        x = self.decoder(x)
+        weights = x[:, :-self.image_dim].view(N, self.image_dim, self.text_dim)
+        biases = x[:, -self.image_dim:]
+        return weights, biases
 
 
 class AttentionDecoder(nn.Module):
-    """
-    We receive [N, D] shaped input (cond. embeddings.)
-    We want to map this to [N, D2, D1]
-
-    Layer 1: 
-    a. [N, D] -> [1, N, D]
-    b. apply attention
-    c. [1, N, D] -> [N, 1, D]
-    d. apply conv1d to get [N, D2 // L, D]
-    e. apply gelu
-    f. apply fc to get [N, D2 // L, D1 // L]
-    """
-    def __init__(self, out_shape, dim, num_heads, expansion_factor, num_layers):
+    def __init__(self, out_shape, dim, num_layers=3, num_heads=4, expansion_factor=2):
         super().__init__()
         self.image_dim = out_shape[0]
         self.text_dim = out_shape[1]
@@ -41,7 +78,7 @@ class AttentionDecoder(nn.Module):
             self.conv_layers.append(nn.Conv1d(in_channels, out_channels, 1, 1))
 
             in_dim = dim if i == 0 else i * self.text_dim // num_layers
-            out_dim = (i+1) * self.text_dim // num_layers
+            out_dim = (i+1) * self.text_dim // num_layers if i != num_layers - 1 else self.text_dim + 1
             self.fc_layers.append(nn.Linear(in_dim, out_dim))
         
         self.attn_layers = nn.ModuleList(self.attn_layers)
@@ -68,12 +105,14 @@ class AttentionDecoder(nn.Module):
             x = x.permute(1, 0, 2)
 
         # return parameters shapes [N, D2, D1] 
-        return x.permute(1, 0, 2)
+        params = x.permute(1, 0, 2)
+        weights = params[:, :, :-1]
+        biases = params[:, :, -1]
+        return weights, biases
 
 
 def test():
-    decoder = AttentionDecoder((768, 384), 32, 8, 2, 3)
-    decoder.train()
+    decoder = AttentionDecoder((768, 384), 32, 12, 8)
 
     c = 0
     for p in decoder.parameters():
@@ -81,7 +120,22 @@ def test():
 
     print("Num params:", c)
     x = torch.randn(10, 32)
-    print(decoder(x).shape)
+    y = decoder(x)
+    for item in y:
+        print(item.shape)
+    
+    decoder = MlpDecoder((768, 384), 32)
+
+    c = 0
+    for p in decoder.parameters():
+        c += p.numel()
+
+    print("Num params:", c)
+    x = torch.randn(10, 32)
+    y = decoder(x)
+    for item in y:
+        print(item.shape)
+    
 
 
 if __name__ == "__main__":
