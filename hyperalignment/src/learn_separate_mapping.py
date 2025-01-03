@@ -10,18 +10,19 @@ from tqdm import tqdm
 from contextlib import suppress
 from torch.utils.data import DataLoader
 
-from src.data import *
-from src.models import *
+from data import *
+from models import *
+from models.param_decoders import MLP
 
-from src.configs.data_configs import data_configs
-from src.configs.model_configs import model_configs
+from configs.data_configs import data_configs
+from configs.model_configs import model_configs
 
-from src.training import SeparateTrainer
-from src.training.schedulers import cosine_lr
-from src.training.loss_functions import ClipLoss
+from training import SeparateTrainer
+from training.schedulers import cosine_lr
+from training.loss_functions import ClipLoss
 
-from src.utils import get_mapper_flops
-from src.utils.backward_flops import FlopCounterMode
+from utils import get_mapper_flops
+from utils.backward_flops import FlopCounterMode
 warnings.simplefilter("ignore")
 
 
@@ -36,7 +37,7 @@ def train_separate_mapper(args):
     print(f"Training data of {len(train_dataset)} samples loaded.")
 
     # the mapper
-    model = MlpMapper(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
+    model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
     model = model.to(args.device)
     print("Mapper loaded.")
 

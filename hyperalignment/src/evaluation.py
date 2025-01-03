@@ -9,22 +9,15 @@ import clip
 import torch
 from torch.utils.data import DataLoader
 
-from src.models import MlpMapper, CustomVLM
-from src.configs.data_configs import data_configs
-from src.configs.model_configs import model_configs
-from src.data.image_caption_datasets import ImageCaptionDataset
-from src.data.classification_datasets import ImageClassificationDataset
+from models import CustomVLM
+from models.param_decoders import MLP
+from configs.data_configs import data_configs
+from configs.model_configs import model_configs
+from data.image_caption_datasets import ImageCaptionDataset
+from data.classification_datasets import ImageClassificationDataset
 
 
 def compute_retrieval(a2b_sims, return_ranks=False):
-    """
-    Args:
-        a2b_sims: Result of computing similarity between two sets of embeddings (emb1 @ emb2.T)
-            with shape (num_datapoints, num_datapoints).
-
-    Returns:
-        Retrieval metrics for that similarity.
-    """
     npts = a2b_sims.shape[0]
     ranks = np.zeros(npts)
     top1 = np.zeros(npts)
@@ -240,7 +233,7 @@ if __name__ == "__main__":
     if args.clip_version == "off":
         args.image_encoder = model_configs.ID_multi_mapper_configs[args.image_embed_dim][args.encoder_index]
         model = CustomVLM(args.image_encoder, args.text_encoder)
-        model.mapper = MlpMapper(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
+        model.mapper = MLP(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
         
         if args.run_type == "sep":
             model = load_separate_ckpt(args, model)

@@ -1,10 +1,10 @@
 import torch
+import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
 
 
-class MlpMapper(nn.Module):
+class MLP(nn.Module):
     def __init__(self, input_dim, intermediate_dims, output_dim, use_bias=True, logit_scale=100.0):
         super().__init__()
         self.input_dim = input_dim
@@ -38,7 +38,7 @@ class MlpDecoder(nn.Module):
         self.image_dim = out_shape[0]
         self.text_dim = out_shape[1]
 
-        self.decoder = MlpMapper(
+        self.decoder = MLP(
             dim,
             [f*dim for f in hidden_layer_factors],
             self.image_dim * self.text_dim + self.image_dim 

@@ -11,11 +11,11 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
-from src.data import *
-from src.models import *
-from src.training.loss_functions import ClipLoss
-from src.configs.data_configs import data_configs
-from src.utils.backward_flops import FlopCounterMode
+from data import *
+from models import *
+from training.loss_functions import ClipLoss
+from configs.data_configs import data_configs
+from utils.backward_flops import FlopCounterMode
 
 def main(args):
     torch.manual_seed(args.random_seed)

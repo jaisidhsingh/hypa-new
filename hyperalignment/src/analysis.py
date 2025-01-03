@@ -5,9 +5,11 @@ from pylab import plt
 import argparse
 import warnings
 import numpy as np
-from src.utils.check_cka import CKA
 from sklearn.metrics import mutual_info_score
 warnings.simplefilter("ignore")
+
+from utils.check_cka import CKA
+
 
 def compute_mutual_information(x, y, bins=20):
     out = np.zeros((x.shape[0], y.shape[0]))

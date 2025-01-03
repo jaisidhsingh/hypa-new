@@ -1,4 +1,4 @@
-python3 ood_autodecoding.py \
+python3 src/ood_autodecoding.py \
     --image-encoder="deit3_small_patch16_224.fb_in22k_ft_in1k" \
     --image-embed-dim=384 \
     --hnet-ckpt-name="ie_9_mlp_c_32_norm" \

@@ -11,14 +11,19 @@ from copy import deepcopy
 from contextlib import suppress
 warnings.simplefilter("ignore")
 
-from src.data.embedding_datasets import MultiMapperEmbeddings
-from src.data import init_encoder_loader, init_indices_loader
-from src.models import MultiMapperHypernet, MlpMapper, OuterProdHypNet
-from src.configs.data_configs import data_configs
-from src.configs.model_configs import model_configs
-from src.training.schedulers import *
-from src.utils import get_hypnet_flops
-from src.utils.backward_flops import FlopCounterMode
+from data.embedding_datasets import MultiMapperEmbeddings
+from data import init_encoder_loader, init_indices_loader
+
+from models import MultiMapperHypernet
+from models.param_decoders import MlpMapper
+
+from configs.data_configs import data_configs
+from configs.model_configs import model_configs
+
+from training.schedulers import *
+
+from utils import get_hypnet_flops
+from utils.backward_flops import FlopCounterMode
 
 
 @torch.no_grad()
