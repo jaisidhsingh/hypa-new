@@ -11,7 +11,8 @@ python3 src/evaluation.py \
     --seed=0 \
     --run-type="sep" \
     --epoch=10 \
-    --encoder-index=10 \
+    --image-embed-dim=768 \
+    --encoder-index=0 \
     --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
 
 python3 src/evaluation.py \
@@ -19,7 +20,8 @@ python3 src/evaluation.py \
     --seed=0 \
     --run-type="sep" \
     --epoch=10 \
-    --encoder-index=20 \
+    --image-embed-dim=1024 \
+    --encoder-index=0 \
     --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
 
 python3 src/evaluation.py \
