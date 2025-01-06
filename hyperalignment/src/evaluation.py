@@ -199,26 +199,7 @@ def eval_classification(args, model, transform, dataset):
     return accuracy
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    # main args
-    parser.add_argument("--device", type=str, default="cuda")
-    parser.add_argument("--exp-name", type=str, default="test")
-    parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--run-type", type=str, default="sep", choices=["sep", "mm", "ood"])
-    parser.add_argument("--ood-results-path", type=str, default="ood_attempt_1.pt")
-    parser.add_argument("--epoch", type=int, default=1)
-    parser.add_argument("--encoder-index", type=int, default=0)
-    parser.add_argument("--benchmarks", type=str, default="mscoco,cifar10,cifar100,imagenet1k")
-    parser.add_argument("--clip-version", type=str, default="off")
-    # model args
-    parser.add_argument("--image-embed-dim", type=int, default=384)
-    parser.add_argument("--text-embed-dim", type=int, default=768)
-    parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
-    parser.add_argument("--image-encoder", type=str, default="set-later")
-    # get args
-    args = parser.parse_args()
-
+def main(args):
     benchmark_mapping = {
         "mscoco": eval_retrieval,
         "cifar10": eval_classification,
@@ -266,4 +247,26 @@ if __name__ == "__main__":
         json.dump(saved_results, f)
     
     print("All done and saved.")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    # main args
+    parser.add_argument("--device", type=str, default="cuda")
+    parser.add_argument("--exp-name", type=str, default="test")
+    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--run-type", type=str, default="sep", choices=["sep", "mm", "ood"])
+    parser.add_argument("--ood-results-path", type=str, default="ood_attempt_1.pt")
+    parser.add_argument("--epoch", type=int, default=1)
+    parser.add_argument("--encoder-index", type=int, default=0)
+    parser.add_argument("--benchmarks", type=str, default="mscoco,cifar10,cifar100,imagenet1k")
+    parser.add_argument("--clip-version", type=str, default="off")
+    # model args
+    parser.add_argument("--image-embed-dim", type=int, default=384)
+    parser.add_argument("--text-embed-dim", type=int, default=768)
+    parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
+    parser.add_argument("--image-encoder", type=str, default="set-later")
+    # get args
+    args = parser.parse_args()
+    main(args)
     
