@@ -51,11 +51,13 @@ def run(args, input_config):
         hidden_layer_factors = []
 
     # load in hyper-network
+    kwargs = model_configs.hnet_decoder_configs[args.hnet_decoder_type]
+
     model = ConditionalHyperNetwork(
         param_shapes, cond_emb_dim=args.hnet_cond_emb_dim,
-        num_cond_embs=args.num_image_encoders, image_embed_dims=image_embed_dims,
-        hidden_layer_factors=hidden_layer_factors, rescale_factor=args.rescale_factor
+        num_cond_embs=args.num_image_encoders, image_embed_dims=image_embed_dims, kwargs=kwargs 
     ).to(args.device)
+    
     print("Hyper-network loaded.")
 
     if args.flop_counter == "calflops":
@@ -234,6 +236,7 @@ if __name__ == "__main__":
     parser.add_argument("--image-embed-dims", type=str, default="384,768,1024")
     parser.add_argument("--hidden-layer-factors", type=str, default="4,16")
     parser.add_argument("--hnet-cond-emb-dim", type=int, default=8)
+    parser.add_argument("--hnet-decoder-type", type=str, default="mlp")
     parser.add_argument("--num-image-encoders", type=int, default=30)
     parser.add_argument("--logit-scale", type=float, default=100.0)
     parser.add_argument("--normalize-output", type=bool, default=True)

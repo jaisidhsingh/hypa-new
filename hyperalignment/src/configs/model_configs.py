@@ -160,3 +160,16 @@ model_configs.ID_experiment_configs = {
 		}
 	}
 }
+
+model_configs.hnet_decoder_configs = {
+    "attention": {
+        "decoder_type": "attention",
+        "num_heads": 4,
+        "num_layers": 3,
+        "expansion_factor": 2
+	},
+    "mlp": {
+        "decoder_type": "mlp",
+        "hidden_layer_factors": [4, 16],
+	}
+}

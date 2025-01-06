@@ -3,11 +3,21 @@
 python3 src/learn_multi_mapper.py \
     --experiment-name="ie_9_mlp_c_32_norm" \
     --num-image-encoders=9 \
-    --hidden-layer-factors="4,16" \
     --hnet-cond-emb-dim=32 \
     --scheduler="off" \
     --normalize-output=True \
-    --rescale-factor=0.0;
+    --hnet-decoder-type="mlp";
+
+
+# c=32, attention decoder, output norm, no init scaling, no scheduler
+# num_ie = 9
+python3 src/learn_multi_mapper.py \
+    --experiment-name="ie_9_attention_c_32_norm" \
+    --num-image-encoders=9 \
+    --hnet-cond-emb-dim=32 \
+    --scheduler="off" \
+    --normalize-output=True \
+    --hnet-decoder-type="attention";
 
 
 # # c=32, mlp decoder, output norm, no init scaling, no scheduler
