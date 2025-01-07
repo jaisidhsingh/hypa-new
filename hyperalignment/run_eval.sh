@@ -24,36 +24,36 @@ python3 src/evaluation.py \
     --encoder-index=0 \
     --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
 
-python3 src/evaluation.py \
-    --exp-name="ie_30_mlp_c_32_norm" \
-    --seed=0 \
-    --run-type="mm" \
-    --epoch=1 \
-    --encoder-index=0 \
-    --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
-
-python3 src/evaluation.py \
-    --exp-name="ie_30_mlp_c_32_norm" \
-    --seed=0 \
-    --run-type="mm" \
-    --epoch=1 \
-    --encoder-index=10 \
-    --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
-
-python3 src/evaluation.py \
-    --exp-name="ie_30_mlp_c_32_norm" \
-    --seed=0 \
-    --run-type="mm" \
-    --epoch=1 \
-    --encoder-index=20 \
-    --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
+# python3 src/evaluation.py \
+#     --exp-name="ie_30_mlp_c_32_norm" \
+#     --seed=0 \
+#     --run-type="mm" \
+#     --epoch=1 \
+#     --encoder-index=0 \
+#     --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
 
 # python3 src/evaluation.py \
-#     --exp-name="flexivit_small.300ep_in1k" \
+#     --exp-name="ie_30_mlp_c_32_norm" \
 #     --seed=0 \
-#     --run-type="ood" \
-#     --ood-results-path="ood_attempt_10k_avg.pt" \
-#     --epoch=10 \
-#     --encoder-index=5 \
+#     --run-type="mm" \
+#     --epoch=1 \
+#     --encoder-index=10 \
 #     --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
+
+# python3 src/evaluation.py \
+#     --exp-name="ie_30_mlp_c_32_norm" \
+#     --seed=0 \
+#     --run-type="mm" \
+#     --epoch=1 \
+#     --encoder-index=20 \
+#     --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
+
+# # python3 src/evaluation.py \
+# #     --exp-name="flexivit_small.300ep_in1k" \
+# #     --seed=0 \
+# #     --run-type="ood" \
+# #     --ood-results-path="ood_attempt_10k_avg.pt" \
+# #     --epoch=10 \
+# #     --encoder-index=5 \
+# #     --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
 

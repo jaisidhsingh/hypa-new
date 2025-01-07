@@ -1,8 +1,15 @@
 # Latest repository for project
 
-- [x] Weight scaling during initialisation
-- [x] Fix ckpt paths in `hyperalignment/src/run_eval.py`
-- [x] Image-Net default
+## FLOPs counts
+
+### APE
+
+1. FLOPs per step for a 768 to 384 connector = 843.96 GFLOPs
+2. FLOPs per step for a 768 to 768 connector = 1687.92 GFLOPs
+3. FLOPs per step for a 1024 768 to 1024 connector = 2250.56 GFLOPs
+4. Batch size = 2^14
+5. Num steps = 37
+6. Num epochs = 10
 
 ## Hyper-net info
 
