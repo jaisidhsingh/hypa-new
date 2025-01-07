@@ -64,5 +64,25 @@
       "text_encoder": "sentence-t5-base",
       "image_encoder": "vit_large_patch16_224"
     }
+  },
+  "ie_30_mlp_c_32_norm": {
+    "cifar10": 94.3,
+    "cifar100": 62.02,
+    "imagenet1k": 31.45,
+    "config": {
+      "device": "cuda",
+      "exp_name": "ie_30_mlp_c_32_norm",
+      "seed": 0,
+      "run_type": "mm",
+      "ood_results_path": "ood_attempt_1.pt",
+      "epoch": 1,
+      "encoder_index": 0,
+      "benchmarks": "cifar10,cifar100,imagenet1k",
+      "clip_version": "off",
+      "image_embed_dim": 1024,
+      "text_embed_dim": 768,
+      "text_encoder": "sentence-t5-base",
+      "image_encoder": "vit_large_patch16_224"
+    }
   }
 }
