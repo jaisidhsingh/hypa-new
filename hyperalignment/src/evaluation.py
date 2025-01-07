@@ -161,7 +161,17 @@ def load_ood_ckpt(args, model):
 def load_mm_ckpt(args, model):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper"
     path = os.path.join(folder, args.exp_name, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
-    [weight, bias] = torch.load(path)["mapper_params"][args.encoder_index]
+    chunk_size = int(args.exp_name.split("_")[1]) // 3
+    
+    if args.image_embed_dim == 384:
+        offset = 0
+    elif args.image_embed_dim == 768:
+        offset = 1
+    else:
+        offset = 2
+
+    index = int(offset * chunk_size) + args.encoder_index
+    [weight, bias] = torch.load(path)["mapper_params"][index]
     model.mapper.layers[0].weight.data = weight.to(args.device)
     model.mapper.layers[0].bias.data = bias.to(args.device)
     model.mapper = model.mapper.to(args.device)
