@@ -33,6 +33,27 @@
     - CIFAR-100:    71.2
     - ImageNet-1k:  40.0
 
+### H-net
+
+1. ViT-S/16
+
+    - CIFAR-10:     89.8
+    - CIFAR-100:    46.7
+    - ImageNet-1k:  23.4
+
+2. ViT-B/16
+
+    - CIFAR-10:     93.6
+    - CIFAR-100:    58.0
+    - ImageNet-1k:  30.3
+
+3. ViT-L/16
+
+    - CIFAR-10:     94.3
+    - CIFAR-100:    62.0
+    - ImageNet-1k:  31.4
+
+
 ## Hyper-net info
 
 ### `learn_multi_mapper.py`
