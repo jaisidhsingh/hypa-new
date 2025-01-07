@@ -4,7 +4,7 @@ python3 src/evaluation.py \
     --run-type="sep" \
     --epoch=10 \
     --encoder-index=0 \
-    --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
+    --benchmarks="cifar10,cifar100,imagenet1k";
 
 python3 src/evaluation.py \
     --exp-name="vit_base_patch16_224" \
@@ -13,7 +13,7 @@ python3 src/evaluation.py \
     --epoch=10 \
     --image-embed-dim=768 \
     --encoder-index=0 \
-    --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
+    --benchmarks="cifar10,cifar100,imagenet1k";
 
 python3 src/evaluation.py \
     --exp-name="vit_large_patch16_224" \
@@ -22,7 +22,7 @@ python3 src/evaluation.py \
     --epoch=10 \
     --image-embed-dim=1024 \
     --encoder-index=0 \
-    --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
+    --benchmarks="cifar10,cifar100,imagenet1k";
 
 # python3 src/evaluation.py \
 #     --exp-name="ie_30_mlp_c_32_norm" \
