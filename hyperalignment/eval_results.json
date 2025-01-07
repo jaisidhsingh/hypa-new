@@ -1,1 +1,68 @@
-{"benchmarks_implemented_currently": ["mscoco", "cifar10", "cifar100", "imagenet1k"], "vit_small_patch16_224": {"cifar10": 90.12, "cifar100": 51.85, "imagenet1k": 25.52, "config": {"device": "cuda", "exp_name": "vit_small_patch16_224", "seed": 0, "run_type": "sep", "ood_results_path": "ood_attempt_1.pt", "epoch": 10, "encoder_index": 0, "benchmarks": "cifar10,cifar100,imagenet1k", "clip_version": "off", "image_embed_dim": 384, "text_embed_dim": 768, "text_encoder": "sentence-t5-base", "image_encoder": "vit_small_patch16_224"}}, "vit_base_patch16_224": {"cifar10": 91.39, "cifar100": 63.0, "imagenet1k": 38.88, "config": {"device": "cuda", "exp_name": "vit_base_patch16_224", "seed": 0, "run_type": "sep", "ood_results_path": "ood_attempt_1.pt", "epoch": 10, "encoder_index": 0, "benchmarks": "cifar10,cifar100,imagenet1k", "clip_version": "off", "image_embed_dim": 768, "text_embed_dim": 768, "text_encoder": "sentence-t5-base", "image_encoder": "vit_base_patch16_224"}}, "vit_large_patch16_224": {"cifar10": 96.56, "cifar100": 71.18, "imagenet1k": 39.95, "config": {"device": "cuda", "exp_name": "vit_large_patch16_224", "seed": 0, "run_type": "sep", "ood_results_path": "ood_attempt_1.pt", "epoch": 10, "encoder_index": 0, "benchmarks": "cifar10,cifar100,imagenet1k", "clip_version": "off", "image_embed_dim": 1024, "text_embed_dim": 768, "text_encoder": "sentence-t5-base", "image_encoder": "vit_large_patch16_224"}}}
+{
+  "benchmarks_implemented_currently": [
+    "mscoco",
+    "cifar10",
+    "cifar100",
+    "imagenet1k"
+  ],
+  "vit_small_patch16_224": {
+    "cifar10": 90.12,
+    "cifar100": 51.85,
+    "imagenet1k": 25.52,
+    "config": {
+      "device": "cuda",
+      "exp_name": "vit_small_patch16_224",
+      "seed": 0,
+      "run_type": "sep",
+      "ood_results_path": "ood_attempt_1.pt",
+      "epoch": 10,
+      "encoder_index": 0,
+      "benchmarks": "cifar10,cifar100,imagenet1k",
+      "clip_version": "off",
+      "image_embed_dim": 384,
+      "text_embed_dim": 768,
+      "text_encoder": "sentence-t5-base",
+      "image_encoder": "vit_small_patch16_224"
+    }
+  },
+  "vit_base_patch16_224": {
+    "cifar10": 91.39,
+    "cifar100": 63.0,
+    "imagenet1k": 38.88,
+    "config": {
+      "device": "cuda",
+      "exp_name": "vit_base_patch16_224",
+      "seed": 0,
+      "run_type": "sep",
+      "ood_results_path": "ood_attempt_1.pt",
+      "epoch": 10,
+      "encoder_index": 0,
+      "benchmarks": "cifar10,cifar100,imagenet1k",
+      "clip_version": "off",
+      "image_embed_dim": 768,
+      "text_embed_dim": 768,
+      "text_encoder": "sentence-t5-base",
+      "image_encoder": "vit_base_patch16_224"
+    }
+  },
+  "vit_large_patch16_224": {
+    "cifar10": 96.56,
+    "cifar100": 71.18,
+    "imagenet1k": 39.95,
+    "config": {
+      "device": "cuda",
+      "exp_name": "vit_large_patch16_224",
+      "seed": 0,
+      "run_type": "sep",
+      "ood_results_path": "ood_attempt_1.pt",
+      "epoch": 10,
+      "encoder_index": 0,
+      "benchmarks": "cifar10,cifar100,imagenet1k",
+      "clip_version": "off",
+      "image_embed_dim": 1024,
+      "text_embed_dim": 768,
+      "text_encoder": "sentence-t5-base",
+      "image_encoder": "vit_large_patch16_224"
+    }
+  }
+}

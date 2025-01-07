@@ -11,6 +11,28 @@
 5. Num steps = 37
 6. Num epochs = 10
 
+## Image Classification Bench
+
+### APE
+
+1. ViT-S/16 -- FLOPs = 312.2 1e+12
+
+    - CIFAR-10:     90.1  
+    - CIFAR-100:    51.9
+    - ImageNet-1k:  25.5
+
+2. ViT-B/16 -- FLOPs = 624.5 1e+12
+
+    - CIFAR-10:     91.4
+    - CIFAR-100:    63.0
+    - ImageNet-1k:  38.9
+
+3. ViT-L/16 -- FLOPs = 832.7 1e+12
+
+    - CIFAR-10:     96.6
+    - CIFAR-100:    71.2
+    - ImageNet-1k:  40.0
+
 ## Hyper-net info
 
 ### `learn_multi_mapper.py`
