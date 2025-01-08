@@ -99,9 +99,9 @@ Optimize a newly initialized conditional embedding over the dataset for 1 epoch.
         - ImageNet eval: 25.8
         - FLOPs used = 74422 x 2.42 GFLOPs per epoch = 180,101 GFLOPs.
     5. Instead of using all 595k samples, lets do this with just 80k samples (10k steps) but we do `new_cond_emb = hnet.cond_embs.mean(dim=0)`
-        - Cifar-10: 84.5
-        - Cifar-100: 43.1
-        - ImageNet eval: 25.9
+        - Cifar-10: 84.5 - 75.2
+        - Cifar-100: 43.1 - 31.4
+        - ImageNet eval: 25.9 - 
         - FLOPs used = 10k x 2.42 GFLOPs = 24,200 GFLOPs
         - Efficient w.r.t 10 epoch baseline = 12.9 times
     6. If we init new cond emb as the avg of the embs of only those which belong to its dim-family, worse off results.
