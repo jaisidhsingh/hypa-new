@@ -28,6 +28,17 @@ class ClipLoss():
         return loss / 2, correct
 
 
+class SelfContrastiveLoss():
+    def __init__(self, args):
+        self.device = args.device
+    
+    def compute_loss(self, x):
+        sim = x @ x.T
+        labels = torch.arange(x.shape[0], dtype=torch.long).to(x.device)
+        loss = F.cross_entropy(sim, labels)
+        return loss
+
+
 class JointClipLoss():
     def __init__(self, args):
         self.args = args

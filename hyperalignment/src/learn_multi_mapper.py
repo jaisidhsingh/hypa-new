@@ -142,7 +142,7 @@ def run(args, input_config):
                 with autocast():
                     weights, biases = model(cond_id=encoder_indices, image_embed_dim=D_img, normalize_output=args.normalize_output)
                     mapped_text_features = model.map_features(weights, biases, text_features)
-                    loss, corrects = model.compute_loss(logit_scale, image_features, mapped_text_features)
+                    loss, corrects = model.compute_loss(logit_scale, image_features, mapped_text_features, emb_loss=args.emb_loss)
                     assert len(corrects) == N, "Error: number of encoders != number of mappers predicted and evaluated."
                 
                 # update metric trackers
@@ -241,7 +241,7 @@ if __name__ == "__main__":
     parser.add_argument("--logit-scale", type=float, default=100.0)
     parser.add_argument("--normalize-output", type=bool, default=True)
     parser.add_argument("--rescale-factor", type=float, default=0.0)
-    parser.add_argument("--use-outer-prod", type=bool, default=False)
+    parser.add_argument("--emb-loss", type=bool, default=False)
     # training args
     parser.add_argument("--num-epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=512)

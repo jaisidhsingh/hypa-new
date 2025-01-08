@@ -133,7 +133,7 @@ class ConditionalHyperNetwork(nn.Module):
         return x
 
 
-    def compute_loss(self, logit_scale, image_features, text_features):
+    def compute_loss(self, logit_scale, image_features, text_features, emb_loss=False):
         logit_scale = logit_scale.exp().to(image_features.device)
         
         batch_size = image_features.shape[0]
@@ -151,4 +151,14 @@ class ConditionalHyperNetwork(nn.Module):
         logits2 = logit_scale * torch.einsum("nbd,ncd->nbc", text_features, image_features)
 
         loss = (F.cross_entropy(logits1, labels) + F.cross_entropy(logits2, labels))/2
-        return loss.mean(), corrects
+
+        if emb_loss:
+            emb_sim = self.cond_embs.weight @ self.cond_embs.weight.T
+            emb_labels = torch.arange(emb_sim.shape[0], dtype=torch.long).to(self.cond_embs.weight.data)
+            emb_l = F.cross_entropy(emb_sim, emb_labels)
+        else:
+            emb_l = 0
+        
+        loss = loss.mean() + emb_l
+
+        return loss, corrects
