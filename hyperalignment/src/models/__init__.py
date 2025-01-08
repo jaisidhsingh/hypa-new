@@ -154,7 +154,7 @@ class ConditionalHyperNetwork(nn.Module):
         loss = (F.cross_entropy(logits1, labels) + F.cross_entropy(logits2, labels))/2
 
         if emb_loss:
-            self.cond_embs.weight = self.cond_embs.weight / self.cond_embs.weight.norm(dim=-1, keepdim=True)
+            self.cond_embs.weight.data = self.cond_embs.weight.data / self.cond_embs.weight.data.norm(dim=-1, keepdim=True)
 
             emb_sim = self.cond_embs.weight @ self.cond_embs.weight.T
             emb_labels = torch.arange(self.num_cond_embs, dtype=torch.long).to(self.cond_embs.weight.data)
