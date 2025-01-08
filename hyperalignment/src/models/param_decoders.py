@@ -38,7 +38,7 @@ class MlpDecoder(nn.Module):
         self.image_dim = out_shape[0]
         self.text_dim = out_shape[1]
 
-        self.w_decoder = MLP(
+        self.decoder = MLP(
             dim,
             [f*dim for f in hidden_layer_factors],
             self.image_dim * self.text_dim + self.image_dim 

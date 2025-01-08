@@ -78,7 +78,7 @@ def run(args, input_config):
     print("Dataset loaded.")
 
     # optimizer + scheduler + scaler
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
     if args.scheduler == "off":
         scheduler = None
     elif args.scheduler == "cosine":
@@ -247,7 +247,7 @@ if __name__ == "__main__":
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--encoder-batch-size", type=int, default=10)
     parser.add_argument("--learning-rate", type=float, default=1e-2)
-    parser.add_argument("--weight-decay", type=float, default=0.0)
+    parser.add_argument("--weight-decay", type=float, default=0.01)
     parser.add_argument("--scheduler", type=str, default="off")
     parser.add_argument("--warmup-steps", type=int, default=500)
     parser.add_argument("--cooldown-steps", type=int, default=500)
