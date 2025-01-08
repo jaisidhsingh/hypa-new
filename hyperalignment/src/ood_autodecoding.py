@@ -15,6 +15,7 @@ from data import *
 from models import *
 from training.loss_functions import ClipLoss
 from configs.data_configs import data_configs
+from configs.model_configs import model_configs
 from utils.backward_flops import FlopCounterMode
 
 def main(args):
@@ -32,10 +33,12 @@ def main(args):
     embedding = embedding.to(args.device)
     print("Initialized embedding to auto-decode.")
 
+    decoder_type = args.hnet_ckpt_name.split("_")[2]
+    kwargs = model_configs.hnet_decoder_configs[decoder_type]
+
     hnet = ConditionalHyperNetwork(
         param_shapes, cond_emb_dim=args.hnet_cond_emb_dim,
-        num_cond_embs=args.hnet_ckpt_num_ie, image_embed_dims=image_embed_dims,
-        hidden_layer_factors=hidden_layer_factors, rescale_factor=0.0
+        num_cond_embs=args.hnet_ckpt_num_ie, image_embed_dims=image_embed_dims, kwargs=kwargs 
     )
 
     ckpt_path = os.path.join(args.hnet_ckpt_folder, args.hnet_ckpt_name, f"seed_{args.random_seed}", f"ckpt_{args.hnet_ckpt_epoch}.pt")
@@ -50,7 +53,7 @@ def main(args):
     hnet.eval()
     print("Freezed hypernetwork parameters.")
 
-    # Initialise the embedding to be learnt as the avg of the hnet's embeddings (of the same family)
+    # Initialise the embedding to be learnt as the avg of the hnet's embeddings
     embedding.weight.data = hnet.cond_embs.weight.data[:, :].mean(dim=0).unsqueeze(0)
     
     dataset_config = data_configs.separate_embedding_dataset_configs(args)
@@ -60,7 +63,7 @@ def main(args):
 
     # opts = [p for p in embedding.parameters()] + [p for p in hnet.parameters()]
 
-    optimizer = torch.optim.Adam(embedding.parameters(), lr=args.learning_rate)
+    optimizer = torch.optim.SGD(embedding.parameters(), lr=args.learning_rate)
     # optimizer = torch.optim.Adam(opts, lr=args.learning_rate)
     criterion = ClipLoss(args)
 
