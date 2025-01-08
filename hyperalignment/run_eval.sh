@@ -3,7 +3,7 @@ python3 src/evaluation.py \
     --seed=0 \
     --run-type="sep" \
     --epoch=10 \
-    --encoder-index=0 \
+    --encoder-index=5 \
     --image-embed-dim=384 \
     --benchmarks="cifar10,cifar100,imagenet1k";
 
@@ -59,5 +59,6 @@ python3 src/evaluation.py \
     --ood-results-path="x.pt" \
     --epoch=10 \
     --encoder-index=5 \
+    --image-embed-dim=384 \
     --benchmarks="cifar10,cifar100,imagenet1k";
 
