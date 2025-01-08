@@ -1,7 +1,7 @@
 from pylab import plt
 
-models = ["H-Net mini", "H-Net full", "APE full"]
-values = [13.1, 25.8, 23.8]
+models = ["H-Net OOD", "H-Net full", "APE full"]
+values = [14.6, 25.8, 23.8]
 
 bars = plt.bar(models, values, width=0.4)
 bars[0].set_color("tab:purple")

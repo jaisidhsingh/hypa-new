@@ -76,6 +76,7 @@ class ConditionalHyperNetwork(nn.Module):
         self.image_embed_dims = image_embed_dims
         self.param_shapes = param_shapes # `param_shapes = [[D_out, D_in], [D_out]]`
 
+        self.num_cond_embs = num_cond_embs
         self.cond_embs = nn.Embedding(num_cond_embs, cond_emb_dim)
         self.shape_embs = nn.Embedding(len(image_embed_dims), cond_emb_dim)
 
@@ -154,8 +155,8 @@ class ConditionalHyperNetwork(nn.Module):
 
         if emb_loss:
             emb_sim = self.cond_embs.weight @ self.cond_embs.weight.T
-            emb_labels = torch.arange(emb_sim.shape[0], dtype=torch.long).to(self.cond_embs.weight.data)
-            emb_l = F.cross_entropy(emb_sim, emb_labels)
+            emb_labels = torch.arange(self.num_cond_embs, dtype=torch.long).to(self.cond_embs.weight.data)
+            emb_l = F.cross_entropy(emb_sim.float(), emb_labels.long())
         else:
             emb_l = 0
         
