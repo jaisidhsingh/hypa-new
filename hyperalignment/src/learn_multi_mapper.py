@@ -195,7 +195,7 @@ def run(args, input_config):
                 "model": model.state_dict(),
                 "logs": logs,
                 "mapper_params": predict_params_for_saving(model, encoder_info),
-                "one_epoch_flop_count": saved_flop_counter.results
+                # "one_epoch_flop_count": saved_flop_counter.results
             }
             save_path = os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt")
             torch.save(dump, save_path)
