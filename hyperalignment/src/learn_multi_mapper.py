@@ -243,7 +243,7 @@ if __name__ == "__main__":
     parser.add_argument("--rescale-factor", type=float, default=0.0)
     parser.add_argument("--use-outer-prod", type=bool, default=False)
     # training args
-    parser.add_argument("--num-epochs", type=int, default=20)
+    parser.add_argument("--num-epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--encoder-batch-size", type=int, default=10)
     parser.add_argument("--learning-rate", type=float, default=1e-2)
