@@ -98,7 +98,7 @@ def run(args, input_config):
     bar = tqdm(total=args.num_epochs * num_batches)
     encoder_info = {}
 
-    flop_counter = FlopCounterMode(model) if args.flop_counter == "custom" else suppress
+    # flop_counter = FlopCounterMode(model) if args.flop_counter == "custom" else suppress
 
     if args.use_wandb:
         wandb.init(project="hnet-init-scaling", name=args.experiment_name, entity="hyperalignment", config=vars(args))
@@ -110,7 +110,7 @@ def run(args, input_config):
         running_loss = 0
 
         # iterate over dataset batches
-        with flop_counter: 
+        if True: 
             for idx in range(num_batches):
 
                 # get the indices of the data samples we want to use
@@ -182,10 +182,10 @@ def run(args, input_config):
                 bar.set_description(f"Epoch: {epoch+1}, Step: {(epoch * num_batches) + idx+1}")
                 bar.set_postfix(logs[f"epoch_{epoch+1}"])
             
-            if epoch == 0:
-                saved_flop_counter = deepcopy(flop_counter)
-                print(f"FLOPs for one training epoch: {saved_flop_counter.results}")
-                flop_counter = suppress
+            # if epoch == 0:
+                # saved_flop_counter = deepcopy(flop_counter)
+                # print(f"FLOPs for one training epoch: {saved_flop_counter.results}")
+                # flop_counter = suppress
 
         # make sure that we save
         if (epoch+1) in [1, 2, 5, 10, 20, 40, 100, 200] and args.saving:
