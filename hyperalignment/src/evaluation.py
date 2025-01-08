@@ -147,6 +147,7 @@ def load_separate_ckpt(args, model):
 def load_ood_ckpt(args, model):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper/ood_attempts"
     args.ood_results_path = args.exp_name + "_ood.pt"
+    print(args.ood_results_path)
     path = os.path.join(folder, args.ood_results_path)
     store = torch.load(path)
     num_epochs = store["config"]["num_epochs"]
@@ -278,5 +279,7 @@ if __name__ == "__main__":
     parser.add_argument("--image-encoder", type=str, default="set-later")
     # get args
     args = parser.parse_args()
+
+    print(args.image_encoder)
     main(args)
     
