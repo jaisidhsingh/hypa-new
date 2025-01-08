@@ -53,7 +53,7 @@
 #     --benchmarks="imagenet1k";
 
 python3 src/evaluation.py \
-    --exp-name="flexivit_small.300ep_in1k" \
+    --exp-name="visformer_tiny.in1k" \
     --seed=0 \
     --run-type="ood" \
     --ood-results-path="x.pt" \
