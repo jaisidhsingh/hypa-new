@@ -1,11 +1,11 @@
 from pylab import plt
 
-models = ["H-Net OOD", "H-Net full", "APE full"]
-values = [14.6, 25.8, 23.8]
+models = ["H-Net OOD", "APE"]
+values = [14.6, 2.29]
 
 bars = plt.bar(models, values, width=0.4)
 bars[0].set_color("tab:purple")
-bars[2].set_color("tab:orange")
+bars[1].set_color("tab:orange")
 
 plt.ylabel("ImageNet-1k Top-1 Accuracy (%)")
 plt.xlabel("Method")
