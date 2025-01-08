@@ -53,8 +53,7 @@ class MlpDecoder(nn.Module):
         N = x.shape[0]
         w = self.w_decoder(x)
         b = self.b_decoder(x)
-        w = w[:, :-self.image_dim].view(N, self.image_dim, self.text_dim)
-        b = b[:, -self.image_dim:]
+        w = w.view(N, self.image_dim, self.text_dim)
         return w, b
 
 
