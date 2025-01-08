@@ -41,20 +41,15 @@ class MlpDecoder(nn.Module):
         self.w_decoder = MLP(
             dim,
             [f*dim for f in hidden_layer_factors],
-            self.image_dim * self.text_dim
-        )
-        self.b_decoder = MLP(
-            dim,
-            [f*dim for f in hidden_layer_factors],
-            self.image_dim
+            self.image_dim * self.text_dim + self.image_dim 
         )
 
     def forward(self, x):
         N = x.shape[0]
-        w = self.w_decoder(x)
-        b = self.b_decoder(x)
-        w = w.view(N, self.image_dim, self.text_dim)
-        return w, b
+        x = self.decoder(x)
+        weights = x[:, :-self.image_dim].view(N, self.image_dim, self.text_dim)
+        biases = x[:, -self.image_dim:]
+        return weights, biases
 
 
 class AttentionDecoder(nn.Module):
