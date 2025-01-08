@@ -46,7 +46,7 @@ python3 src/evaluation.py \
     --exp-name="ie_30_mlp_c_32_norm" \
     --seed=0 \
     --run-type="mm" \
-    --epoch=5 \
+    --epoch=10 \
     --encoder-index=0 \
     --image-embed-dim=1024 \
     --benchmarks="imagenet1k";

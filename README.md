@@ -66,8 +66,8 @@
 4. Num encoders = 30
 5. Warmup steps = 500
 
-- For `num_ie=12` = 29260.64 GFLOPs
-- For `num_ie=30` = 73151.62 GFLOPs -- which is exactly 2.5 * FLOPs for `num_ie=12`.
+- For `num_ie=12` and 1 epoch, cost = 29260.64 GFLOPs
+- For `num_ie=30` and 1 epoch, cost = 73151.62 GFLOPs -- which is exactly 2.5 * FLOPs for `num_ie=12`.
 
 ## ImageNet eval
 
