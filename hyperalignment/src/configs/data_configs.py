@@ -15,7 +15,7 @@ data_configs.image_caption_dataset_configs = {
 		"annFile": f"{data_configs.STORE}/coco_torchvision/extract/annotations/captions_train2017.json"
 	},
 	"mscoco_val": {
-		"root": f"{data_configs.STORE}/coco_torchvision/extract/val2017",
+		"root": f"{data_configs.STORE}/coco_torchvision/val2017",
 		"annFile": f"{data_configs.STORE}/coco_torchvision/captions_val2017.json"
 	},
 	"cc3m300k": {
