@@ -11,7 +11,7 @@
 python3 src/ood_autodecoding.py \
     --image-encoder="visformer_tiny.in1k" \
     --image-embed-dim=384 \
-    --hnet-ckpt-name="ie_12_mlp_c_32_norm_ec" \
+    --hnet-ckpt-name="ie_12_mlp_c_32_norm" \
     --hnet-ckpt-num-ie=12 \
     --learning-rate=1e-5 \
     --save-path="x.pt" \
