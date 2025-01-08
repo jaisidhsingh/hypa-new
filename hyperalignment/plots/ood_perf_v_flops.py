@@ -1,7 +1,7 @@
 from pylab import plt
 
 models = ["H-Net OOD", "APE"]
-values = [14.6, 2.29]
+values = [0.12, 2.29]
 
 bars = plt.bar(models, values, width=0.4)
 bars[0].set_color("tab:purple")
