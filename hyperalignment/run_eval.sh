@@ -58,7 +58,7 @@ python3 src/evaluation.py \
     --run-type="ood" \
     --ood-results-path="x.pt" \
     --epoch=10 \
-    --encoder-index=5 \
+    --encoder-index=6 \
     --image-embed-dim=384 \
     --benchmarks="cifar10,cifar100,imagenet1k";
 
