@@ -42,21 +42,21 @@
 #     --image-embed-dim=768 \
 #     --benchmarks="cifar10,cifar100,imagenet1k";
 
-python3 src/evaluation.py \
-    --exp-name="ie_30_mlp_c_32_norm" \
-    --seed=0 \
-    --run-type="mm" \
-    --epoch=10 \
-    --encoder-index=0 \
-    --image-embed-dim=1024 \
-    --benchmarks="imagenet1k";
+# python3 src/evaluation.py \
+#     --exp-name="ie_30_mlp_c_32_norm" \
+#     --seed=0 \
+#     --run-type="mm" \
+#     --epoch=10 \
+#     --encoder-index=0 \
+#     --image-embed-dim=1024 \
+#     --benchmarks="imagenet1k";
 
-# # python3 src/evaluation.py \
-# #     --exp-name="flexivit_small.300ep_in1k" \
-# #     --seed=0 \
-# #     --run-type="ood" \
-# #     --ood-results-path="ood_attempt_10k_avg.pt" \
-# #     --epoch=10 \
-# #     --encoder-index=5 \
-# #     --benchmarks="cifar10,cifar100,imagenet1k,mscoco";
+python3 src/evaluation.py \
+    --exp-name="flexivit_small.300ep_in1k" \
+    --seed=0 \
+    --run-type="ood" \
+    --ood-results-path="x.pt" \
+    --epoch=10 \
+    --encoder-index=5 \
+    --benchmarks="cifar10,cifar100,imagenet1k";
 
