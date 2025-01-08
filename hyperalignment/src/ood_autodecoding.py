@@ -112,7 +112,7 @@ def main(args):
         store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
 
     store["config"] = vars(args)
-    args.save_path = args.image_encoder + "_ood.pt"
+    args.save_path = args.image_encoder + "_ec_ood.pt"
 
     save_folder = os.path.join(args.hnet_ckpt_folder, "ood_attempts")
     os.makedirs(save_folder, exist_ok=True)
