@@ -22,7 +22,16 @@ python3 src/evaluation.py \
     --epoch=1 \
     --image-embed-dim=1024 \
     --encoder-index=0 \
-    --benchmarks="cifar10,cifar100,imagenet1k";
+    --benchmarks="imagenet1k";
+
+python3 src/evaluation.py \
+    --exp-name="vit_large_patch16_224" \
+    --seed=0 \
+    --run-type="sep" \
+    --epoch=5 \
+    --image-embed-dim=1024 \
+    --encoder-index=0 \
+    --benchmarks="imagenet1k";
 
 # python3 src/evaluation.py \
 #     --exp-name="ie_30_mlp_c_32_norm" \
