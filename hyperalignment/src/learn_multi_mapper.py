@@ -145,7 +145,7 @@ def run(args, input_config):
                     
                     elif args.cond_type == "features":
                         cond_id = image_features[:, :, :args.hnet_cond_emb_dim].mean(dim=0)
-                        print(cond_id.shape)
+                        # print(cond_id.shape)
                         weights, biases = model(cond_id=cond_id, image_embed_dim=D_img, normalize_output=args.normalize_output, nolookup=True)
 
                     mapped_text_features = model.map_features(weights, biases, text_features)
