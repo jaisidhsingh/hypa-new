@@ -41,7 +41,7 @@ def sanity_check(args):
 
         new_cost = compute_cost_matrix(aligned_ood_fts, item)
         new_r, new_c = linear_sum_assignment(new_cost)
-        new = new_cost[new_r, new_c]
+        new = new_cost[new_r, new_c].sum()
 
         print(new, old)
         print("Percentange of positions for which aligned_cot <= raw_cost:", (new <= old).astype(np.float32).mean())
