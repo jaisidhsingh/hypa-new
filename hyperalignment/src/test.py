@@ -124,7 +124,7 @@ def main(args):
     # flop_counter = FlopCounterMode(embedding)
 
     hnet_cond_emb_dim = int(args.hnet_ckpt_name.split("_")[4])
-    image_embeddings = next(iter(loader))
+    image_embeddings, _ = next(iter(loader))
     cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim)
     # for epoch in range(args.num_epochs):
     #     running_loss = 0.0
