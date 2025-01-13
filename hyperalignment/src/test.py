@@ -118,14 +118,14 @@ def main(args):
     image_embed_dim = args.image_embed_dim
     logit_scale = torch.tensor(math.log(args.logit_scale)).to(args.device)
 
-    bar = tqdm(total=int(args.num_epochs * len(loader)))
+    # bar = tqdm(total=int(args.num_epochs * len(loader)))
     store = {}
 
     # flop_counter = FlopCounterMode(embedding)
 
     hnet_cond_emb_dim = int(args.hnet_ckpt_name.split("_")[4])
     image_embeddings, _ = next(iter(loader))
-    cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim)
+    cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim).to(args.device)
     # for epoch in range(args.num_epochs):
     #     running_loss = 0.0
     #     correct, total = 0, 0
