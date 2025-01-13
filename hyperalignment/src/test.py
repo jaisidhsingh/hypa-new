@@ -71,7 +71,7 @@ def cka_based_sim_weighting(args):
 def main(args):
     torch.manual_seed(args.random_seed)
 
-    P = sanity_check(args)
+    # P = sanity_check(args)
 
     param_shapes = [[args.largest_image_dim, args.largest_text_dim], [args.largest_image_dim]]
     image_embed_dims = [int(x) for x in args.image_embed_dims.split(",")]
@@ -123,17 +123,19 @@ def main(args):
 
     # flop_counter = FlopCounterMode(embedding)
 
+    hnet_cond_emb_dim = int(args.hnet_ckpt_name.split("_")[4])
     for epoch in range(args.num_epochs):
         running_loss = 0.0
         correct, total = 0, 0
 
         if True: # holder for "with flop_counter:"
             for idx, (image_embeddings, text_embeddings) in enumerate(loader):
-                image_embeddings = image_embeddings.to(args.device) @ P.to(args.device)
+                image_embeddings = image_embeddings.to(args.device) #@ P.to(args.device)
                 text_embeddings = text_embeddings.to(args.device)
 
                 optimizer.zero_grad()
-                cond_emb = embedding(torch.tensor([0]).to(args.device))
+                # cond_emb = embedding(torch.tensor([0]).to(args.device))
+                cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0)
                 pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
 
                 pred_weight = pred_weight.squeeze(0)
@@ -160,7 +162,7 @@ def main(args):
         store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
 
     store["config"] = vars(args)
-    args.save_path = args.image_encoder + "_ood.pt"
+    args.save_path = args.image_encoder + "_ood_perm.pt"
 
     save_folder = os.path.join(args.hnet_ckpt_folder, "ood_attempts")
     os.makedirs(save_folder, exist_ok=True)

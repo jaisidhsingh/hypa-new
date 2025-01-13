@@ -51,7 +51,7 @@ def main(args):
         p.requires_grad = False #True
     # set to eval mode 
     hnet.eval()
-    print("Freezed hypernetwork parameters.")
+    print("Froze hypernetwork parameters.")
 
     # Initialise the embedding to be learnt as the avg of the hnet's embeddings
     embedding.weight.data = hnet.cond_embs.weight.data[:, :].mean(dim=0).unsqueeze(0)
