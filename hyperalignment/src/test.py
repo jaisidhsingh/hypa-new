@@ -118,48 +118,65 @@ def main(args):
     image_embed_dim = args.image_embed_dim
     logit_scale = torch.tensor(math.log(args.logit_scale)).to(args.device)
 
-    bar = tqdm(total=int(args.num_epochs * len(loader)))
     store = {}
-
-    flop_counter = FlopCounterMode(hnet)
-
     hnet_cond_emb_dim = int(args.hnet_ckpt_name.split("_")[4])
-    # image_embeddings, _ = next(iter(loader))
-    # cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim).to(args.device)
-    for epoch in range(args.num_epochs):
+    flop_counter = FlopCounterMode(hnet)
+    bar = tqdm(total=int(len(loader)))
+    train = True
+
+    def set_model(model, train):
+        if train:
+            model.train()
+        else:
+            model.eval()
+
+    set_model(hnet, train)
+    with flop_counter:
+
         running_loss = 0.0
         correct, total = 0, 0
+        
+        for idx, (image_embeddings, text_embeddings) in enumerate(loader):
+            if idx >= args.train_steps:
+                train = False
+                set_model(hnet, train)
 
-        # if True: # holder for "with flop_counter:"
-        with flop_counter:
-            for idx, (image_embeddings, text_embeddings) in enumerate(loader):
-                image_embeddings = image_embeddings.to(args.device) #@ P.to(args.device)
-                text_embeddings = text_embeddings.to(args.device)
+            image_embeddings = image_embeddings.to(args.device)
+            text_embeddings = text_embeddings.to(args.device)
 
+            if train:
                 optimizer.zero_grad()
-                # cond_emb = embedding(torch.tensor([0]).to(args.device))
-                cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim)
-                pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
 
-                pred_weight = pred_weight.squeeze(0)
-                pred_bias = pred_bias.squeeze(0)
-                mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
+            cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim)
+            pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
+            
+            pred_weight = pred_weight.squeeze(0)
+            pred_bias = pred_bias.squeeze(0)
 
-                loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
-                
-                correct += corrects
-                total += image_embeddings.shape[0]
-                accuracy = round(correct/total * 100, 2)
+            if idx == 0:
+                store["step_0"] = {"weight": pred_weight, "bias": pred_bias}
 
+            mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
+
+            loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
+            
+            correct += corrects
+            total += image_embeddings.shape[0]
+            accuracy = round(correct/total * 100, 2)
+
+            if train:
                 loss.backward()
                 optimizer.step()
 
-                running_loss = round(loss.item(), 2)
-                bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
-                bar.update(1)
+            running_loss = round(loss.item(), 2)
+            bar.set_description(f"Step {idx+1}/{args.num_steps}, Loss: {running_loss}, Accuracy: {accuracy}%")
+            bar.update(1)
 
-                if idx == 8000:
-                    break
+            if idx+1 % 500 == 0:
+                store[f"step_{idx+1}"] = {"weight": pred_weight, "bias": pred_bias}
+
+            if idx == args.total_steps-1:
+                break
             
     hnet.eval() 
     pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
@@ -199,7 +216,8 @@ if __name__ == "__main__":
     parser.add_argument("--text-embed-dim", type=int, default=768)
     parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
     # training settings
-    parser.add_argument("--num-epochs", type=int, default=1)
+    parser.add_argument("--total-steps", type=int, default=5000)
+    parser.add_argument("--train-steps", type=int, default=2000)
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--learning-rate", type=float, default=1e-4)
