@@ -135,7 +135,7 @@ def main(args):
 
                 optimizer.zero_grad()
                 # cond_emb = embedding(torch.tensor([0]).to(args.device))
-                cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0)
+                cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim)
                 pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
 
                 pred_weight = pred_weight.squeeze(0)
