@@ -43,7 +43,7 @@ def sanity_check(args):
         new_r, new_c = linear_sum_assignment(new_cost)
         new = new_cost[new_r, new_c]
 
-        print(old_cost.shape)
+        print(new, old)
         print("Percentange of positions for which aligned_cot <= raw_cost:", (new <= old).astype(np.float32).mean())
 
 
