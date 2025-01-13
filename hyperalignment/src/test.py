@@ -35,7 +35,7 @@ def sanity_check(args):
         old = ood_fts @ item.T
         new = aligned_ood_fts @ item.T
 
-        print("Percentange of positions for which aligned_sim >= raw_sim:" (new >= old).float().mean())
+        print("Percentange of positions for which aligned_sim >= raw_sim:", (new >= old).float().mean())
 
 
 def main(args):
