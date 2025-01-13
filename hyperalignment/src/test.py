@@ -169,7 +169,7 @@ def main(args):
                 optimizer.step()
 
             running_loss = round(loss.item(), 2)
-            bar.set_description(f"Step {idx+1}/{args.num_steps}, Loss: {running_loss}, Accuracy: {accuracy}%")
+            bar.set_description(f"Step {idx+1}/{args.total_steps}, Loss: {running_loss}, Accuracy: {accuracy}%")
             bar.update(1)
 
             if idx+1 % 500 == 0:
