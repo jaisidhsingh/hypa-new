@@ -25,14 +25,14 @@ python3 src/evaluation.py \
 #     --encoder-index=0 \
 #     --benchmarks="imagenet1k";
 
-# python3 src/evaluation.py \
-#     --exp-name="ie_30_mlp_c_32_norm" \
-#     --seed=0 \
-#     --run-type="mm" \
-#     --epoch=1 \
-#     --encoder-index=0 \
-#     --image-embed-dim=384 \
-#     --benchmarks="cifar10,cifar100,imagenet1k";
+python3 src/evaluation.py \
+    --exp-name="ie_12_mlp_c_32_norm_ft" \
+    --seed=0 \
+    --run-type="mm" \
+    --epoch=1 \
+    --encoder-index=0 \
+    --image-embed-dim=384 \
+    --benchmarks="cifar10,cifar100,imagenet1k";
 
 # python3 src/evaluation.py \
 #     --exp-name="ie_30_mlp_c_32_norm" \
