@@ -124,45 +124,47 @@ def main(args):
     # flop_counter = FlopCounterMode(embedding)
 
     hnet_cond_emb_dim = int(args.hnet_ckpt_name.split("_")[4])
-    for epoch in range(args.num_epochs):
-        running_loss = 0.0
-        correct, total = 0, 0
+    image_embeddings = next(iter(loader))
+    cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim)
+    # for epoch in range(args.num_epochs):
+    #     running_loss = 0.0
+    #     correct, total = 0, 0
 
-        if True: # holder for "with flop_counter:"
-            for idx, (image_embeddings, text_embeddings) in enumerate(loader):
-                image_embeddings = image_embeddings.to(args.device) #@ P.to(args.device)
-                text_embeddings = text_embeddings.to(args.device)
+    #     if True: # holder for "with flop_counter:"
+    #         for idx, (image_embeddings, text_embeddings) in enumerate(loader):
+    #             image_embeddings = image_embeddings.to(args.device) #@ P.to(args.device)
+    #             text_embeddings = text_embeddings.to(args.device)
 
-                optimizer.zero_grad()
-                cond_emb = embedding(torch.tensor([0]).to(args.device))
-                # cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim)
-                pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
+    #             optimizer.zero_grad()
+    #             # cond_emb = embedding(torch.tensor([0]).to(args.device))
+    #             cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim)
+    #             pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
 
-                pred_weight = pred_weight.squeeze(0)
-                pred_bias = pred_bias.squeeze(0)
-                mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
+    #             pred_weight = pred_weight.squeeze(0)
+    #             pred_bias = pred_bias.squeeze(0)
+    #             mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
 
-                loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
+    #             loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
                 
-                correct += corrects
-                total += image_embeddings.shape[0]
-                accuracy = round(correct/total * 100, 2)
+    #             correct += corrects
+    #             total += image_embeddings.shape[0]
+    #             accuracy = round(correct/total * 100, 2)
 
-                loss.backward()
-                optimizer.step()
+    #             loss.backward()
+    #             optimizer.step()
 
-                running_loss = round(loss.item(), 2)
-                bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
-                bar.update(1)
+    #             running_loss = round(loss.item(), 2)
+    #             bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
+    #             bar.update(1)
 
-                if idx == 1001:
-                    break
+    #             if idx == 1001:
+    #                 break
         
-        pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
-        store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
+    pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
+    store[f"epoch_{0+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": 0, "accuracy": 0}
 
     store["config"] = vars(args)
-    args.save_path = args.image_encoder + "_ood_perm.pt"
+    args.save_path = args.image_encoder + "_ood_ft.pt"
 
     save_folder = os.path.join(args.hnet_ckpt_folder, "ood_attempts")
     os.makedirs(save_folder, exist_ok=True)
