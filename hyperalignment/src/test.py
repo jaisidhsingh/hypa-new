@@ -121,7 +121,7 @@ def main(args):
     bar = tqdm(total=int(args.num_epochs * len(loader)))
     store = {}
 
-    # flop_counter = FlopCounterMode(embedding)
+    flop_counter = FlopCounterMode(hnet)
 
     hnet_cond_emb_dim = int(args.hnet_ckpt_name.split("_")[4])
     # image_embeddings, _ = next(iter(loader))
@@ -130,7 +130,8 @@ def main(args):
         running_loss = 0.0
         correct, total = 0, 0
 
-        if True: # holder for "with flop_counter:"
+        # if True: # holder for "with flop_counter:"
+        with flop_counter:
             for idx, (image_embeddings, text_embeddings) in enumerate(loader):
                 image_embeddings = image_embeddings.to(args.device) #@ P.to(args.device)
                 text_embeddings = text_embeddings.to(args.device)
@@ -156,6 +157,8 @@ def main(args):
                 running_loss = round(loss.item(), 2)
                 bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
                 bar.update(1)
+
+                print(flop_counter)
 
                 # if idx == 1001:
                 #     break
