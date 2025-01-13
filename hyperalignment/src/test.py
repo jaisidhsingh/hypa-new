@@ -76,12 +76,12 @@ def main(args):
     param_shapes = [[args.largest_image_dim, args.largest_text_dim], [args.largest_image_dim]]
     image_embed_dims = [int(x) for x in args.image_embed_dims.split(",")]
 
-    embedding = nn.Embedding(1, args.hnet_cond_emb_dim)
+    # embedding = nn.Embedding(1, args.hnet_cond_emb_dim)
     
-    for param in embedding.parameters():
-        param.requires_grad = True
-    embedding = embedding.to(args.device)
-    print("Initialized embedding to auto-decode.")
+    # for param in embedding.parameters():
+    #     param.requires_grad = True
+    # embedding = embedding.to(args.device)
+    # print("Initialized embedding to auto-decode.")
 
     decoder_type = args.hnet_ckpt_name.split("_")[2]
     kwargs = model_configs.hnet_decoder_configs[decoder_type]
@@ -101,10 +101,10 @@ def main(args):
     #     p.requires_grad = False #True
     # # set to eval mode 
     hnet.train()
-    print("Freezed hypernetwork parameters.")
+    # print("Freezed hypernetwork parameters.")
 
     # Initialise the embedding to be learnt as the avg of the hnet's embeddings
-    embedding.weight.data = hnet.cond_embs.weight.data[:4, :].mean(dim=0).unsqueeze(0)
+    # embedding.weight.data = hnet.cond_embs.weight.data[:4, :].mean(dim=0).unsqueeze(0)
     
     dataset_config = data_configs.separate_embedding_dataset_configs(args)
     dataset = SeparateEmbeddings(dataset_config)
