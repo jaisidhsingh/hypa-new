@@ -63,7 +63,7 @@ def cka_based_sim_weighting(args):
     id_fts_paths = [f"{prefix}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{ie}/memmap.npy" for ie in model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim]["image_encoders"][:4]]
     id_fts_list = [np.array(np.memmap(path, dtype="float32", mode="r", shape=(595375, 384)))[:10000, :] for path in id_fts_paths]
 
-    cka = CKA()
+    cka = CKA("cuda")
 
     ood_fts = torch.from_numpy(ood_fts).cuda()
     aligned_fts = align_features(ood_fts, id_fts_list)
