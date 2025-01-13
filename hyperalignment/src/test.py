@@ -34,7 +34,7 @@ def sanity_check(args):
 
     aligned_ood_fts = align_features(ood_fts, id_fts_list)
 
-    print((align_features - ood_fts).all())
+    print((aligned_ood_fts - ood_fts).norm(dim=-1).mean())
 
     for item in id_fts_list:
         old_cost = compute_cost_matrix(ood_fts, item)
