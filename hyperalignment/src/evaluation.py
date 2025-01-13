@@ -146,7 +146,7 @@ def load_separate_ckpt(args, model):
 
 def load_ood_ckpt(args, model):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper/ood_attempts"
-    args.ood_results_path = args.exp_name + "_ood_perm.pt"
+    args.ood_results_path = args.exp_name + "_ood_ft.pt"
     print(args.ood_results_path)
     path = os.path.join(folder, args.ood_results_path)
     store = torch.load(path)
