@@ -48,7 +48,7 @@ def sanity_check(args):
         new_r, new_c = linear_sum_assignment(new_cost)
         new = new_cost[new_r, new_c].sum()
 
-        print(new, old)
+        print((new_cost-old_cost).mean())
 
 
 
