@@ -69,6 +69,10 @@
 - For `num_ie=12` and 1 epoch, cost = 29260.64 GFLOPs
 - For `num_ie=30` and 1 epoch, cost = 73151.62 GFLOPs -- which is exactly 2.5 * FLOPs for `num_ie=12`.
 
+**Using features as conditional embeddings**
+
+1. `num_ie=12`, 1 epoch, FLOP cost = 23631.96 GFLOPs
+
 ## ImageNet eval
 
 All evals done at epoch 1 for `vit_small_patch16_224`:

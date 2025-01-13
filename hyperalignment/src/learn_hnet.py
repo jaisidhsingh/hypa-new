@@ -26,7 +26,7 @@ def predict_params_for_saving(model, info):
     outputs = []
 
     for v in info.values():
-        weights, biases = model(cond_id=v["embedding"], image_embed_dim=v["image_embed_dim"], normalize_outputs=True, nolookup=True)
+        weights, biases = model(cond_id=v["embedding"], image_embed_dim=v["image_embed_dim"], normalize_output=True, nolookup=True)
         outputs.append([weights.squeeze(0), biases.squeeze(0)])
 
     return outputs
