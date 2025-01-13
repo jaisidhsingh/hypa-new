@@ -293,6 +293,10 @@ class SeparateTrainer():
                     # flop_counter = suppress
                 else:
                     saved_flop_counter_results = None
+                
+                if idx == 8:
+                    logs["avg_loss"] /= idx+1
+                    return logs, saved_flop_counter_results
 
             logs["avg_loss"] /= idx+1
         return logs, saved_flop_counter_results
