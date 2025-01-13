@@ -158,8 +158,9 @@ def main(args):
                 bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
                 bar.update(1)
 
-                # if idx == 1001:
-                #     break
+                if idx == 8000:
+                    break
+            
     hnet.eval() 
     pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
     store[f"epoch_{0+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": 0, "accuracy": 0}
