@@ -140,7 +140,12 @@ def run(args, input_config):
 
                 # forward pass + loss calculation
                 with autocast():
-                    weights, biases = model(cond_id=encoder_indices, image_embed_dim=D_img, normalize_output=args.normalize_output)
+                    if args.cond_type == "indices":
+                        weights, biases = model(cond_id=encoder_indices, image_embed_dim=D_img, normalize_output=args.normalize_output)
+                    
+                    elif args.cond_type == "features":
+                        weights, biases = model(cond_id=image_features, image_embed_dim=D_img, normalize_output=args.normalize_output, nolookup=True)
+
                     mapped_text_features = model.map_features(weights, biases, text_features)
                     loss, corrects = model.compute_loss(logit_scale, image_features, mapped_text_features, emb_loss=args.emb_loss)
                     assert len(corrects) == N, "Error: number of encoders != number of mappers predicted and evaluated."
@@ -229,6 +234,7 @@ if __name__ == "__main__":
     parser.add_argument("--experiment-name", type=str, default="multi_mapper_test_0_fixed")
     parser.add_argument("--random-seed", type=int, default=0)
     parser.add_argument("--use-wandb", type=bool, default=False)
+    parser.add_argument("--cond-type", type=str, default="features")
     # model args
     parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
     parser.add_argument("--largest-image-dim", type=int, default=1536)
