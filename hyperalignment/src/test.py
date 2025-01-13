@@ -153,7 +153,7 @@ def main(args):
                 bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
                 bar.update(1)
 
-                if idx == 12903:
+                if idx == 1001:
                     break
         
         pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
