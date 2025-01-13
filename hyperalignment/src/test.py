@@ -37,11 +37,11 @@ def sanity_check(args):
 
     # Feature-wise L2 distances
     for item in id_fts_list:
-        dist_before = np.linalg.norm(ood_fts[:, None, :] - item[:, :, None], axis=0)
-        dist_after = np.linalg.norm(aligned_ood_fts[:, None, :] - item[:, :, None], axis=0)
+        old = compute_cost_matrix(ood_fts, item)
+        new = compute_cost_matrix(aligned_ood_fts, item)
 
-        print(dist_before, dist_after)
-    
+        print(np.diag(old).mean())
+        print(np.diag(new).mean()) 
 
 
 
