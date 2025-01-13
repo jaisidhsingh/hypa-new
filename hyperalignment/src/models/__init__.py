@@ -90,7 +90,23 @@ class ConditionalHyperNetwork(nn.Module):
         elif kwargs["decoder_type"] == "attention":
             self.decoder = AttentionDecoder(param_shapes[0], cond_emb_dim, kwargs["num_layers"], kwargs["num_heads"], kwargs["expansion_factor"])
 
-        assert self.decoder is not None, "Decoder type not recognized." 
+        assert self.decoder is not None, "Decoder type not recognized."
+
+
+    def lookup_embedding_table(self, cond_id): 
+        assert type(cond_id) in [list, int], "Conditional input is of the wrong type."
+
+        if type(cond_id) != list and type(cond_id) == int:
+            cond_id = [cond_id]
+
+        cond_id = torch.tensor(cond_id).long().to(self.cond_embs.weight.device) 
+        num_conds = len(cond_id)
+        cond_emb = self.cond_embs(cond_id) # shape: [num_conds, cond_emb_dim]
+
+        if num_conds == 1:
+            cond_emb = cond_emb.unsqueeze(0)
+        
+        return cond_emb
 
     
     def forward(self, cond_id, image_embed_dim, normalize_output=False, nolookup=False):

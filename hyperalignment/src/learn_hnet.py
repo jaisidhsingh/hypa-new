@@ -11,31 +11,34 @@ from copy import deepcopy
 from contextlib import suppress
 warnings.simplefilter("ignore")
 
-from data.embedding_datasets import MultiMapperEmbeddings
-from data import init_encoder_loader, init_indices_loader
-
+from training.schedulers import *
 from models import ConditionalHyperNetwork
-from models.param_decoders import MLP
-
 from configs.data_configs import data_configs
 from configs.model_configs import model_configs
-
-from training.schedulers import *
-
-from utils import get_hypnet_flops
 from utils.backward_flops import FlopCounterMode
+from data.embedding_datasets import MultiMapperEmbeddings
+from data import init_encoder_loader, init_indices_loader
 
 
 @torch.no_grad()
 def predict_params_for_saving(model, info):
     model.eval()
     outputs = []
-    for k, v in info.items():
-        weights, biases = model(cond_id=v, image_embed_dim=k, nolookup=True)
-        for (w, b) in zip(weights.cpu(), biases.cpu()):
-            outputs.append([w, b])
+
+    for v in info.values():
+        weights, biases = model(cond_id=v["embedding"], image_embed_dim=v["image_embed_dim"], normalize_outputs=True, nolookup=True)
+        outputs.append([weights.squeeze(0), biases.squeeze(0)])
 
     return outputs
+
+
+def recursive_average(avg, data, timestep):
+    if timestep == 1 and avg is None:
+        avg = torch.zeros_like(avg).to(avg.device)
+
+    avg = (timestep - 1) * avg + data.mean(dim=0)
+    avg /= timestep
+    return avg 
 
 
 def run(args, input_config):
@@ -52,21 +55,11 @@ def run(args, input_config):
 
     # load in hyper-network
     kwargs = model_configs.hnet_decoder_configs[args.hnet_decoder_type]
-
-    model = ConditionalHyperNetwork(
-        param_shapes, cond_emb_dim=args.hnet_cond_emb_dim,
-        num_cond_embs=args.num_image_encoders, image_embed_dims=image_embed_dims, kwargs=kwargs 
-    ).to(args.device)
-    
+    model = ConditionalHyperNetwork(param_shapes, cond_emb_dim=args.hnet_cond_emb_dim, num_cond_embs=args.num_image_encoders, image_embed_dims=image_embed_dims, kwargs=kwargs).to(args.device)
     print("Hyper-network loaded.")
-
-    if args.flop_counter == "calflops":
-        hnet_flops = get_hypnet_flops(model, kwargs={"cond_id": [0], "image_embed_dim": 768})
-        print(f"FLOPs for hyper-network (one encoder only): {round(hnet_flops[0], 2)} x 10^{math.log10(hnet_flops[1])}")
 
     # load in dataset and encoder sampler
     config = data_configs.multi_embedding_dataset_configs[args.feature_dataset]
-
     config["image_encoder_data"] = input_config
 
     dataset = MultiMapperEmbeddings(config)
@@ -81,8 +74,10 @@ def run(args, input_config):
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
     if args.scheduler == "off":
         scheduler = None
+    
     elif args.scheduler == "cosine":
         scheduler = cosine_lr(optimizer, args.learning_rate, args.warmup_steps, args.num_epochs * num_batches)
+    
     elif args.scheduler == "linear":
         scheduler = const_lr_cooldown(optimizer, args.learning_rate, args.warmup_steps, args.num_epochs * num_batches, args.cooldown_steps)
 
@@ -97,12 +92,21 @@ def run(args, input_config):
     logit_scale = torch.tensor(np.log(args.logit_scale))
     bar = tqdm(total=args.num_epochs * num_batches)
     encoder_info = {}
-
     flop_counter = FlopCounterMode(model) if args.flop_counter == "custom" else suppress
 
     if args.use_wandb:
         wandb.init(project="hnet-init-scaling", name=args.experiment_name, entity="hyperalignment", config=vars(args))
 
+    # epoch 0 checkpoint
+    logs.update({"args": vars(args)})
+    dump = {
+        "model": model.state_dict(),
+        "logs": logs,
+    }
+    save_path = os.path.join(ckpt_save_folder, f"ckpt_0.pt")
+    torch.save(dump, save_path)
+    print(f"Checkpoint saved before training as epoch 0.")
+    
     # training loop
     for epoch in range(args.num_epochs):
         total = 0
@@ -110,7 +114,7 @@ def run(args, input_config):
         running_loss = 0
 
         # iterate over dataset batches
-        if True: 
+        with flop_counter: 
             for idx in range(num_batches):
 
                 # get the indices of the data samples we want to use
@@ -118,10 +122,6 @@ def run(args, input_config):
 
                 # first sample the encoders to use in this step
                 encoder_indices, encoder_dims = next(encoder_loader)
-
-                # collect the indices and dims as info to be used later
-                if len(encoder_info.keys()) < num_encoder_batches:
-                    encoder_info[encoder_dims[0]] = encoder_indices
 
                 # then get the features made by the sampled encoders
                 image_features, text_features = dataset.get_minibatch(batch_indices, encoder_indices, encoder_dims)
@@ -145,8 +145,6 @@ def run(args, input_config):
                     
                     elif args.cond_type == "features":
                         cond_id = image_features[:, :, :args.hnet_cond_emb_dim].mean(dim=0)
-                        encoder_info[encoder_dims[0]] = cond_id
-                        # print(cond_id.shape)
                         weights, biases = model(cond_id=cond_id, image_embed_dim=D_img, normalize_output=args.normalize_output, nolookup=True)
 
                     mapped_text_features = model.map_features(weights, biases, text_features)
@@ -189,21 +187,31 @@ def run(args, input_config):
                 bar.update(1)
                 bar.set_description(f"Epoch: {epoch+1}, Step: {(epoch * num_batches) + idx+1}")
                 bar.set_postfix(logs[f"epoch_{epoch+1}"])
-            
-            # if epoch == 0:
-                # saved_flop_counter = deepcopy(flop_counter)
-                # print(f"FLOPs for one training epoch: {saved_flop_counter.results}")
-                # flop_counter = suppress
 
+                # update info about embeddings and H-Net
+                model.eval()
+
+                for ii, index in enumerate(encoder_indices):
+                    if args.cond_type == "indices":
+                        encoder_info[index] = {"index": index, "image_embed_dim": D_img, "embedding": model.lookup_embedding_table(index)}
+
+                    elif args.cond_type == "features":
+                        encoder_info[index] = {"index": index, "image_embed_dim": D_img, "embedding": cond_id[ii, :].view(1, args.hnet_cond_emb_dim)}
+                
+                model.train()
+            
+        # make sure we have saved info correctly
+        assert len(encoder_info.keys()) == args.num_image_encoders, "Something went wrong during storing info for H-Net."
+        
         # make sure that we save
         if (epoch+1) in [1, 2, 5, 10, 20, 40, 100, 200] and args.saving:
+            model.eval()
             logs.update({"args": args.__dict__})
             dump = {
-                "optimizer": optimizer.state_dict(),
                 "model": model.state_dict(),
                 "logs": logs,
                 "mapper_params": predict_params_for_saving(model, encoder_info),
-                # "one_epoch_flop_count": saved_flop_counter.results
+                "info": encoder_info
             }
             save_path = os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt")
             torch.save(dump, save_path)
@@ -234,28 +242,27 @@ if __name__ == "__main__":
     parser.add_argument("--results-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results")
     parser.add_argument("--checkpoint-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints")
     parser.add_argument("--experiment-type", type=str, default="multi_mapper")
-    parser.add_argument("--experiment-name", type=str, default="multi_mapper_test_0_fixed")
+    parser.add_argument("--experiment-name", type=str, default="ie_12_mlp_c_32_norm_ft_ep_10_lr1e-3")
     parser.add_argument("--random-seed", type=int, default=0)
     parser.add_argument("--use-wandb", type=bool, default=False)
-    parser.add_argument("--cond-type", type=str, default="indices", choices=["indices", "features"])
+    parser.add_argument("--cond-type", type=str, default="features", choices=["indices", "features"])
     # model args
     parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
-    parser.add_argument("--largest-image-dim", type=int, default=1536)
+    parser.add_argument("--largest-image-dim", type=int, default=1024)
     parser.add_argument("--largest-text-dim", type=int, default=768)
     parser.add_argument("--image-embed-dims", type=str, default="384,768,1024")
-    parser.add_argument("--hidden-layer-factors", type=str, default="4,16")
-    parser.add_argument("--hnet-cond-emb-dim", type=int, default=8)
+    parser.add_argument("--hnet-cond-emb-dim", type=int, default=32)
     parser.add_argument("--hnet-decoder-type", type=str, default="mlp")
-    parser.add_argument("--num-image-encoders", type=int, default=30)
+    parser.add_argument("--num-image-encoders", type=int, default=12)
     parser.add_argument("--logit-scale", type=float, default=100.0)
     parser.add_argument("--normalize-output", type=bool, default=True)
     parser.add_argument("--rescale-factor", type=float, default=0.0)
     parser.add_argument("--emb-loss", type=bool, default=False)
     # training args
-    parser.add_argument("--num-epochs", type=int, default=1)
+    parser.add_argument("--num-epochs", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=512)
-    parser.add_argument("--encoder-batch-size", type=int, default=10)
-    parser.add_argument("--learning-rate", type=float, default=1e-2)
+    parser.add_argument("--encoder-batch-size", type=int, default=4)
+    parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=0.01)
     parser.add_argument("--scheduler", type=str, default="off")
     parser.add_argument("--warmup-steps", type=int, default=500)
