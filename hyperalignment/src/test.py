@@ -200,4 +200,4 @@ if __name__ == "__main__":
     parser.add_argument("--logit-scale", type=float, default=100.0)
 
     args = parser.parse_args()
-    cka_based_sim_weighting(args)
+    main(args)
