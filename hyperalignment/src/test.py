@@ -34,8 +34,8 @@ def sanity_check(args):
     aligned_ood_fts = align_features(ood_fts, id_fts_list)
 
     for item in id_fts_list:
-        old = ood_fts @ item.T
-        new = aligned_ood_fts @ item.T
+        old = torch.from_numpy(ood_fts).cuda() @ torch.from_numpy(item).cuda().T
+        new = torch.from_numpy(aligned_ood_fts).cuda() @ torch.from_numpy(item).cuda().T
 
         print("Percentange of positions for which aligned_sim >= raw_sim:", (new >= old).float().mean())
 
