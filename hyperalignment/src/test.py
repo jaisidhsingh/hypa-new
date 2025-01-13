@@ -18,6 +18,7 @@ from training.loss_functions import ClipLoss
 from configs.data_configs import data_configs
 from configs.model_configs import model_configs
 from utils.backward_flops import FlopCounterMode
+from utils.check_cka import CKA
 from utils.perm_tests import align_features, compute_cost_matrix
 
 
@@ -49,6 +50,29 @@ def sanity_check(args):
         new = new_cost[new_r, new_c].sum()
 
         print((new_cost-old_cost).mean())
+
+
+def cka_based_sim_weighting(args):
+    print(args.image_encoder)
+
+    prefix = "/home/mila/s/sparsha.mishra/scratch/hyperalignment/results"
+
+    ood_fts_path = f"{prefix}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{args.image_encoder}/memmap.npy"
+    ood_fts = np.array(np.memmap(ood_fts_path, dtype="float32", mode="r", shape=(595375,384)))[:10000, :]
+
+    id_fts_paths = [f"{prefix}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{ie}/memmap.npy" for ie in model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim]["image_encoders"][:4]]
+    id_fts_list = [np.array(np.memmap(path, dtype="float32", mode="r", shape=(595375, 384)))[:10000, :] for path in id_fts_paths]
+
+    cka = CKA()
+
+    ood_fts = torch.from_numpy(ood_fts).cuda()
+    aligned_fts = align_features(ood_fts, id_fts_list)
+    aligned_fts = torch.from_numpy(aligned_fts).cuda()
+
+    for item in id_fts_list:
+        old_cka = cka.linear_CKA(ood_fts, torch.from_numpy(item).cuda())
+        new_cka = cka.linear_CKA(aligned_fts, torch.from_numpy(item).cuda())
+        print(old_cka, new_cka)
 
 
 
@@ -182,4 +206,4 @@ if __name__ == "__main__":
     parser.add_argument("--logit-scale", type=float, default=100.0)
 
     args = parser.parse_args()
-    sanity_check(args)
+    cka_based_sim_weighting(args)
