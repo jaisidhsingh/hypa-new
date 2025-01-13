@@ -62,15 +62,9 @@ def cka_based_sim_weighting(args):
     aligned_fts = torch.from_numpy(aligned_fts).cuda()
     ood_fts = torch.from_numpy(ood_fts).cuda()
 
-    print(aligned_fts[0, :10])
-    print(ood_fts[0, :10])
-
-    print(torch.equal(aligned_fts, ood_fts))
-
     for item in id_fts_list:
         old_cka = cka.linear_CKA(ood_fts, torch.from_numpy(item).cuda())
-        new_cka = cka.linear_CKA(aligned_fts, torch.from_numpy(item).cuda())
-        print(old_cka, new_cka)
+        print(old_cka)
 
 
 
@@ -204,4 +198,4 @@ if __name__ == "__main__":
     parser.add_argument("--logit-scale", type=float, default=100.0)
 
     args = parser.parse_args()
-    sanity_check(args)
+    cka_based_sim_weighting(args)
