@@ -1,13 +1,15 @@
 # c=32, mlp decoder, output norm, no init scaling, no scheduler
 # num_ie = 12
 python3 src/learn_multi_mapper.py \
-    --experiment-name="ie_12_mlp_c_32_norm_ft" \
+    --experiment-name="ie_12_mlp_c_32_norm_ft_ep_10_lr1e-3" \
     --num-image-encoders=12 \
     --hnet-cond-emb-dim=32 \
     --scheduler="off" \
     --normalize-output=True \
     --emb-loss=False \
     --cond-type="features" \
+    --num-epochs=10 \
+    --learning-rate=1e-3 \
     --hnet-decoder-type="mlp";
 
 

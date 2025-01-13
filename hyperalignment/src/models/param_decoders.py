@@ -109,7 +109,7 @@ class AttentionDecoder(nn.Module):
         weights = params[:, :, :-1]
         biases = params[:, :, -1]
         return weights, biases
-
+    
 
 def test():
     decoder = AttentionDecoder((768, 384), 32, 12, 8)
