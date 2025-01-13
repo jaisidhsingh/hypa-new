@@ -158,8 +158,6 @@ def main(args):
                 bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
                 bar.update(1)
 
-                print(flop_counter.flop_counts)
-
                 # if idx == 1001:
                 #     break
     hnet.eval() 
