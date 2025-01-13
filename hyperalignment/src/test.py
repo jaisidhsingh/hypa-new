@@ -65,9 +65,9 @@ def cka_based_sim_weighting(args):
 
     cka = CKA("cuda")
 
-    ood_fts = torch.from_numpy(ood_fts).cuda()
     aligned_fts = align_features(ood_fts, id_fts_list)
     aligned_fts = torch.from_numpy(aligned_fts).cuda()
+    ood_fts = torch.from_numpy(ood_fts).cuda()
 
     for item in id_fts_list:
         old_cka = cka.linear_CKA(ood_fts, torch.from_numpy(item).cuda())
