@@ -6,6 +6,7 @@ import warnings
 from tqdm import tqdm
 from contextlib import suppress
 warnings.simplefilter("ignore")
+from scipy.optimize import linear_sum_assignment
 
 import torch
 import torch.nn as nn
@@ -35,10 +36,15 @@ def sanity_check(args):
 
     for item in id_fts_list:
         old_cost = compute_cost_matrix(ood_fts, item)
+        old_r, old_c = linear_sum_assignment(old_cost)
+        old = old_cost[old_r, old_c].sum()
+
         new_cost = compute_cost_matrix(aligned_ood_fts, item)
+        new_r, new_c = linear_sum_assignment(new_cost)
+        new = new_cost[new_r, new_c]
 
         print(old_cost.shape)
-        print("Percentange of positions for which aligned_sim <= raw_sim:", (new_cost < old_cost).astype(np.float32).mean())
+        print("Percentange of positions for which aligned_cot <= raw_cost:", (new <= old).astype(np.float32).mean())
 
 
 def main(args):
