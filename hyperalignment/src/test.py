@@ -23,10 +23,12 @@ from utils.perm_tests import align_features
 def sanity_check(args):
     print(args.image_encoder)
 
-    ood_fts_path = f"{args.results_folder}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{args.image_encoder}/memmap.npy"
+    prefix = "/home/mila/s/sparsha.mishra/scratch/hyperalignment/results"
+
+    ood_fts_path = f"{prefix}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{args.image_encoder}/memmap.npy"
     ood_fts = np.array(np.memmap(ood_fts_path, dtype="float32", mode="r", shape=(595375,384)))[:10000, :]
 
-    id_fts_paths = [f"{args.results_folder}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{ie}/memmap.npy" for ie in model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim][:4]]
+    id_fts_paths = [f"{prefix}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{ie}/memmap.npy" for ie in model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim]["image_encoders"][:4]]
     id_fts_list = [np.array(np.memmap(path, dtype="float32", mode="r", shape=(595375, 384)))[:10000, :] for path in id_fts_paths]
 
     aligned_ood_fts = align_features(ood_fts, id_fts_list)
