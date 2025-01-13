@@ -150,8 +150,8 @@ def load_ood_ckpt(args, model):
     print(args.ood_results_path)
     path = os.path.join(folder, args.ood_results_path)
     store = torch.load(path)
-    num_epochs = store["config"]["num_epochs"]
-    [weight, bias] = store[f"epoch_{num_epochs}"]["mapper_params"]
+    # num_epochs = store["config"]["num_epochs"]
+    [weight, bias] = store[f"epoch_1"]["mapper_params"]
     model.mapper.layers[0].weight.data = weight.to(args.device)
     model.mapper.layers[0].bias.data = bias.to(args.device)
     model.mapper = model.mapper.to(args.device)
