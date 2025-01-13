@@ -28,20 +28,21 @@ def sanity_check(args):
     prefix = "/home/mila/s/sparsha.mishra/scratch/hyperalignment/results"
 
     ood_fts_path = f"{prefix}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{args.image_encoder}/memmap.npy"
-    ood_fts = np.array(np.memmap(ood_fts_path, dtype="float32", mode="r", shape=(595375,384)))[:10000, :]
+    ood_fts = np.array(np.memmap(ood_fts_path, dtype="float32", mode="r", shape=(595375,384)))
 
     id_fts_paths = [f"{prefix}/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie/dim_{args.image_embed_dim}/{ie}/memmap.npy" for ie in model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim]["image_encoders"][:4]]
-    id_fts_list = [np.array(np.memmap(path, dtype="float32", mode="r", shape=(595375, 384)))[:10000, :] for path in id_fts_paths]
+    id_fts_list = [np.array(np.memmap(path, dtype="float32", mode="r", shape=(595375, 384))) for path in id_fts_paths]
 
-    aligned_ood_fts = align_features(ood_fts, id_fts_list)
+    P = align_features(ood_fts, id_fts_list, return_perm=True)
+    return P
 
-    # Feature-wise L2 distances
-    for item in id_fts_list:
-        old = compute_cost_matrix(ood_fts, item)
-        new = compute_cost_matrix(aligned_ood_fts, item)
+    # # Feature-wise L2 distances
+    # for item in id_fts_list:
+    #     old = compute_cost_matrix(ood_fts, item)
+    #     new = compute_cost_matrix(aligned_ood_fts, item)
 
-        print(np.diag(old).mean())
-        print(np.diag(new).mean()) 
+    #     print(np.diag(old).mean())
+    #     print(np.diag(new).mean()) 
 
 
 
@@ -67,9 +68,10 @@ def cka_based_sim_weighting(args):
         print(old_cka)
 
 
-
 def main(args):
     torch.manual_seed(args.random_seed)
+
+    P = sanity_check(args)
 
     param_shapes = [[args.largest_image_dim, args.largest_text_dim], [args.largest_image_dim]]
     image_embed_dims = [int(x) for x in args.image_embed_dims.split(",")]
@@ -102,7 +104,7 @@ def main(args):
     print("Freezed hypernetwork parameters.")
 
     # Initialise the embedding to be learnt as the avg of the hnet's embeddings
-    embedding.weight.data = hnet.cond_embs.weight.data[:, :].mean(dim=0).unsqueeze(0)
+    embedding.weight.data = hnet.cond_embs.weight.data[:4, :].mean(dim=0).unsqueeze(0)
     
     dataset_config = data_configs.separate_embedding_dataset_configs(args)
     dataset = SeparateEmbeddings(dataset_config)
@@ -127,7 +129,7 @@ def main(args):
 
         if True: # holder for "with flop_counter:"
             for idx, (image_embeddings, text_embeddings) in enumerate(loader):
-                image_embeddings = image_embeddings.to(args.device)
+                image_embeddings = image_embeddings.to(args.device) @ P.to(args.device)
                 text_embeddings = text_embeddings.to(args.device)
 
                 optimizer.zero_grad()

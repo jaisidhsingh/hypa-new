@@ -40,9 +40,13 @@ def find_best_permutation(ood_model_fts, id_models_fts_list):
 
     return best_perm
 
-def align_features(ood_model_fts, id_models_fts_list):
+def align_features(ood_model_fts, id_models_fts_list, return_perm=False):
     best_perm = find_best_permutation(ood_model_fts, id_models_fts_list)
     
     aligned_features = ood_model_fts @ best_perm
-    return aligned_features
+
+    if return_perm:
+        return best_perm
+    else:
+        return aligned_features
 
