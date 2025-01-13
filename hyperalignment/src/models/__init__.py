@@ -80,6 +80,8 @@ class ConditionalHyperNetwork(nn.Module):
         self.cond_embs = nn.Embedding(num_cond_embs, cond_emb_dim)
         self.shape_embs = nn.Embedding(len(image_embed_dims), cond_emb_dim)
 
+        self.cond_dim = cond_emb_dim
+
         self.decoder = None
         
         if kwargs["decoder_type"] == "mlp":
