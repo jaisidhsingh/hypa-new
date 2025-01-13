@@ -1,6 +1,6 @@
 python3 src/learn_separate_mapping.py \
-    --experiment-name="visformer_tiny.in1k" \
-    --image-encoder="visformer_tiny.in1k" \
+    --experiment-name="flexivit_small.300ep_in1k" \
+    --image-encoder="flexivit.300ep_in1k" \
     --image-embed-dim=384 \
     --num-epochs=1;
 
