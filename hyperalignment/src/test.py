@@ -17,7 +17,7 @@ from training.loss_functions import ClipLoss
 from configs.data_configs import data_configs
 from configs.model_configs import model_configs
 from utils.backward_flops import FlopCounterMode
-from utils.perm_tests import align_features
+from utils.perm_tests import align_features, compute_cost_matrix
 
 
 def sanity_check(args):
@@ -34,10 +34,9 @@ def sanity_check(args):
     aligned_ood_fts = align_features(ood_fts, id_fts_list)
 
     for item in id_fts_list:
-        old = torch.from_numpy(ood_fts).cuda() @ torch.from_numpy(item).cuda().T
-        new = torch.from_numpy(aligned_ood_fts).cuda() @ torch.from_numpy(item).cuda().T
-
-        print("Percentange of positions for which aligned_sim >= raw_sim:", (new >= old).float().mean())
+        old_cost = compute_cost_matrix(ood_fts, item)
+        new_cost = compute_cost_matrix(aligned_ood_fts, item)
+        print("Percentange of positions for which aligned_sim >= raw_sim:", (new_cost < old_cost).astype(np.float32).mean())
 
 
 def main(args):
