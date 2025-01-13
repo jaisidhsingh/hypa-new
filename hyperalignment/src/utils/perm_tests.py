@@ -1,3 +1,4 @@
+from pylab import plt
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 
@@ -34,6 +35,9 @@ def find_best_permutation(ood_model_fts, id_models_fts_list):
             
     print(best_cost)
     print(best_perm.sum())
+    plt.imshow(best_perm)
+    plt.savefig("x.png")
+
     return best_perm
 
 def align_features(ood_model_fts, id_models_fts_list):
