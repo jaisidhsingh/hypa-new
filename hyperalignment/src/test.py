@@ -36,6 +36,8 @@ def sanity_check(args):
     for item in id_fts_list:
         old_cost = compute_cost_matrix(ood_fts, item)
         new_cost = compute_cost_matrix(aligned_ood_fts, item)
+
+        print(old_cost.shape)
         print("Percentange of positions for which aligned_sim >= raw_sim:", (new_cost < old_cost).astype(np.float32).mean())
 
 
