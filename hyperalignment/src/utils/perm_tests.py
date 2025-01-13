@@ -33,6 +33,7 @@ def find_best_permutation(ood_model_fts, id_models_fts_list):
             best_perm = P
             
     print(best_cost)
+    print(best_perm.sum())
     return best_perm
 
 def align_features(ood_model_fts, id_models_fts_list):
