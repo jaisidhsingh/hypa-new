@@ -144,7 +144,8 @@ def run(args, input_config):
                         weights, biases = model(cond_id=encoder_indices, image_embed_dim=D_img, normalize_output=args.normalize_output)
                     
                     elif args.cond_type == "features":
-                        weights, biases = model(cond_id=image_features, image_embed_dim=D_img, normalize_output=args.normalize_output, nolookup=True)
+                        cond_id = image_features.mean(dim=0)[:model.cond_embs.weight.shape[1]]
+                        weights, biases = model(cond_id=cond_id, image_embed_dim=D_img, normalize_output=args.normalize_output, nolookup=True)
 
                     mapped_text_features = model.map_features(weights, biases, text_features)
                     loss, corrects = model.compute_loss(logit_scale, image_features, mapped_text_features, emb_loss=args.emb_loss)
