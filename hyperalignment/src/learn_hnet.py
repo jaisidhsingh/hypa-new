@@ -47,11 +47,6 @@ def run(args, input_config):
     # largest mapper shape
     param_shapes = [[args.largest_image_dim, args.largest_text_dim], [args.largest_image_dim]]
     image_embed_dims = [int(x) for x in args.image_embed_dims.split(",")]
-    hidden_layer_factors = [int(x) for x in args.hidden_layer_factors.split(",")]
-    
-    # make an easy switch to linear
-    if hidden_layer_factors == [0]:
-        hidden_layer_factors = []
 
     # load in hyper-network
     kwargs = model_configs.hnet_decoder_configs[args.hnet_decoder_type]
