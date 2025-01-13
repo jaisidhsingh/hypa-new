@@ -97,10 +97,10 @@ def main(args):
     print("Initialized hypernetwork (decoder) with saved checkpoint:", args.hnet_ckpt_name)
 
     # freeze the hypernetwork which decodes the conditional embedding that we are optimizing
-    for p in hnet.parameters():
-        p.requires_grad = False #True
-    # set to eval mode 
-    hnet.eval()
+    # for p in hnet.parameters():
+    #     p.requires_grad = False #True
+    # # set to eval mode 
+    hnet.train()
     print("Freezed hypernetwork parameters.")
 
     # Initialise the embedding to be learnt as the avg of the hnet's embeddings
@@ -112,54 +112,54 @@ def main(args):
     print("Loaded dataset for OOD image encoder.")
 
 
-    optimizer = torch.optim.SGD(embedding.parameters(), lr=args.learning_rate)
+    optimizer = torch.optim.Adam(hnet.parameters(), lr=args.learning_rate)
     criterion = ClipLoss(args)
 
     image_embed_dim = args.image_embed_dim
     logit_scale = torch.tensor(math.log(args.logit_scale)).to(args.device)
 
-    # bar = tqdm(total=int(args.num_epochs * len(loader)))
+    bar = tqdm(total=int(args.num_epochs * len(loader)))
     store = {}
 
     # flop_counter = FlopCounterMode(embedding)
 
     hnet_cond_emb_dim = int(args.hnet_ckpt_name.split("_")[4])
-    image_embeddings, _ = next(iter(loader))
-    cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim).to(args.device)
-    # for epoch in range(args.num_epochs):
-    #     running_loss = 0.0
-    #     correct, total = 0, 0
+    # image_embeddings, _ = next(iter(loader))
+    # cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim).to(args.device)
+    for epoch in range(args.num_epochs):
+        running_loss = 0.0
+        correct, total = 0, 0
 
-    #     if True: # holder for "with flop_counter:"
-    #         for idx, (image_embeddings, text_embeddings) in enumerate(loader):
-    #             image_embeddings = image_embeddings.to(args.device) #@ P.to(args.device)
-    #             text_embeddings = text_embeddings.to(args.device)
+        if True: # holder for "with flop_counter:"
+            for idx, (image_embeddings, text_embeddings) in enumerate(loader):
+                image_embeddings = image_embeddings.to(args.device) #@ P.to(args.device)
+                text_embeddings = text_embeddings.to(args.device)
 
-    #             optimizer.zero_grad()
-    #             # cond_emb = embedding(torch.tensor([0]).to(args.device))
-    #             cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim)
-    #             pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
+                optimizer.zero_grad()
+                # cond_emb = embedding(torch.tensor([0]).to(args.device))
+                cond_emb = image_embeddings[:, :hnet_cond_emb_dim].mean(dim=0).view(1, hnet_cond_emb_dim)
+                pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
 
-    #             pred_weight = pred_weight.squeeze(0)
-    #             pred_bias = pred_bias.squeeze(0)
-    #             mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
+                pred_weight = pred_weight.squeeze(0)
+                pred_bias = pred_bias.squeeze(0)
+                mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
 
-    #             loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
+                loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
                 
-    #             correct += corrects
-    #             total += image_embeddings.shape[0]
-    #             accuracy = round(correct/total * 100, 2)
+                correct += corrects
+                total += image_embeddings.shape[0]
+                accuracy = round(correct/total * 100, 2)
 
-    #             loss.backward()
-    #             optimizer.step()
+                loss.backward()
+                optimizer.step()
 
-    #             running_loss = round(loss.item(), 2)
-    #             bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
-    #             bar.update(1)
+                running_loss = round(loss.item(), 2)
+                bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
+                bar.update(1)
 
-    #             if idx == 1001:
-    #                 break
-        
+                # if idx == 1001:
+                #     break
+    hnet.eval() 
     pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
     store[f"epoch_{0+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": 0, "accuracy": 0}
 
