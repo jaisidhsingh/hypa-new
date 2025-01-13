@@ -1,20 +1,20 @@
+# python3 src/evaluation.py \
+#     --exp-name="visformer_tiny.in1k" \
+#     --seed=0 \
+#     --run-type="sep" \
+#     --epoch=1 \
+#     --encoder-index=6 \
+#     --image-embed-dim=384 \
+#     --benchmarks="cifar10,cifar100,imagenet1k";
+
 python3 src/evaluation.py \
-    --exp-name="visformer_tiny.in1k" \
+    --exp-name="vit_small_patch16_224" \
     --seed=0 \
     --run-type="sep" \
     --epoch=1 \
-    --encoder-index=6 \
     --image-embed-dim=384 \
+    --encoder-index=0 \
     --benchmarks="cifar10,cifar100,imagenet1k";
-
-# python3 src/evaluation.py \
-#     --exp-name="vit_base_patch16_224" \
-#     --seed=0 \
-#     --run-type="sep" \
-#     --epoch=10 \
-#     --image-embed-dim=768 \
-#     --encoder-index=0 \
-#     --benchmarks="cifar10,cifar100,imagenet1k";
 
 # python3 src/evaluation.py \
 #     --exp-name="vit_large_patch16_224" \
