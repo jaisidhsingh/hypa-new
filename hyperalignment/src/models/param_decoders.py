@@ -29,7 +29,7 @@ class MLP(nn.Module):
 
     def forward(self, x):
         x = self.layers(x)
-        return F.normalize(x, dim=-1)
+        return x #F.normalize(x, dim=-1)
 
 
 class MlpDecoder(nn.Module):

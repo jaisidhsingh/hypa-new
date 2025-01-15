@@ -244,6 +244,6 @@ print(int(flops[0]), "10^", math.log10(flops[1]))
 
 
 model = MLP(768, [], 384)
-input_kwargs = {"x": torch.randn(1,768)}
+input_kwargs = {"x": torch.randn(16384,768)}
 flops = get_hypnet_flops(model, input_kwargs)
 print(int(flops[0]), "10^", math.log10(flops[1]))
