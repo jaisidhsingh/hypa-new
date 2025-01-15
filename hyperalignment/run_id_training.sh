@@ -51,14 +51,14 @@
 #     --hnet-decoder-type="mlp";
 
 python3 src/learn_hnet.py \
-    --experiment-name="ie_12_mlp_c_32_norm_ft_ep10_lr1e-2_bs_4096" \
+    --experiment-name="ie_12_mlp_c_32_norm_no_se" \
     --num-image-encoders=12 \
     --encoder-batch-size=4 \
     --hnet-cond-emb-dim=32 \
     --cond-type="features" \
-    --num-epochs=10 \
-    --learning-rate=1 \
-    --batch-size=4096 \
+    --num-epochs=1 \
+    --learning-rate=1e-3 \
+    --batch-size=512 \
     --scheduler="off" \
     --emb-loss=False \
     --normalize-output=True \

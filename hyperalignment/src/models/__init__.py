@@ -127,11 +127,11 @@ class ConditionalHyperNetwork(nn.Module):
             num_conds = cond_id.shape[0]
             cond_emb = cond_id
 
-        shape_id = torch.tensor([self.image_embed_dims.index(image_embed_dim)]).long().to(self.cond_embs.weight.device)
-        shape_emb = self.shape_embs(shape_id) # shape: [1, cond_emb_dim]
-        shape_emb = shape_emb.repeat((num_conds, 1)) # shape: [num_conds, cond_emb_dim]
+        # shape_id = torch.tensor([self.image_embed_dims.index(image_embed_dim)]).long().to(self.cond_embs.weight.device)
+        # shape_emb = self.shape_embs(shape_id) # shape: [1, cond_emb_dim]
+        # shape_emb = shape_emb.repeat((num_conds, 1)) # shape: [num_conds, cond_emb_dim]
 
-        final_cond_emb = cond_emb + shape_emb
+        final_cond_emb = cond_emb #+ shape_emb
 
         pred_weight, pred_bias = self.decoder(final_cond_emb)
         pred_weight = pred_weight[:, :image_embed_dim, :]
