@@ -126,8 +126,8 @@ def run(args, input_config):
                 image_features = image_features.float().to(args.device)
                 text_features = text_features.float().to(args.device)
 
+                step = (epoch * num_batches) + idx
                 if scheduler is not None:
-                    step = (epoch * num_batches) + idx
                     scheduler(step)
 
                 # zero grads
