@@ -103,13 +103,14 @@ def run(args, input_config):
     print(f"Checkpoint saved before training as epoch 0.")
     
     # training loop
-    for epoch in range(args.num_epochs):
-        total = 0
-        correct_store = [0 for _ in range(args.num_image_encoders)]
-        running_loss = 0
+    with flop_counter: 
+
+        for epoch in range(args.num_epochs):
+            total = 0
+            correct_store = [0 for _ in range(args.num_image_encoders)]
+            running_loss = 0
 
         # iterate over dataset batches
-        with flop_counter: 
             for idx in range(num_batches):
 
                 # get the indices of the data samples we want to use
