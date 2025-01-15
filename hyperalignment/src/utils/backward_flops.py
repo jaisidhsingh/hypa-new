@@ -193,14 +193,16 @@ class FlopCounterMode(TorchDispatchMode):
         super().__enter__()
 
     def __exit__(self, *args):
-        gmacs = round(sum(self.flop_counts['Global'].values())/1e9, 2)
+        gmacs = round(sum(self.flop_counts['Global'].values()), 2)
         gflops = 2 * gmacs # flops = 2 * macs approximately
+        gflops = round(gflops, 2)
         print(f"Total: {gflops} GFlops")
         for mod in self.flop_counts.keys():
             print(f"Module: ", mod)
             for k,v in self.flop_counts[mod].items():
-                mod_gmacs = round(v/1e9, 10)
+                mod_gmacs = round(v, 2)
                 mod_gflops = mod_gmacs * 2
+                mod_gflops = round(mod_gflops, 2)
                 print(f"{k}: {mod_gflops} GFLOPS")
                 self.results[k] = (mod_gflops, 1e+9)
             print()
