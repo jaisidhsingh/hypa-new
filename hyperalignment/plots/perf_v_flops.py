@@ -20,7 +20,22 @@ ape_flops = [843.56e+9 * 37 * i for i in ape_epochs]
 
 hnet_acc = [10.7, 14.1, 23.9] #, 36.10]
 hnet_epochs = [1, 5, 10] #, 5]
-hnet_flops = [23632e+9 / 30 * i for i in hnet_epochs]
+hnet_flops = [23632e+9 / 12 * i for i in hnet_epochs]
+
+"""
+
+In one epoch for the hnet:
+1. All samples once.
+2. All models multiple times.
+
+FLOPs_for_hnet_1ep = 23000 GFLOPs (num_ie = 12, all data samples in the dataset, regardless mini_batch_of_models)
+input_to_hnet.shape = [len(models), 32]
+input_passes_through_MLP_of_config = [128, 512, N*M]
+
+FLOPs_for_APE_1ep =  31200 GFLOPs (num_ie = 1, per pair.)
+input_to_APE_ll = [16384, 384]
+input_passes_through_MLP_of_config = [768] (weights.shape = (384, 768))
+"""
 
 plt.plot(hnet_flops, hnet_acc, marker="*", label="H-Net ViT-S/16")
 plt.plot(ape_flops, ape_accs, marker="o", label="APE ViT-S/16")

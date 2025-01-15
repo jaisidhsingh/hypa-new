@@ -287,19 +287,19 @@ class SeparateTrainer():
                 del text_features
                 del mapped_text_features
 
-                if epoch == 0:
-                    saved_flop_counter_results = deepcopy(flop_counter) #.results
-                    saved_flop_counter_results = saved_flop_counter_results.flop_counts
+                # if epoch == 0:
+                    # saved_flop_counter_results = deepcopy(flop_counter) #.results
+                    # saved_flop_counter_results = saved_flop_counter_results.flop_counts
                     # flop_counter = suppress
-                else:
-                    saved_flop_counter_results = None
+                # else:
+                    # saved_flop_counter_results = None
                 
                 # if idx == 8:
                 #     logs["avg_loss"] /= idx+1
                 #     return logs, saved_flop_counter_results
 
             logs["avg_loss"] /= idx+1
-        return logs, saved_flop_counter_results
+        return logs, None
 
     @torch.no_grad()
     def val_one_epoch(self, model, loader, criterion):

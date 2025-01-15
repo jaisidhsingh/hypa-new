@@ -27,7 +27,7 @@ def get_hypnet_flops(hypnet, kwargs, include_backward=True):
         "G": 1e+9,
         "T": 1e+12
     }
-    flops, macs, _ = calculate_flops(model=hypnet, kwargs=kwargs, print_results=False)
+    flops, macs, _ = calculate_flops(model=hypnet, kwargs=kwargs, print_results=True)
     flops = flops.split(" ")
     num = float(flops[0])
     exp = exponent_map[flops[1][0]]
