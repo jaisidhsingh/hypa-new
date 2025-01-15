@@ -88,7 +88,7 @@ class ConditionalHyperNetwork(nn.Module):
         self.decoder = None
         
         if kwargs["decoder_type"] == "mlp":
-            self.decoder = MlpDecoder(param_shapes[0], cond_emb_dim, kwargs["hidden_layer_factors"])
+            self.decoder = MlpDecoder(param_shapes[0], 4*cond_emb_dim, kwargs["hidden_layer_factors"])
         
         elif kwargs["decoder_type"] == "attention":
             self.decoder = AttentionDecoder(param_shapes[0], cond_emb_dim, kwargs["num_layers"], kwargs["num_heads"], kwargs["expansion_factor"])
