@@ -58,7 +58,8 @@ python3 src/learn_hnet.py \
     --cond-type="features" \
     --num-epochs=1 \
     --learning-rate=1e-3 \
-    --batch-size=512 \
+    --scheduler="cosine" \
+    --batch-size=1024 \
     --scheduler="off" \
     --emb-loss=False \
     --normalize-output=True \
