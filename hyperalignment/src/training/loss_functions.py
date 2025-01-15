@@ -6,7 +6,9 @@ import torch.nn.functional as F
 class ClipLoss():
     def __init__(self, args):
         self.args = args
-        self.device = args.device
+        self.device = "cpu"
+        if args is not None:
+            self.device = args.device
 
     def get_labels(self, batch_size):
         labels = torch.arange(batch_size, dtype=torch.long)

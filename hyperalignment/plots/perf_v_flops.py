@@ -16,11 +16,11 @@ ViT-S
 """
 ape_accs = [12.0 , 20.5, 25.5]
 ape_epochs = [1, 5, 10]
-ape_flops = [843.56e+9 * 37 * i for i in ape_epochs]
+ape_flops = [30.484e+12 * i for i in ape_epochs]
 
 hnet_acc = [10.7, 14.1, 23.9] #, 36.10]
 hnet_epochs = [1, 5, 10] #, 5]
-hnet_flops = [23632e+9 / 12 * i for i in hnet_epochs]
+hnet_flops = [13.08e+12 / 12 * i for i in hnet_epochs]
 
 """
 
@@ -52,4 +52,4 @@ for i in range(3):
     plt.annotate(f"{hnet_epochs[i]}", (hnet_flops[i], hnet_acc[i]))
 
 plt.title("ViT-S/16 Performance v/s FLOPs tradeoff")
-plt.savefig("vits_imagenet_flops.png")
+plt.savefig("new_flops_check.png")
