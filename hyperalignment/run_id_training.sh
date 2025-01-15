@@ -59,7 +59,7 @@ python3 src/learn_hnet.py \
     --num-epochs=1 \
     --learning-rate=1e-3 \
     --scheduler="cosine" \
-    --batch-size=1024 \
+    --batch-size=2048 \
     --scheduler="off" \
     --emb-loss=False \
     --normalize-output=True \
