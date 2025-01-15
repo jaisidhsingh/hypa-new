@@ -52,8 +52,8 @@
 
 python3 src/learn_hnet.py \
     --experiment-name="ie_12_mlp_c_32_norm_flop_test" \
-    --num-image-encoders=12 \
-    --encoder-batch-size=4 \
+    --num-image-encoders=30 \
+    --encoder-batch-size=10 \
     --hnet-cond-emb-dim=32 \
     --cond-type="features" \
     --num-epochs=2 \
