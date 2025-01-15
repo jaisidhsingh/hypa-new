@@ -57,10 +57,10 @@ python3 src/learn_hnet.py \
     --hnet-cond-emb-dim=32 \
     --cond-type="features" \
     --num-epochs=1 \
-    --learning-rate=1e-3 \
+    --learning-rate=2e-2 \
     --scheduler="cosine" \
-    --warmup-steps=50 \
-    --batch-size=2048 \
+    --warmup-steps=10 \
+    --batch-size=4096 \
     --scheduler="off" \
     --emb-loss=False \
     --normalize-output=True \
