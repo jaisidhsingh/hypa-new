@@ -20,7 +20,7 @@ class SeparateTrainer():
         logs = {"avg_loss": 0, "accuracy": 0}
         correct, total = 0, 0
 
-        flop_counter = FlopCounterMode(model, display=True, depth=2)
+        flop_counter = FlopCounterMode(model, display=True, depth=4)
         total_flops = None
 
         with flop_counter:

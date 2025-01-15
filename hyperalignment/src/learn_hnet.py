@@ -87,7 +87,7 @@ def run(args, input_config):
     logit_scale = torch.tensor(np.log(args.logit_scale))
     bar = tqdm(total=args.num_epochs * num_batches)
     encoder_info = {}
-    flop_counter = FlopCounterMode(model, display=True, depth=2)
+    flop_counter = FlopCounterMode(model, display=True, depth=4)
 
     if args.use_wandb:
         wandb.init(project="hnet-init-scaling", name=args.experiment_name, entity="hyperalignment", config=vars(args))
