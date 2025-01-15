@@ -80,6 +80,9 @@ class ConditionalHyperNetwork(nn.Module):
         self.cond_embs = nn.Embedding(num_cond_embs, cond_emb_dim)
         self.shape_embs = nn.Embedding(len(image_embed_dims), cond_emb_dim)
 
+        self.in_proj = nn.Linear(cond_emb_dim, 4*cond_emb_dim)
+        self.attn = nn.TransformerEncoderLayer(4*cond_emb_dim, 4)
+
         self.cond_dim = cond_emb_dim
 
         self.decoder = None
