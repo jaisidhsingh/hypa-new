@@ -201,15 +201,16 @@ class FlopCounterMode(TorchDispatchMode):
         super().__enter__()
 
     def __exit__(self, *args):
-        gmacs = round(sum(self.flop_counts['Global'].values())/1e9, 2)
+        gmacs = round(sum(self.flop_counts['Global'].values()), 2)
         gflops = 2 * gmacs # flops = 2 * macs approximately
-        print(f"Total: {gflops} GFlops")
+        gflops = round(2 * gmacs, 2)
+        print(f"Total: {gflops}")
         for mod in self.flop_counts.keys():
             print(f"Module: ", mod)
             for k,v in self.flop_counts[mod].items():
-                mod_gmacs = round(v/1e9, 2)
-                mod_gflops = mod_gmacs * 2
-                print(f"{k}: {mod_gflops} GFLOPS")
+                mod_gmacs = round(v, 2)
+                mod_gflops = round(mod_gmacs * 2, 2)
+                print(f"{k}: {mod_gflops}")
             print()
         super().__exit__(*args)
 
@@ -242,8 +243,8 @@ class SeparateTrainer():
 
         flop_counter = FlopCounterMode(model)
         saved_flop_counter_results = None
-        for idx, (image_features, text_features) in enumerate(loader):
-            with flop_counter:
+        with flop_counter:
+            for idx, (image_features, text_features) in enumerate(loader):
                 step = int(epoch * len(loader)) + idx + 1
                 batch_size = image_features.shape[0]
 
