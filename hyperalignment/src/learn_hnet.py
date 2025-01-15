@@ -195,8 +195,8 @@ def run(args, input_config):
                 
                 model.train()
 
-                if step >= 499:
-                    break
+                # if step >= 499:
+                #     break
             
         # make sure we have saved info correctly
         assert len(encoder_info.keys()) == args.num_image_encoders, "Something went wrong during storing info for H-Net."
