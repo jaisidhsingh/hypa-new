@@ -60,7 +60,7 @@ python3 src/learn_hnet.py \
     --learning-rate=1e-2 \
     --scheduler="off" \
     --warmup-steps=100 \
-    --batch-size=512 \
+    --batch-size=2048 \
     --scheduler="off" \
     --emb-loss=False \
     --normalize-output=True \
