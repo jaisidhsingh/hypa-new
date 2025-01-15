@@ -9,13 +9,13 @@ import numpy as np
 from tqdm import tqdm
 from copy import deepcopy
 from contextlib import suppress
+from torch.utils.flop_counter import FlopCounterMode
 warnings.simplefilter("ignore")
 
 from training.schedulers import *
 from models import ConditionalHyperNetwork
 from configs.data_configs import data_configs
 from configs.model_configs import model_configs
-from utils.backward_flops import FlopCounterMode
 from data.embedding_datasets import MultiMapperEmbeddings
 from data import init_encoder_loader, init_indices_loader
 
@@ -87,7 +87,7 @@ def run(args, input_config):
     logit_scale = torch.tensor(np.log(args.logit_scale))
     bar = tqdm(total=args.num_epochs * num_batches)
     encoder_info = {}
-    flop_counter = FlopCounterMode(model) if args.flop_counter == "custom" else suppress
+    flop_counter = FlopCounterMode(model, display=True, depth=2)
 
     if args.use_wandb:
         wandb.init(project="hnet-init-scaling", name=args.experiment_name, entity="hyperalignment", config=vars(args))
@@ -195,9 +195,6 @@ def run(args, input_config):
                 
                 model.train()
 
-                # if step >= 499:
-                #     break
-            
         # make sure we have saved info correctly
         assert len(encoder_info.keys()) == args.num_image_encoders, "Something went wrong during storing info for H-Net."
         

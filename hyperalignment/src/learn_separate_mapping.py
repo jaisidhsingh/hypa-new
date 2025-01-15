@@ -20,9 +20,6 @@ from configs.model_configs import model_configs
 from training import SeparateTrainer
 from training.schedulers import cosine_lr
 from training.loss_functions import ClipLoss
-
-from utils import get_mapper_flops
-from utils.backward_flops import FlopCounterMode
 warnings.simplefilter("ignore")
 
 
