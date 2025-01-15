@@ -26,7 +26,7 @@
 #     --benchmarks="imagenet1k";
 
 python3 src/evaluation.py \
-    --exp-name="ie_12_mlp_c_32_norm_ft" \
+    --exp-name="ie_12_mlp_c_32_norm_ft_ep10_lr1e-3" \
     --seed=0 \
     --run-type="mm" \
     --epoch=5 \
@@ -35,7 +35,7 @@ python3 src/evaluation.py \
     --benchmarks="cifar10,cifar100,imagenet1k";
 
 python3 src/evaluation.py \
-    --exp-name="ie_12_mlp_c_32_norm_ft" \
+    --exp-name="ie_12_mlp_c_32_norm_ft_ep10_lr1e-3" \
     --seed=0 \
     --run-type="mm" \
     --epoch=10 \
