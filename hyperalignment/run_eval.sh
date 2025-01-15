@@ -17,7 +17,7 @@
 #     --benchmarks="cifar10,cifar100,imagenet1k";
 
 python3 src/evaluation.py \
-    --exp-name="vit_large_patch16_224" \
+    --exp-name="vit_small_patch16_224" \
     --seed=0 \
     --run-type="sep" \
     --epoch=1 \
