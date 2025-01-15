@@ -57,7 +57,7 @@ python3 src/learn_hnet.py \
     --hnet-cond-emb-dim=32 \
     --cond-type="features" \
     --num-epochs=1 \
-    --learning-rate=1e-1 \
+    --learning-rate=1e-2 \
     --scheduler="off" \
     --warmup-steps=100 \
     --batch-size=512 \
