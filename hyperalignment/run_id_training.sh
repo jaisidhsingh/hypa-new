@@ -58,10 +58,9 @@ python3 src/learn_hnet.py \
     --cond-type="features" \
     --num-epochs=1 \
     --learning-rate=1e-2 \
-    --scheduler="off" \
     --warmup-steps=100 \
-    --batch-size=256 \
-    --scheduler="off" \
+    --batch-size=512 \
+    --scheduler="cosine" \
     --emb-loss=False \
     --normalize-output=True \
     --hnet-decoder-type="mlp";
