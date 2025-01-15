@@ -16,8 +16,8 @@ def count_hnet_flops(bs, include_backward=True):
     )
     opt = torch.optim.AdamW(model.parameters(), lr=1e-2)
     x = torch.randn(bs, 32)
-    y = torch.randn(512, bs, 384)
-    z = torch.randn(512, 768)
+    y = torch.randn(1, bs, 384)
+    z = torch.randn(1, 768)
     logit_scale = torch.tensor(np.log(100.0))
     flop_counter = FlopCounterMode(model, display=True, depth=4)
 
