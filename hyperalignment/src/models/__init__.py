@@ -81,7 +81,7 @@ class ConditionalHyperNetwork(nn.Module):
         self.shape_embs = nn.Embedding(len(image_embed_dims), cond_emb_dim)
 
         self.in_proj = nn.Linear(cond_emb_dim, 4*cond_emb_dim)
-        self.attn = nn.TransformerEncoderLayer(4*cond_emb_dim, 4)
+        self.attn = nn.TransformerEncoderLayer(4*cond_emb_dim, 4, batch_first=True)
 
         self.cond_dim = cond_emb_dim
 
@@ -134,7 +134,9 @@ class ConditionalHyperNetwork(nn.Module):
         # shape_emb = self.shape_embs(shape_id) # shape: [1, cond_emb_dim]
         # shape_emb = shape_emb.repeat((num_conds, 1)) # shape: [num_conds, cond_emb_dim]
 
-        final_cond_emb = self.in_proj(cond_emb) + self.attn(cond_emb) #+ shape_emb
+        final_cond_emb = cond_emb #+ shape_emb
+        final_cond_emb = self.in_proj(final_cond_emb)
+        final_cond_emb = self.attn(final_cond_emb.unsqueeze(0)).squeeze(0)
 
         pred_weight, pred_bias = self.decoder(final_cond_emb)
         pred_weight = pred_weight[:, :image_embed_dim, :]
