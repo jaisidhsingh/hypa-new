@@ -31,12 +31,12 @@ def train_separate_mapper(args):
     # load in dataset for training
     train_dataset_config = data_configs.separate_embedding_dataset_configs(args)
     train_dataset = SeparateEmbeddings(train_dataset_config, split="train", args=args)
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True, drop_last=True)
     print(f"Training data of {len(train_dataset)} samples loaded.")
 
     # load in dataset for validation
     val_dataset = SeparateEmbeddings(train_dataset_config, split="val", args=args)
-    val_loader = DataLoader(val_dataset, batch_size=args.eval_batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=False)
+    val_loader = DataLoader(val_dataset, batch_size=args.eval_batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=False, drop_last=True)
     print(f"Validation data of {len(val_dataset)} samples loaded.")
 
     # the connector
@@ -121,7 +121,6 @@ def train_separate_mapper(args):
                 train_running_loss += loss.item()
                 train_corrects += in_batch_corrects
                 train_total += labels.size(0)
-                train_accuracy = round(train_corrects/train_total * 100, 2)
 
                 scaler.scale(loss).backward()
                 scaler.step(optimizer)
@@ -136,10 +135,10 @@ def train_separate_mapper(args):
         
         train_logs["flops"] = flop_counter.get_total_flops()
         train_logs["train_loss"] = train_running_loss / (idx+1)
-        train_logs["train_accuracy"] = train_accuracy
+        train_logs["train_accuracy"] = round(train_corrects/train_total * 100, 2)
         
         if args.use_wandb:
-            wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_accuracy}, step=epoch+1)
+            wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_logs["train_accuracy"]}, step=epoch+1)
         
         # now validate
         val_corrects, val_total = 0, 0
@@ -169,18 +168,17 @@ def train_separate_mapper(args):
                 val_running_loss += loss.item()
                 val_corrects += in_batch_corrects
                 val_total += labels.size(0)
-                val_accuracy = round(val_corrects/val_total * 100, 2)
                 
                 del image_features
                 del text_features
                 del mapped_text_features
         
         val_logs["val_loss"] = val_running_loss / len(val_loader)
-        val_logs["val_accuracy"] = val_accuracy
+        val_logs["val_accuracy"] = round(val_corrects/val_total * 100, 2)
         logs[f"epoch_{epoch+1}"] = {"train": train_logs, "val": val_logs}
 
         if args.use_wandb:
-            wandb.log({"val_loss": val_running_loss / len(val_loader), "val_accuracy": val_accuracy}, step=epoch+1)  
+            wandb.log({"val_loss": val_running_loss / len(val_loader), "val_accuracy": val_logs["val_accuracy"]}, step=epoch+1)  
 
 
         # update the progress bar
