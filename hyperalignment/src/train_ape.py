@@ -147,7 +147,7 @@ def train_separate_mapper(args):
             val_corrects, val_total = 0, 0
             val_running_loss = 0
             val_logs = {}
-            # model.eval()
+            model.eval()
 
             with torch.no_grad():
                 for (image_features, text_features) in train_loader:
@@ -170,6 +170,7 @@ def train_separate_mapper(args):
 
                     sim = args.logit_scale * (image_features @ mapped_text_features.T).to(args.device)
                     labels = torch.arange(batch_size).long().to(args.device)
+                    print(args.eval_batch_size, batch_size)
                     print(sim)
                     print(labels)
                     sys.exit(0)
