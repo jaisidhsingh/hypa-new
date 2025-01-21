@@ -113,7 +113,7 @@ def train_separate_mapper(args):
                     mapped_text_features = model(text_features)
                     mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
                     
-                    sim = model.logit_scale.exp() * (image_features @ mapped_text_features.T)
+                    sim = model.logit_scale.exp().to(args.device) * (image_features @ mapped_text_features.T)
                     labels = torch.arange(batch_size).long().to(args.device)
                     loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
@@ -161,13 +161,13 @@ def train_separate_mapper(args):
                 text_features = text_features.float().to(args.device)
                 text_features = text_features.view(batch_size, args.text_embed_dim)
 
-                with autocast(args.device):
-                    mapped_text_features = model(text_features)
-                    mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
+                # with autocast(args.device):
+                mapped_text_features = model(text_features)
+                mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
 
-                    sim = model.logit_scale.exp() * (image_features @ mapped_text_features.T)
-                    labels = torch.arange(batch_size).long().to(args.device)
-                    loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
+                sim = model.logit_scale.exp().to(args.device) * (image_features @ mapped_text_features.T)
+                labels = torch.arange(batch_size).long().to(args.device)
+                loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
                 in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
                 val_running_loss += loss.item()
