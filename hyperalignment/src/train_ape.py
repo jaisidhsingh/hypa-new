@@ -116,12 +116,11 @@ def train_separate_mapper(args):
                     mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True).to(args.device)
                     
                     sim = args.logit_scale * (image_features @ mapped_text_features.T)
-                    labels = torch.arange(batch_size).long().to(args.device)
+                    if torch.isnan(sim).any():
+                        print("[Train]: Nan encountered in sim at step=", step)
+                        break
 
-                    if idx == 0:
-                        print(sim)
-                        print(labels)
-                    
+                    labels = torch.arange(batch_size).long().to(args.device)
                     loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
                 in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
@@ -147,7 +146,7 @@ def train_separate_mapper(args):
             val_logs = {}
             model.eval()
 
-            if True:
+            with torch.no_grad():
                 for idx, (image_features, text_features) in enumerate(train_loader):
                     step = int(epoch * len(train_loader)) + idx
                     batch_size = image_features.shape[0]
@@ -165,10 +164,12 @@ def train_separate_mapper(args):
                         mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True).to(args.device)
                         
                         sim = args.logit_scale * (image_features @ mapped_text_features.T)
+                        
+                        if torch.isnan(sim).any():
+                            print("[Val]: Nan encountered in sim at step=", step)
+                            break
+                        
                         labels = torch.arange(batch_size).long().to(args.device)
-                        print(sim)
-                        print(labels)
-                        sys.exit(0)
                         loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
                     in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
