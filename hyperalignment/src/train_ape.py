@@ -150,7 +150,7 @@ def train_separate_mapper(args):
             # model.eval()
 
             with torch.no_grad():
-                for (image_features, text_features) in val_loader:
+                for (image_features, text_features) in train_loader:
                     batch_size = image_features.shape[0]
 
                     image_features = image_features.float().to(args.device)
