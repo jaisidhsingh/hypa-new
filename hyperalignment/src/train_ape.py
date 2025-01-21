@@ -98,7 +98,7 @@ def train_separate_mapper(args):
                 step = int(epoch * len(train_loader)) + idx
                 batch_size = image_features.shape[0]
 
-                image_features = image_features.float()
+                image_features = image_features.float().to(args.device)
                 image_features = image_features.view(batch_size, args.image_embed_dim)
 
                 text_features = text_features.float().to(args.device)
@@ -111,7 +111,7 @@ def train_separate_mapper(args):
 
                 with autocast(args.device):
                     mapped_text_features = model(text_features)
-                    mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
+                    mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True).to(args.device)
                     
                     sim = model.logit_scale.exp().to(args.device) * (image_features @ mapped_text_features.T)
                     labels = torch.arange(batch_size).long().to(args.device)
@@ -155,7 +155,7 @@ def train_separate_mapper(args):
             for (image_features, text_features) in val_loader:
                 batch_size = image_features.shape[0]
 
-                image_features = image_features.float()
+                image_features = image_features.float().to(args.device)
                 image_features = image_features.view(batch_size, args.image_embed_dim)
                 
                 text_features = text_features.float().to(args.device)
@@ -165,7 +165,7 @@ def train_separate_mapper(args):
                 mapped_text_features = model(text_features)
                 mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
 
-                sim = model.logit_scale.exp().to(args.device) * (image_features @ mapped_text_features.T)
+                sim = model.logit_scale.exp().to(args.device) * (image_features @ mapped_text_features.T).to(args.device)
                 labels = torch.arange(batch_size).long().to(args.device)
                 loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
