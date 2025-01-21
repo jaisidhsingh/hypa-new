@@ -119,7 +119,6 @@ def train_separate_mapper(args):
 
 
                 in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
-                print(in_batch_corrects)            
                 train_running_loss += loss.item()
                 train_corrects += in_batch_corrects
                 train_total += batch_size
