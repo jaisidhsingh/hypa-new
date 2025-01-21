@@ -117,9 +117,11 @@ def train_separate_mapper(args):
                     
                     sim = args.logit_scale * (image_features @ mapped_text_features.T)
                     labels = torch.arange(batch_size).long().to(args.device)
-                    print(sim)
-                    print(labels)
-                    sys.exit(0)
+
+                    if idx == 0:
+                        print(sim)
+                        print(labels)
+                    
                     loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
                 in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
@@ -130,10 +132,6 @@ def train_separate_mapper(args):
                 scaler.scale(loss).backward()
                 scaler.step(optimizer)
                 scaler.update()
-                    
-                del image_features
-                del text_features
-                del mapped_text_features
         
         train_logs["flops"] = flop_counter.get_total_flops()
         train_logs["train_loss"] = train_running_loss / (idx+1)
@@ -150,40 +148,33 @@ def train_separate_mapper(args):
             model.eval()
 
             with torch.no_grad():
-                for (image_features, text_features) in train_loader:
+                for idx, (image_features, text_features) in enumerate(train_loader):
+                    step = int(epoch * len(train_loader)) + idx
                     batch_size = image_features.shape[0]
 
                     image_features = image_features.float().to(args.device)
                     image_features = image_features.view(batch_size, args.image_embed_dim)
                     image_features = image_features / image_features.norm(dim=-1, keepdim=True).to(args.device)
-                    
+
                     text_features = text_features.float().to(args.device)
                     text_features = text_features.view(batch_size, args.text_embed_dim)
                     text_features = text_features / text_features.norm(dim=-1, keepdim=True).to(args.device)
 
-                    # with autocast(args.device):
-                    mapped_text_features = model(text_features)
-                    mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
-
-                    if torch.any(image_features.norm(dim=-1) == 0) or torch.any(mapped_text_features.norm(dim=-1) == 0):
-                        raise ValueError("Zero norm detected in features.")
-
-                    sim = args.logit_scale * (image_features @ mapped_text_features.T).to(args.device)
-                    labels = torch.arange(batch_size).long().to(args.device)
-                    print(args.eval_batch_size, batch_size)
-                    print(sim)
-                    print(labels)
-                    sys.exit(0)
-                    loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
+                    with autocast(args.device):
+                        mapped_text_features = model(text_features)
+                        mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True).to(args.device)
+                        
+                        sim = args.logit_scale * (image_features @ mapped_text_features.T)
+                        labels = torch.arange(batch_size).long().to(args.device)
+                        print(sim)
+                        print(labels)
+                        sys.exit(0)
+                        loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
                     in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
                     val_running_loss += loss.item()
                     val_corrects += in_batch_corrects
                     val_total += labels.size(0)
-                    
-                    del image_features
-                    del text_features
-                    del mapped_text_features
             
             val_logs["val_loss"] = val_running_loss / len(val_loader)
             val_logs["val_accuracy"] = round(val_corrects/val_total * 100, 2)
