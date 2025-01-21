@@ -146,7 +146,7 @@ def train_separate_mapper(args):
         val_corrects, val_total = 0, 0
         val_running_loss = 0
         val_logs = {}
-        model.eval()
+        # model.eval()
 
         with torch.no_grad():
             for (image_features, text_features) in val_loader:
@@ -166,9 +166,9 @@ def train_separate_mapper(args):
 
                 sim = args.logit_scale * (image_features @ mapped_text_features.T).to(args.device)
                 labels = torch.arange(batch_size).long().to(args.device)
-                print(sim)
-                print(labels)
-                sys.exit(0)
+                # print(sim)
+                # print(labels)
+                # sys.exit(0)
                 loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
                 in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
