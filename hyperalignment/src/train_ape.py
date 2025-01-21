@@ -83,13 +83,16 @@ def train_separate_mapper(args):
 
     if args.use_wandb:
         wandb.init(project="APE-training", name=args.experiment_name, entity="hyperalignment", config=vars(args))
-    x = torch.randn((256, 768)).to(args.device)
-    y = torch.randn((256, 768)).to(args.device)
+    
+    x = torch.randn((256, 768)).float().to(args.device)
+    y = torch.randn((256, 768)).float().to(args.device)
+    model = model.float()
     z = torch.cat([model(x), model(y)], dim=0)
     u = model(torch.cat([x, y], dim=0))
     print(torch.equal(z, u))
     print((z-u).norm())
     sys.exit(0)
+    
     # training loop
     for epoch in range(args.num_epochs):
         # train for one epoch
