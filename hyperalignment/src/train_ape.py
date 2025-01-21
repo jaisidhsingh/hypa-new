@@ -184,7 +184,7 @@ def train_separate_mapper(args):
         bar.update(1)
         to_log = {
             "train_loss": train_logs["train_loss"],
-            "train_acc": train_logs["accuracy"],
+            "train_acc": train_logs["train_accuracy"],
             "val_loss": val_logs["val_loss"],
             "val_acc": val_logs["val_accuracy"]
         }
