@@ -164,6 +164,8 @@ def train_separate_mapper(args):
                         mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True).to(args.device)
                         
                         sim = args.logit_scale * (image_features @ mapped_text_features.T)
+                        print(sim)
+                        sys.exit(0)
                         
                         if torch.isnan(sim).any():
                             print("[Val]: Nan encountered in sim at step=", step)

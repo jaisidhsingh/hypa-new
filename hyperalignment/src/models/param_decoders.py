@@ -128,7 +128,7 @@ class ChunkedMlpDecoder(nn.Module):
         x = torch.repeat(x.unsqueeze(1), (1, self.num_chunks, 1)) # x.shape = [num_encoders, num_chunks, dim]
         chunk_embs = self.chunk_embs(torch.arange(self.num_chunks, device=x.device))
         x = x + torch.repeat(chunk_embs.unsqueeze(0), (x.shape[0], 1, 1))
-        x = self.decoder(x) # x.shape = [num_encoders, num_chunks, chunk_dim**2]
+        x = self.w_decoder(x) # x.shape = [num_encoders, num_chunks, chunk_dim**2]
         x = x.view(num_encoders, self.out_shape[0], self.out_shape[1])
         return x, bias 
 
