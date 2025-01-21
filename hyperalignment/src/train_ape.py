@@ -117,6 +117,9 @@ def train_separate_mapper(args):
                     
                     sim = model.logit_scale.exp().to(args.device) * (image_features @ mapped_text_features.T)
                     labels = torch.arange(batch_size).long().to(args.device)
+                    print(sim)
+                    print(labels)
+                    sys.exit(0)
                     loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
                 in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
