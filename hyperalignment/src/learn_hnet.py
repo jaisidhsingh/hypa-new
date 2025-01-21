@@ -60,7 +60,7 @@ def run(args, input_config):
     for p in model.parameters():
         c += p.numel()
     print(c)
-    sys.exit(0)
+    # sys.exit(0)
 
     # load in dataset and encoder sampler
     config = data_configs.multi_embedding_dataset_configs[args.feature_dataset]
