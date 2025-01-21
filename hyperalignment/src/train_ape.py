@@ -135,45 +135,46 @@ def train_separate_mapper(args):
         if args.use_wandb:
             wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_logs["train_accuracy"]}, step=epoch+1)
         
-        with torch.no_grad():
-            val_image_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
-            val_text_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
-            val_labels = torch.arange(len(val_dataset)).long().to(args.device)
-            val_logs = {}
+        # with torch.no_grad():
+        #     val_image_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
+        #     val_text_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
+        #     val_labels = torch.arange(len(val_dataset)).long().to(args.device)
+        #     val_logs = {}
 
-            for idx, (image_features, text_features) in enumerate(val_loader):
-                batch_size = image_features.shape[0]
-                image_features = image_features.float().to(args.device)
-                image_features = image_features.view(batch_size, args.image_embed_dim)
-                image_features /= image_features.norm(dim=-1, keepdim=True).to(args.device)
+        #     for idx, (image_features, text_features) in enumerate(val_loader):
+        #         batch_size = image_features.shape[0]
+        #         image_features = image_features.float().to(args.device)
+        #         image_features = image_features.view(batch_size, args.image_embed_dim)
+        #         image_features /= image_features.norm(dim=-1, keepdim=True).to(args.device)
 
-                text_features = text_features.float().to(args.device)
-                text_features = text_features.view(batch_size, args.text_embed_dim)
-                text_features /= text_features.norm(dim=-1, keepdim=True).to(args.device)
+        #         text_features = text_features.float().to(args.device)
+        #         text_features = text_features.view(batch_size, args.text_embed_dim)
+        #         text_features /= text_features.norm(dim=-1, keepdim=True).to(args.device)
 
-                mapped_text_features = model(text_features)
-                mapped_text_features /= mapped_text_features.norm(dim=-1, keepdim=True).to(args.device)
+        #         mapped_text_features = model(text_features)
+        #         mapped_text_features /= mapped_text_features.norm(dim=-1, keepdim=True).to(args.device)
             
-                val_image_store[idx * batch_size : (idx+1) * batch_size] = image_features
-                val_text_store[idx * batch_size : (idx+1) * batch_size] = mapped_text_features
+        #         val_image_store[idx * batch_size : (idx+1) * batch_size] = image_features
+        #         val_text_store[idx * batch_size : (idx+1) * batch_size] = mapped_text_features
             
-            sim = args.logit_scale * (val_image_store @ val_text_store.T)
-            val_corrects = (sim.argmax(dim=-1) == val_labels).sum().item()
-            val_accuracy = round(val_corrects / len(val_dataset) * 100, 2)
-            val_loss = (F.cross_entropy(sim, val_labels) + F.cross_entropy(sim.T, val_labels)) / 2
+        #     sim = args.logit_scale * (val_image_store @ val_text_store.T)
+        #     val_corrects = (sim.argmax(dim=-1) == val_labels).sum().item()
+        #     val_accuracy = round(val_corrects / len(val_dataset) * 100, 2)
+        #     val_loss = (F.cross_entropy(sim, val_labels) + F.cross_entropy(sim.T, val_labels)) / 2
             
-            val_logs = {"val_loss": val_loss.item(), "val_accuracy": val_accuracy}
+        #     print(val_corrects)
+        #     val_logs = {"val_loss": val_loss.item(), "val_accuracy": val_accuracy}
         
-        if args.use_wandb:
-            wandb.log({"val_loss": val_loss.item(), "val_accuracy": val_accuracy}, step=epoch+1)
+        # if args.use_wandb:
+        #     wandb.log({"val_loss": val_loss.item(), "val_accuracy": val_accuracy}, step=epoch+1)
 
         # update the progress bar
         bar.update(1)
         to_log = {
             "train_loss": train_logs["train_loss"],
             "train_acc": train_logs["train_accuracy"],
-            "val_loss": val_logs["val_loss"],
-            "val_acc": val_logs["val_accuracy"]
+            # "val_loss": val_logs["val_loss"],
+            # "val_acc": val_logs["val_accuracy"]
         } 
         bar.set_postfix(to_log)
 
@@ -181,12 +182,14 @@ def train_separate_mapper(args):
         if (epoch+1) in [1, 2, 5, 10, 20, 40, 100, 200] and args.saving:
             dump = {
                 "model": model.state_dict(),
-                "logs": logs,
+                "optimizer": optimizer.state_dict(),
+                "flops": train_logs["flops"]
             }
-            # "optimizer": optimizer.state_dict(),
-            # "one_epoch_flop_count": train_logs["flops"]
 
             torch.save(dump, os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt"))
+            with open(os.path.join(logs_save_folder, f"logs_{epoch+1}.json"), "w") as f:
+                json.dump(logs, f)
+
             tqdm.write(f"Checkpoint saved at epoch {epoch+1}.")
 
     bar.close()
@@ -214,7 +217,7 @@ if __name__ == "__main__":
     parser.add_argument("--use-bias", type=bool, default=True)
     parser.add_argument("--logit-scale", type=float, default=100.0)
     parser.add_argument("--use-wandb", type=bool, default=False)
-    parser.add_argument("--validate", type=bool, default=True)
+    parser.add_argument("--ablate", type=bool, default=False)
     # training settings
     parser.add_argument("--batch-size", type=int, default=int(pow(2, 14)))
     parser.add_argument("--eval-batch-size", type=int, default=int(pow(2, 14)))
@@ -230,10 +233,19 @@ if __name__ == "__main__":
     # get args object
     args = parser.parse_args()
 
-    suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
-    args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
-    train_separate_mapper(args)
-    print("All done.")
+    if not args.ablate:
+        suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
+        args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
+        train_separate_mapper(args)
+    
+    else:
+        batch_sizes = [int(pow(2, i)) for i in range(8, 15, 2)]
+        lrs = [1e-3, 3e-3, 5e-3, 1e-2]
+        for bs, lr in zip(batch_sizes, lrs):
+            suffix = f"bs-{bs}_lr-{lr}_ep-{args.num_epochs}"
+            args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
+            train_separate_mapper(args)
+
 
     # models = [
     #     # "vit_base_patch16_224"
