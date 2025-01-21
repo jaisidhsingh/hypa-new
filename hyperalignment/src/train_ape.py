@@ -31,12 +31,12 @@ def train_separate_mapper(args):
     # load in dataset for training
     train_dataset_config = data_configs.separate_embedding_dataset_configs(args)
     train_dataset = SeparateEmbeddings(train_dataset_config, split="train")
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=args.shuffle_data)
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True)
     print(f"Training data of {len(train_dataset)} samples loaded.")
 
     # load in dataset for validation
     val_dataset = SeparateEmbeddings(train_dataset_config, split="val", split_ratio=args.train_val_split_ratio)
-    val_loader = DataLoader(val_dataset, batch_size=args.eval_batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=args.shuffle_data)
+    val_loader = DataLoader(val_dataset, batch_size=args.eval_batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=False)
     print(f"Validation data of {len(val_dataset)} samples loaded.")
 
     # the connector
@@ -229,7 +229,7 @@ if __name__ == "__main__":
     parser.add_argument("--text-embed-dim", type=int, default=768)
     parser.add_argument("--use-bias", type=bool, default=True)
     parser.add_argument("--logit-scale", type=float, default=100.0)
-    parser.add_argument("--use-wandb", type=bool, default=True)
+    parser.add_argument("--use-wandb", type=bool, default=False)
     # training settings
     parser.add_argument("--batch-size", type=int, default=int(pow(2, 14)))
     parser.add_argument("--eval-batch-size", type=int, default=int(pow(2, 14)))
