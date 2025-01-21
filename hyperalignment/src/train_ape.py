@@ -35,7 +35,7 @@ def train_separate_mapper(args):
     print(f"Training data of {len(train_dataset)} samples loaded.")
 
     # load in dataset for validation
-    val_dataset = SeparateEmbeddings(train_dataset_config, split="val")
+    val_dataset = SeparateEmbeddings(train_dataset_config, split="val", split_ratio=args.train_val_split_ratio)
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=args.shuffle_data)
     print(f"Validation data of {len(val_dataset)} samples loaded.")
 
@@ -221,7 +221,7 @@ if __name__ == "__main__":
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
     parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
     parser.add_argument("--val-dataset", type=str, default="cc3mval")
-    parser.add_argument("--split-ratio", type=float, default=0.9)
+    parser.add_argument("--train-val-split-ratio", type=float, default=0.9)
     parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-embed-dim", type=int, default=768)
     parser.add_argument("--use-bias", type=bool, default=True)
