@@ -50,6 +50,9 @@ def run(args, input_config):
 
     # load in hyper-network
     kwargs = model_configs.hnet_decoder_configs[args.hnet_decoder_type]
+    if args.hnet_decoder_type == "chunked_mlp":
+        kwargs["chunk_dim"] = args.chunk_dim
+
     model = ConditionalHyperNetwork(param_shapes, cond_emb_dim=args.hnet_cond_emb_dim, num_cond_embs=args.num_image_encoders, image_embed_dims=image_embed_dims, kwargs=kwargs).to(args.device)
     print("Hyper-network loaded.")
 
@@ -256,6 +259,7 @@ if __name__ == "__main__":
     parser.add_argument("--normalize-output", type=bool, default=True)
     parser.add_argument("--rescale-factor", type=float, default=0.0)
     parser.add_argument("--emb-loss", type=bool, default=False)
+    parser.add_argument("--chunk-dim", type=int, default=256)
     # training args
     parser.add_argument("--num-epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=512)

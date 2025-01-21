@@ -51,7 +51,7 @@
 #     --hnet-decoder-type="mlp";
 
 python3 src/learn_hnet.py \
-    --experiment-name="ie_12_mlp_c_32_norm_chunked" \
+    --experiment-name="ie_12_mlp_c_32_norm_chunked_128" \
     --num-image-encoders=12 \
     --encoder-batch-size=4 \
     --hnet-cond-emb-dim=32 \
@@ -63,10 +63,28 @@ python3 src/learn_hnet.py \
     --warmup-steps=100 \
     --emb-loss=False \
     --normalize-output=True \
+    --chunk-dim=128 \
+    --hnet-decoder-type="chunked_mlp";
+
+
+python3 src/learn_hnet.py \
+    --experiment-name="ie_12_mlp_c_32_norm_chunked_256" \
+    --num-image-encoders=12 \
+    --encoder-batch-size=4 \
+    --hnet-cond-emb-dim=32 \
+    --cond-type="features" \
+    --num-epochs=1 \
+    --learning-rate=1e-2 \
+    --batch-size=512 \
+    --scheduler="off" \
+    --warmup-steps=100 \
+    --emb-loss=False \
+    --normalize-output=True \
+    --chunk-dim=256 \
     --hnet-decoder-type="chunked_mlp";
 
 python3 src/learn_hnet.py \
-    --experiment-name="ie_12_mlp_c_32_norm_chunked" \
+    --experiment-name="ie_12_mlp_c_32_norm" \
     --num-image-encoders=12 \
     --encoder-batch-size=4 \
     --hnet-cond-emb-dim=32 \
