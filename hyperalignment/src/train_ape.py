@@ -36,7 +36,7 @@ def train_separate_mapper(args):
 
     # load in dataset for validation
     val_dataset = SeparateEmbeddings(train_dataset_config, split="val", split_ratio=args.train_val_split_ratio)
-    val_loader = DataLoader(val_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=args.shuffle_data)
+    val_loader = DataLoader(val_dataset, batch_size=args.eval_batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=args.shuffle_data)
     print(f"Validation data of {len(val_dataset)} samples loaded.")
 
     # the connector
@@ -90,6 +90,7 @@ def train_separate_mapper(args):
         train_corrects, train_total = 0, 0
         train_running_loss = 0
         train_logs = {}
+        model.train()
 
         # track training flops
         with flop_counter:
@@ -122,9 +123,6 @@ def train_separate_mapper(args):
                 train_total += batch_size
                 train_accuracy = round(train_corrects/train_total * 100, 2)
 
-                if args.use_wandb:
-                    wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_accuracy}, step=step)
-
                 scaler.scale(loss).backward()
                 scaler.step(optimizer)
                 scaler.update()
@@ -139,11 +137,15 @@ def train_separate_mapper(args):
         train_logs["flops"] = flop_counter.get_total_flops()
         train_logs["train_loss"] = train_running_loss / (idx+1)
         train_logs["train_accuracy"] = train_accuracy
+        
+        if args.use_wandb:
+            wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_accuracy}, step=epoch+1)
 
         # now validate
         val_corrects, val_total = 0, 0
         val_running_loss = 0
         val_logs = {}
+        model.eval()
 
         for (image_features, text_features) in val_loader:
             batch_size = image_features.shape[0]
@@ -177,7 +179,7 @@ def train_separate_mapper(args):
         logs[f"epoch_{epoch+1}"] = {"train": train_logs, "val": val_logs}
         
         if args.use_wandb:
-            wandb.log({"val_loss": val_running_loss / len(val_loader), "val_accuracy": val_accuracy}, step=step)  
+            wandb.log({"val_loss": val_running_loss / len(val_loader), "val_accuracy": val_accuracy}, step=epoch+1)  
 
 
         # update the progress bar
@@ -229,6 +231,7 @@ if __name__ == "__main__":
     parser.add_argument("--use-wandb", type=bool, default=True)
     # training settings
     parser.add_argument("--batch-size", type=int, default=int(pow(2, 14)))
+    parser.add_argument("--eval-batch-size", type=int, default=int(pow(2, 14)))
     parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=0.01)
     parser.add_argument("--num-epochs", type=int, default=10)
