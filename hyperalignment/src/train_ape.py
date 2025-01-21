@@ -32,7 +32,7 @@ def train_separate_mapper(args):
     train_dataset_config = data_configs.separate_embedding_dataset_configs(args)
     train_dataset = SeparateEmbeddings(train_dataset_config, split="train", args=args)
 
-    print(train_dataset.image_embeddings[595374].norm())
+    print(train_dataset.image_embeddings[595374])
     sys.exit(0)
 
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True, drop_last=True)
