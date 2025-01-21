@@ -171,5 +171,10 @@ model_configs.hnet_decoder_configs = {
     "mlp": {
         "decoder_type": "mlp",
         "hidden_layer_factors": [4, 16],
+	},
+    "chunked_mlp": {
+        "decoder_type": "chunked_mlp",
+        "chunk_dim": 128,
+        "hidden_layer_factors": [4, 16],
 	}
 }

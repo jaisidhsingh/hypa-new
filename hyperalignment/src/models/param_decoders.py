@@ -116,7 +116,7 @@ class ChunkedMlpDecoder(nn.Module):
         super().__init__()
         self.out_shape = out_shape
         self.num_chunks = (out_shape[0] // chunk_dim) * (out_shape[1] // chunk_dim)
-        self.chunk_embs = nn.Embedding(self.num_chunks, dim)
+        self.chunk_embs = nn.Parameter(torch.randn(self.num_chunks, dim) * 0.1)
         self.w_decoder = MLP(dim, hidden_layer_factors, chunk_dim**2)
         self.b_decoder = MLP(dim, hidden_layer_factors, out_shape[0])
     
@@ -126,8 +126,7 @@ class ChunkedMlpDecoder(nn.Module):
         # x.shape = [num_encoders, dim]
 
         x = torch.repeat(x.unsqueeze(1), (1, self.num_chunks, 1)) # x.shape = [num_encoders, num_chunks, dim]
-        chunk_embs = self.chunk_embs(torch.arange(self.num_chunks, device=x.device))
-        x = x + torch.repeat(chunk_embs.unsqueeze(0), (x.shape[0], 1, 1))
+        x = x + self.chunk_embs.unsqueeze(0)
         x = self.w_decoder(x) # x.shape = [num_encoders, num_chunks, chunk_dim**2]
         x = x.view(num_encoders, self.out_shape[0], self.out_shape[1])
         return x, bias 
