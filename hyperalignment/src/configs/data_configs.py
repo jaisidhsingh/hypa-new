@@ -11,8 +11,8 @@ data_configs.embedding_store_root = f"{data_configs.STORE}/hyperalignment/result
 
 data_configs.image_caption_dataset_configs = {
 	"mscoco_train": {
-		"root": f"{data_configs.STORE}/coco_torchvision/extract/train2017",
-		"annFile": f"{data_configs.STORE}/coco_torchvision/extract/annotations/captions_train2017.json"
+		"root": f"{data_configs.STORE}/coco_torchvision/train2017",
+		"annFile": f"{data_configs.STORE}/coco_torchvision/captions_train2017.json"
 	},
 	"mscoco_val": {
 		"root": f"{data_configs.STORE}/coco_torchvision/val2017",

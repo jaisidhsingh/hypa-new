@@ -90,6 +90,9 @@ class ConditionalHyperNetwork(nn.Module):
         if kwargs["decoder_type"] == "mlp":
             self.decoder = MlpDecoder(param_shapes[0], cond_emb_dim, kwargs["hidden_layer_factors"])
         
+        elif kwargs["decoder_type"] == "chunked_mlp":
+            self.decoder = ChunkedMlpDecoder(param_shapes[0], cond_emb_dim, kwargs["chunk_dim"], kwargs["hidden_layer_factors"])
+        
         elif kwargs["decoder_type"] == "attention":
             self.decoder = AttentionDecoder(param_shapes[0], cond_emb_dim, kwargs["num_layers"], kwargs["num_heads"], kwargs["expansion_factor"])
 
