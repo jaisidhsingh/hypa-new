@@ -56,6 +56,12 @@ def run(args, input_config):
     model = ConditionalHyperNetwork(param_shapes, cond_emb_dim=args.hnet_cond_emb_dim, num_cond_embs=args.num_image_encoders, image_embed_dims=image_embed_dims, kwargs=kwargs).to(args.device)
     print("Hyper-network loaded.")
 
+    c = 0
+    for p in model.parameters():
+        c += p.numel()
+    print(c)
+    sys.exit(0)
+
     # load in dataset and encoder sampler
     config = data_configs.multi_embedding_dataset_configs[args.feature_dataset]
     config["image_encoder_data"] = input_config
