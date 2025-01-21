@@ -73,8 +73,8 @@ class SeparateEmbeddings(Dataset):
             self.num_samples = data_config["num_samples"] - round(self.split_ratio * data_config["num_samples"])
 
         self.indices = [i for i in range(data_config["num_samples"])]
-        random.seed(args.random_seed)
-        random.shuffle(self.indices)
+        # random.seed(args.random_seed)
+        # random.shuffle(self.indices)
         
         self.image_embed_dim = data_config["image_embed_dim"]
         self.text_embed_dim = data_config["text_embed_dim"]
@@ -88,7 +88,7 @@ class SeparateEmbeddings(Dataset):
         # text_embedding = self.text_embeddings[idx].view(1, self.text_embed_dim)
         
         offset = 0 if self.split == "train" else round(self.split_ratio * self.data_config["num_samples"])
-        index = self.indices[offset + idx]
+        index = offset + idx
 
         image_embedding = np.array(deepcopy(self.image_embeddings[index, :])).astype(np.float32)
         text_embedding = np.array(deepcopy(self.text_embeddings[index, :])).astype(np.float32)
