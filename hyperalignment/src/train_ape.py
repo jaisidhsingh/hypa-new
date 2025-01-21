@@ -141,8 +141,6 @@ def train_separate_mapper(args):
         if args.use_wandb:
             wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_accuracy}, step=epoch+1)
         
-        print(in_batch_corrects, train_corrects, train_total, batch_size)
-
         # now validate
         val_corrects, val_total = 0, 0
         val_running_loss = 0
@@ -181,8 +179,6 @@ def train_separate_mapper(args):
         val_logs["val_accuracy"] = val_accuracy
         logs[f"epoch_{epoch+1}"] = {"train": train_logs, "val": val_logs}
 
-        print(in_batch_corrects, val_corrects, val_total, batch_size)
-        
         if args.use_wandb:
             wandb.log({"val_loss": val_running_loss / len(val_loader), "val_accuracy": val_accuracy}, step=epoch+1)  
 
@@ -233,7 +229,7 @@ if __name__ == "__main__":
     parser.add_argument("--text-embed-dim", type=int, default=768)
     parser.add_argument("--use-bias", type=bool, default=True)
     parser.add_argument("--logit-scale", type=float, default=100.0)
-    parser.add_argument("--use-wandb", type=bool, default=False)
+    parser.add_argument("--use-wandb", type=bool, default=True)
     # training settings
     parser.add_argument("--batch-size", type=int, default=int(pow(2, 14)))
     parser.add_argument("--eval-batch-size", type=int, default=int(pow(2, 14)))
@@ -252,7 +248,7 @@ if __name__ == "__main__":
     suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
     args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
     train_separate_mapper(args)
-    print("All done.") 
+    print("All done.")
 
     # models = [
     #     # "vit_base_patch16_224"
