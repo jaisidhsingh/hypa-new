@@ -112,12 +112,14 @@ def train_separate_mapper(args):
                 with autocast(args.device):
                     mapped_text_features = model(text_features)
                     mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
-                    loss, in_batch_corrects = criterion.compute_loss_and_accuracy(
-                        model.logit_scale,
-                        image_features,
-                        mapped_text_features
-                    )
-                
+                    
+                    sim = model.logit_scale.exp() * (image_features @ mapped_text_features.T)
+                    labels = torch.arange(batch_size).long().to(args.device)
+                    loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
+
+
+                in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
+                print(in_batch_corrects)            
                 train_running_loss += loss.item()
                 train_corrects += in_batch_corrects
                 train_total += batch_size
@@ -147,32 +149,34 @@ def train_separate_mapper(args):
         val_logs = {}
         model.eval()
 
-        for (image_features, text_features) in val_loader:
-            batch_size = image_features.shape[0]
+        with torch.no_grad():
+            for (image_features, text_features) in val_loader:
+                batch_size = image_features.shape[0]
 
-            image_features = image_features.float()
-            image_features = image_features.view(batch_size, args.image_embed_dim)
-            
-            text_features = text_features.float().to(args.device)
-            text_features = text_features.view(batch_size, args.text_embed_dim)
+                image_features = image_features.float()
+                image_features = image_features.view(batch_size, args.image_embed_dim)
+                
+                text_features = text_features.float().to(args.device)
+                text_features = text_features.view(batch_size, args.text_embed_dim)
 
-            with autocast(args.device):
-                mapped_text_features = model(text_features)
-                mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
-                loss, in_batch_corrects = criterion.compute_loss_and_accuracy(
-                    model.logit_scale,
-                    image_features,
-                    mapped_text_features
-                )
-            
-            val_running_loss += loss.item()
-            val_corrects += in_batch_corrects
-            val_total += batch_size
-            val_accuracy = round(val_corrects/val_total * 100, 2)
-            
-            del image_features
-            del text_features
-            del mapped_text_features
+                with autocast(args.device):
+                    mapped_text_features = model(text_features)
+                    mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
+
+                    sim = model.logit_scale.exp() * (image_features @ mapped_text_features.T)
+                    labels = torch.arange(batch_size).long().to(args.device)
+                    loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
+
+                in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
+                print(in_batch_corrects) 
+                val_running_loss += loss.item()
+                val_corrects += in_batch_corrects
+                val_total += batch_size
+                val_accuracy = round(val_corrects/val_total * 100, 2)
+                
+                del image_features
+                del text_features
+                del mapped_text_features
         
         val_logs["val_loss"] = val_running_loss / len(val_loader)
         val_logs["val_accuracy"] = val_accuracy
