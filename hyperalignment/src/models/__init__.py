@@ -76,6 +76,7 @@ class ConditionalHyperNetwork(nn.Module):
         self.image_embed_dims = image_embed_dims
         self.param_shapes = param_shapes # `param_shapes = [[D_out, D_in], [D_out]]`
 
+        self.in_proj = nn.Linear(param_shapes[0][0], cond_emb_dim)
         self.num_cond_embs = num_cond_embs
         self.cond_embs = nn.Embedding(num_cond_embs, cond_emb_dim)
         self.shape_embs = nn.Embedding(len(image_embed_dims), cond_emb_dim)
@@ -132,7 +133,7 @@ class ConditionalHyperNetwork(nn.Module):
         else:
             assert type(cond_id) in [torch.Tensor, torch.nn.Parameter], "Conditional input is of the wrong type."
             num_conds = cond_id.shape[0]
-            cond_emb = cond_id
+            cond_emb = self.in_proj(cond_id)
 
         shape_id = torch.tensor([self.image_embed_dims.index(image_embed_dim)]).long().to(self.cond_embs.weight.device)
         shape_emb = self.shape_embs(shape_id) # shape: [1, cond_emb_dim]
