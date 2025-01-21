@@ -34,6 +34,11 @@ def train_separate_mapper(args):
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=False, drop_last=True)
     print(f"Training data of {len(train_dataset)} samples loaded.")
 
+    # load in dataset for validation
+    val_dataset = SeparateEmbeddings(train_dataset_config, split="val", args=args)
+    val_loader = DataLoader(val_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=False, drop_last=True)
+    print(f"Validation data of {len(val_dataset)} samples loaded.")
+
     # the connector
     model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
     model = model.to(args.device)
@@ -111,10 +116,6 @@ def train_separate_mapper(args):
                     mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True).to(args.device)
                     
                     sim = args.logit_scale * (image_features @ mapped_text_features.T)
-                    if torch.isnan(sim).any():
-                        print("[Train]: Nan encountered in sim at step=", step)
-                        break
-
                     labels = torch.arange(batch_size).long().to(args.device)
                     loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
@@ -133,13 +134,46 @@ def train_separate_mapper(args):
         
         if args.use_wandb:
             wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_logs["train_accuracy"]}, step=epoch+1)
+        
+        with torch.no_grad():
+            val_image_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
+            val_text_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
+            val_labels = torch.arange(len(val_dataset)).long().to(args.device)
+            val_logs = {}
 
+            for idx, (image_features, text_features) in enumerate(val_loader):
+                batch_size = image_features.shape[0]
+                image_features = image_features.float().to(args.device)
+                image_features = image_features.view(batch_size, args.image_embed_dim)
+                image_features /= image_features.norm(dim=-1, keepdim=True).to(args.device)
+
+                text_features = text_features.float().to(args.device)
+                text_features = text_features.view(batch_size, args.text_embed_dim)
+                text_features /= text_features.norm(dim=-1, keepdim=True).to(args.device)
+
+                mapped_text_features = model(text_features)
+                mapped_text_features /= mapped_text_features.norm(dim=-1, keepdim=True).to(args.device)
+            
+                val_image_store[idx * batch_size : (idx+1) * batch_size] = image_features
+                val_text_store[idx * batch_size : (idx+1) * batch_size] = mapped_text_features
+            
+            sim = args.logit_scale * (val_image_store @ val_text_store.T)
+            val_corrects = (sim.argmax(dim=-1) == val_labels).sum().item()
+            val_accuracy = round(val_corrects / len(val_dataset) * 100, 2)
+            val_loss = (F.cross_entropy(sim, val_labels) + F.cross_entropy(sim.T, val_labels)) / 2
+            
+            val_logs = {"val_loss": val_loss.item(), "val_accuracy": val_accuracy}
+        
+        if args.use_wandb:
+            wandb.log({"val_loss": val_loss.item(), "val_accuracy": val_accuracy}, step=epoch+1)
 
         # update the progress bar
         bar.update(1)
         to_log = {
             "train_loss": train_logs["train_loss"],
             "train_acc": train_logs["train_accuracy"],
+            "val_loss": val_logs["val_loss"],
+            "val_acc": val_logs["val_accuracy"]
         } 
         bar.set_postfix(to_log)
 

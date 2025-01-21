@@ -53,7 +53,7 @@
 #     --benchmarks="cifar10,cifar100,imagenet1k";
 
 python3 src/evaluation.py \
-    --exp-name="ie_12_mlp_c_32_norm_no_se" \
+    --exp-name="ie_12_mlp_c_32_norm_chunked_128" \
     --seed=0 \
     --run-type="mm" \
     --epoch=1 \
