@@ -142,7 +142,7 @@ def train_separate_mapper(args):
         if args.use_wandb:
             wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_accuracy}, step=epoch+1)
         
-        print(train_corrects, train_total)
+        print(in_batch_corrects, train_corrects, train_total)
 
         # now validate
         val_corrects, val_total = 0, 0
@@ -182,7 +182,7 @@ def train_separate_mapper(args):
         val_logs["val_accuracy"] = val_accuracy
         logs[f"epoch_{epoch+1}"] = {"train": train_logs, "val": val_logs}
 
-        print(val_corrects, val_total)
+        print(in_batch_corrects, val_corrects, val_total)
         
         if args.use_wandb:
             wandb.log({"val_loss": val_running_loss / len(val_loader), "val_accuracy": val_accuracy}, step=epoch+1)  
