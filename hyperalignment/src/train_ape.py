@@ -142,6 +142,8 @@ def train_separate_mapper(args):
         
         if args.use_wandb:
             wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_accuracy}, step=epoch+1)
+        
+        print(train_corrects, train_total)
 
         # now validate
         val_corrects, val_total = 0, 0
@@ -168,7 +170,6 @@ def train_separate_mapper(args):
                     loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
                 in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
-                print(in_batch_corrects) 
                 val_running_loss += loss.item()
                 val_corrects += in_batch_corrects
                 val_total += batch_size
@@ -181,6 +182,8 @@ def train_separate_mapper(args):
         val_logs["val_loss"] = val_running_loss / len(val_loader)
         val_logs["val_accuracy"] = val_accuracy
         logs[f"epoch_{epoch+1}"] = {"train": train_logs, "val": val_logs}
+
+        print(val_corrects, val_total)
         
         if args.use_wandb:
             wandb.log({"val_loss": val_running_loss / len(val_loader), "val_accuracy": val_accuracy}, step=epoch+1)  
@@ -232,7 +235,7 @@ if __name__ == "__main__":
     parser.add_argument("--text-embed-dim", type=int, default=768)
     parser.add_argument("--use-bias", type=bool, default=True)
     parser.add_argument("--logit-scale", type=float, default=100.0)
-    parser.add_argument("--use-wandb", type=bool, default=True)
+    parser.add_argument("--use-wandb", type=bool, default=False)
     # training settings
     parser.add_argument("--batch-size", type=int, default=int(pow(2, 14)))
     parser.add_argument("--eval-batch-size", type=int, default=int(pow(2, 14)))
