@@ -147,7 +147,7 @@ def train_separate_mapper(args):
             val_logs = {}
             model.eval()
 
-            with torch.no_grad():
+            if True:
                 for idx, (image_features, text_features) in enumerate(train_loader):
                     step = int(epoch * len(train_loader)) + idx
                     batch_size = image_features.shape[0]
