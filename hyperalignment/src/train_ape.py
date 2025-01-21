@@ -244,6 +244,8 @@ if __name__ == "__main__":
         for bs, lr in zip(batch_sizes, lrs):
             print(bs, lr)
             suffix = f"bs-{bs}_lr-{lr}_ep-{args.num_epochs}"
+            args.batch_size = bs
+            args.learning_rate = lr
             args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
             train_separate_mapper(args)
 
