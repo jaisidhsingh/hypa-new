@@ -154,9 +154,11 @@ def train_separate_mapper(args):
 
                 image_features = image_features.float().to(args.device)
                 image_features = image_features.view(batch_size, args.image_embed_dim)
+                image_features = image_features / image_features.norm(dim=-1, keepdim=True).to(args.device)
                 
                 text_features = text_features.float().to(args.device)
                 text_features = text_features.view(batch_size, args.text_embed_dim)
+                text_features = text_features / text_features.norm(dim=-1, keepdim=True).to(args.device)
 
                 # with autocast(args.device):
                 mapped_text_features = model(text_features)
