@@ -84,7 +84,7 @@ python3 src/learn_hnet.py \
     --hnet-decoder-type="chunked_mlp";
 
 python3 src/learn_hnet.py \
-    --experiment-name="ie_12_mlp_c_32_norm" \
+    --experiment-name="ie_12_mlp_c_32_512" \
     --num-image-encoders=12 \
     --encoder-batch-size=4 \
     --hnet-cond-emb-dim=32 \
@@ -96,4 +96,5 @@ python3 src/learn_hnet.py \
     --warmup-steps=100 \
     --emb-loss=False \
     --normalize-output=True \
-    --hnet-decoder-type="mlp";
+    --chunk-dim=512 \
+    --hnet-decoder-type="chunked_mlp";

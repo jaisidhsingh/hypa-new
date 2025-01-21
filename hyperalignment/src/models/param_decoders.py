@@ -114,6 +114,7 @@ class AttentionDecoder(nn.Module):
 class ChunkedMlpDecoder(nn.Module):
     def __init__(self, out_shape, dim, chunk_dim, hidden_layer_factors=[4,16]):
         super().__init__()
+        print(chunk_dim)
         self.out_shape = out_shape
         self.num_chunks = (out_shape[0] // chunk_dim) * (out_shape[1] // chunk_dim)
         self.chunk_embs = nn.Parameter(torch.randn(self.num_chunks, dim))
