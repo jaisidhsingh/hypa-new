@@ -154,7 +154,6 @@ def train_separate_mapper(args):
                     batch_size = image_features.shape[0]
 
                     image_features = image_features.float().to(args.device)
-                    print(image_features)
                     image_features = image_features.view(batch_size, args.image_embed_dim)
                     image_features = image_features / image_features.norm(dim=-1, keepdim=True).to(args.device)
                     
@@ -165,6 +164,9 @@ def train_separate_mapper(args):
                     # with autocast(args.device):
                     mapped_text_features = model(text_features)
                     mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
+
+                    if torch.any(image_features.norm(dim=-1) == 0) or torch.any(mapped_text_features.norm(dim=-1) == 0):
+                        raise ValueError("Zero norm detected in features.")
 
                     sim = args.logit_scale * (image_features @ mapped_text_features.T).to(args.device)
                     labels = torch.arange(batch_size).long().to(args.device)
