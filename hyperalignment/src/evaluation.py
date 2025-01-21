@@ -173,6 +173,7 @@ def load_mm_ckpt(args, model):
 
     index = int(offset * chunk_size) + args.encoder_index
     [weight, bias] = torch.load(path)["mapper_params"][index]
+    print(weight.shape, bias.shape)
     model.mapper.layers[0].weight.data = weight.to(args.device)
     model.mapper.layers[0].bias.data = bias.to(args.device)
     model.mapper = model.mapper.to(args.device)
