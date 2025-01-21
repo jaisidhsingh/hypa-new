@@ -116,7 +116,7 @@ class ConditionalHyperNetwork(nn.Module):
         return cond_emb
 
     
-    def forward(self, cond_id, image_features, text_features, image_embed_dim, normalize_output=False, nolookup=False):
+    def forward(self, cond_id, image_features, text_features, image_embed_dim, normalize_output=False, nolookup=False, just_params=False):
         if nolookup == False:
             assert type(cond_id) in [list, int], "Conditional input is of the wrong type."
 
@@ -149,6 +149,9 @@ class ConditionalHyperNetwork(nn.Module):
         if normalize_output:
             pred_weight = pred_weight * (1 / pred_weight[0].numel()) ** 0.5
             pred_bias = pred_bias * (1 / pred_bias[0].numel()) ** 0.5
+        
+        if just_params:
+            return pred_weight, pred_bias
         
         mapped_text_features = self.map_features(pred_weight, pred_bias, text_features)
         mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)

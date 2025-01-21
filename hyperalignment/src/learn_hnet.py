@@ -26,7 +26,7 @@ def predict_params_for_saving(model, info):
     outputs = []
 
     for v in info.values():
-        weights, biases = model(cond_id=v["embedding"], image_embed_dim=v["image_embed_dim"], normalize_output=True, nolookup=True)
+        weights, biases = model(v["embedding"], None, None, image_embed_dim=v["image_embed_dim"], normalize_output=True, nolookup=True, just_params=True)
         outputs.append([weights.squeeze(0), biases.squeeze(0)])
 
     return outputs
@@ -115,6 +115,7 @@ def run(args, input_config):
 
         # iterate over dataset batches
             for idx in range(num_batches):
+                model.train()
 
                 # get the indices of the data samples we want to use
                 batch_indices = next(indices_loader)
@@ -197,10 +198,6 @@ def run(args, input_config):
                     elif args.cond_type == "features":
                         encoder_info[index] = {"index": index, "image_embed_dim": D_img, "embedding": cond_id[ii, :].view(1, args.hnet_cond_emb_dim)}
                 
-                model.train()
-
-                # break
-
         # make sure we have saved info correctly
         assert len(encoder_info.keys()) == args.num_image_encoders, "Something went wrong during storing info for H-Net."
         
@@ -211,7 +208,7 @@ def run(args, input_config):
             dump = {
                 "model": model.state_dict(),
                 "logs": logs,
-                # "mapper_params": predict_params_for_saving(model, encoder_info),
+                "mapper_params": predict_params_for_saving(model, encoder_info),
                 "info": encoder_info
             }
             save_path = os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt")
