@@ -126,7 +126,7 @@ class ChunkedMlpDecoder(nn.Module):
         # x.shape = [num_encoders, dim]
 
         print(x.shape)
-        x = x.unsqueeze(0).repeat(1, self.num_chunks, 1) # x.shape = [num_encoders, num_chunks, dim]
+        x = x.unsqueeze(1).repeat(1, self.num_chunks, 1) # x.shape = [num_encoders, num_chunks, dim]
         print(x.shape)
         x = x + self.chunk_embs.unsqueeze(0)
         x = self.w_decoder(x) # x.shape = [num_encoders, num_chunks, chunk_dim**2]
