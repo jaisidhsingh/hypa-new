@@ -31,10 +31,6 @@ def train_separate_mapper(args):
     # load in dataset for training
     train_dataset_config = data_configs.separate_embedding_dataset_configs(args)
     train_dataset = SeparateEmbeddings(train_dataset_config, split="train", args=args)
-
-    print(train_dataset.image_embeddings[train_dataset.image_embeddings != 0].sum())
-    sys.exit(0)
-
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True, drop_last=True)
     print(f"Training data of {len(train_dataset)} samples loaded.")
 
@@ -158,6 +154,7 @@ def train_separate_mapper(args):
                     batch_size = image_features.shape[0]
 
                     image_features = image_features.float().to(args.device)
+                    print(image_features)
                     image_features = image_features.view(batch_size, args.image_embed_dim)
                     image_features = image_features / image_features.norm(dim=-1, keepdim=True).to(args.device)
                     
@@ -240,6 +237,7 @@ if __name__ == "__main__":
     parser.add_argument("--use-bias", type=bool, default=True)
     parser.add_argument("--logit-scale", type=float, default=100.0)
     parser.add_argument("--use-wandb", type=bool, default=False)
+    parser.add_argument("--validate", type=bool, default=True)
     # training settings
     parser.add_argument("--batch-size", type=int, default=int(pow(2, 14)))
     parser.add_argument("--eval-batch-size", type=int, default=int(pow(2, 14)))
