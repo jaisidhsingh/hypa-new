@@ -117,11 +117,10 @@ def train_separate_mapper(args):
                     labels = torch.arange(batch_size).long().to(args.device)
                     loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
-
                 in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
                 train_running_loss += loss.item()
                 train_corrects += in_batch_corrects
-                train_total += batch_size
+                train_total += labels.size(0)
                 train_accuracy = round(train_corrects/train_total * 100, 2)
 
                 scaler.scale(loss).backward()
@@ -142,7 +141,7 @@ def train_separate_mapper(args):
         if args.use_wandb:
             wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_accuracy}, step=epoch+1)
         
-        print(in_batch_corrects, train_corrects, train_total)
+        print(in_batch_corrects, train_corrects, train_total, batch_size)
 
         # now validate
         val_corrects, val_total = 0, 0
@@ -171,7 +170,7 @@ def train_separate_mapper(args):
                 in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
                 val_running_loss += loss.item()
                 val_corrects += in_batch_corrects
-                val_total += batch_size
+                val_total += labels.size(0)
                 val_accuracy = round(val_corrects/val_total * 100, 2)
                 
                 del image_features
@@ -182,7 +181,7 @@ def train_separate_mapper(args):
         val_logs["val_accuracy"] = val_accuracy
         logs[f"epoch_{epoch+1}"] = {"train": train_logs, "val": val_logs}
 
-        print(in_batch_corrects, val_corrects, val_total)
+        print(in_batch_corrects, val_corrects, val_total, batch_size)
         
         if args.use_wandb:
             wandb.log({"val_loss": val_running_loss / len(val_loader), "val_accuracy": val_accuracy}, step=epoch+1)  
