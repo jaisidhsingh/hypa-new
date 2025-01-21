@@ -137,14 +137,14 @@ def run(args, input_config):
                 # forward pass + loss calculation
                 with autocast():
                     if args.cond_type == "indices":
-                        weights, biases = model(cond_id=encoder_indices, image_embed_dim=D_img, normalize_output=args.normalize_output)
+                        loss, corrects = model(cond_id=encoder_indices, image_embed_dim=D_img, normalize_output=args.normalize_output)
                     
                     elif args.cond_type == "features":
                         cond_id = image_features[:, :, :args.hnet_cond_emb_dim].mean(dim=0)
-                        weights, biases = model(cond_id, image_features, text_features, image_embed_dim=D_img, normalize_output=args.normalize_output, nolookup=True)
+                        loss, corrects = model(cond_id, image_features, text_features, image_embed_dim=D_img, normalize_output=args.normalize_output, nolookup=True)
 
-                    mapped_text_features = model.map_features(weights, biases, text_features)
-                    loss, corrects = model.compute_loss(logit_scale, image_features, mapped_text_features, emb_loss=args.emb_loss)
+                    # mapped_text_features = model.map_features(weights, biases, text_features)
+                    # loss, corrects = model.compute_loss(logit_scale, image_features, mapped_text_features, emb_loss=args.emb_loss)
                     assert len(corrects) == N, "Error: number of encoders != number of mappers predicted and evaluated."
                 
                 # update metric trackers
@@ -208,7 +208,7 @@ def run(args, input_config):
             dump = {
                 "model": model.state_dict(),
                 "logs": logs,
-                "mapper_params": predict_params_for_saving(model, encoder_info),
+                # "mapper_params": predict_params_for_saving(model, encoder_info),
                 "info": encoder_info
             }
             save_path = os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt")

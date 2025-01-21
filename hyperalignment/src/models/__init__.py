@@ -153,6 +153,7 @@ class ConditionalHyperNetwork(nn.Module):
         mapped_text_features = self.map_features(pred_weight, pred_bias, text_features)
         mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
         loss, corrects = self.compute_loss(self.logit_scale.to(mapped_text_features.device), image_features, mapped_text_features)
+        return loss, corrects
 
 
     def map_features(self, weights, biases, features):
