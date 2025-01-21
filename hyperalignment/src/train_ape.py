@@ -31,7 +31,7 @@ def train_separate_mapper(args):
     # load in dataset for training
     train_dataset_config = data_configs.separate_embedding_dataset_configs(args)
     train_dataset = SeparateEmbeddings(train_dataset_config, split="train", args=args)
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True, drop_last=True)
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=False, drop_last=True)
     print(f"Training data of {len(train_dataset)} samples loaded.")
 
     # load in dataset for validation
