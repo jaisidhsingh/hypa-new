@@ -115,7 +115,7 @@ def train_separate_mapper(args):
                     mapped_text_features = model(text_features)
                     mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True).to(args.device)
                     
-                    sim = model.logit_scale.exp().to(args.device) * (image_features @ mapped_text_features.T)
+                    sim = args.logit_scale * (image_features @ mapped_text_features.T)
                     labels = torch.arange(batch_size).long().to(args.device)
                     # print(sim)
                     # print(labels)
@@ -130,9 +130,6 @@ def train_separate_mapper(args):
                 scaler.scale(loss).backward()
                 scaler.step(optimizer)
                 scaler.update()
-
-                with torch.no_grad():
-                    model.logit_scale.clamp_(0, math.log(100))
                     
                 del image_features
                 del text_features
@@ -165,7 +162,7 @@ def train_separate_mapper(args):
                 mapped_text_features = model(text_features)
                 mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
 
-                sim = model.logit_scale.exp().to(args.device) * (image_features @ mapped_text_features.T).to(args.device)
+                sim = args.logit_scale * (image_features @ mapped_text_features.T).to(args.device)
                 labels = torch.arange(batch_size).long().to(args.device)
                 print(sim)
                 print(labels)
