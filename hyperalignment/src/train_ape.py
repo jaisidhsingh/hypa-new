@@ -229,7 +229,7 @@ if __name__ == "__main__":
     parser.add_argument("--seeds", type=str, default="0,1,2,3,4")
     parser.add_argument("--random-seed", type=int, default=0)
     parser.add_argument("--num-workers", type=int, default=4)
-    parser.add_argument("--saving", type=bool, default=False)
+    parser.add_argument("--saving", type=bool, default=True)
     # get args object
     args = parser.parse_args()
 
@@ -242,6 +242,7 @@ if __name__ == "__main__":
         batch_sizes = [int(pow(2, i)) for i in range(8, 15, 2)]
         lrs = [1e-3, 3e-3, 5e-3, 1e-2]
         for bs, lr in zip(batch_sizes, lrs):
+            print(bs, lr)
             suffix = f"bs-{bs}_lr-{lr}_ep-{args.num_epochs}"
             args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
             train_separate_mapper(args)
