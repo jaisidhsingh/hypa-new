@@ -7,14 +7,14 @@
 #     --image-embed-dim=384 \
 #     --benchmarks="cifar10,cifar100,imagenet1k";
 
-python3 src/evaluation.py \
-    --exp-name="vit_small_patch16_224" \
-    --seed=0 \
-    --run-type="sep" \
-    --epoch=1 \
-    --image-embed-dim=384 \
-    --encoder-index=0 \
-    --benchmarks="imagenet1k";
+# python3 src/evaluation.py \
+#     --exp-name="vit_small_patch16_224" \
+#     --seed=0 \
+#     --run-type="sep" \
+#     --epoch=1 \
+#     --image-embed-dim=384 \
+#     --encoder-index=0 \
+#     --benchmarks="imagenet1k";
 
 # python3 src/evaluation.py \
 #     --exp-name="vit_small_patch16_224" \
@@ -62,7 +62,7 @@ python3 src/evaluation.py \
 #     --benchmarks="imagenet1k";
 
 python3 src/evaluation.py \
-    --exp-name="ie_12_mlp_c_256_norm_chunked_256" \
+    --exp-name="ie_12_mlp_c_256_norm_chunked_256_inproj" \
     --seed=0 \
     --run-type="mm" \
     --epoch=1 \
