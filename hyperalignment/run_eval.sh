@@ -62,7 +62,7 @@
 #     --benchmarks="imagenet1k";
 
 python3 src/evaluation.py \
-    --exp-name="ie_12_mlp_c_256_norm_chunked_256_inproj" \
+    --exp-name="ie_12_mlp_c_32_norm_chunked_256_inproj" \
     --seed=0 \
     --run-type="mm" \
     --epoch=1 \
