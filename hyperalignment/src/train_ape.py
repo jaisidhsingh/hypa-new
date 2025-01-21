@@ -31,6 +31,10 @@ def train_separate_mapper(args):
     # load in dataset for training
     train_dataset_config = data_configs.separate_embedding_dataset_configs(args)
     train_dataset = SeparateEmbeddings(train_dataset_config, split="train", args=args)
+
+    print(train_dataset.image_embeddings[595374].norm())
+    sys.exit(0)
+
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True, drop_last=True)
     print(f"Training data of {len(train_dataset)} samples loaded.")
 
@@ -141,51 +145,52 @@ def train_separate_mapper(args):
         
         if args.use_wandb:
             wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_logs["train_accuracy"]}, step=epoch+1)
-        
-        # now validate
-        val_corrects, val_total = 0, 0
-        val_running_loss = 0
-        val_logs = {}
-        # model.eval()
 
-        with torch.no_grad():
-            for (image_features, text_features) in val_loader:
-                batch_size = image_features.shape[0]
+        if args.validate: 
+            # now validate
+            val_corrects, val_total = 0, 0
+            val_running_loss = 0
+            val_logs = {}
+            # model.eval()
 
-                image_features = image_features.float().to(args.device)
-                image_features = image_features.view(batch_size, args.image_embed_dim)
-                image_features = image_features / image_features.norm(dim=-1, keepdim=True).to(args.device)
-                
-                text_features = text_features.float().to(args.device)
-                text_features = text_features.view(batch_size, args.text_embed_dim)
-                text_features = text_features / text_features.norm(dim=-1, keepdim=True).to(args.device)
+            with torch.no_grad():
+                for (image_features, text_features) in val_loader:
+                    batch_size = image_features.shape[0]
 
-                # with autocast(args.device):
-                mapped_text_features = model(text_features)
-                mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
+                    image_features = image_features.float().to(args.device)
+                    image_features = image_features.view(batch_size, args.image_embed_dim)
+                    image_features = image_features / image_features.norm(dim=-1, keepdim=True).to(args.device)
+                    
+                    text_features = text_features.float().to(args.device)
+                    text_features = text_features.view(batch_size, args.text_embed_dim)
+                    text_features = text_features / text_features.norm(dim=-1, keepdim=True).to(args.device)
 
-                sim = args.logit_scale * (image_features @ mapped_text_features.T).to(args.device)
-                labels = torch.arange(batch_size).long().to(args.device)
-                print(sim)
-                print(labels)
-                sys.exit(0)
-                loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
+                    # with autocast(args.device):
+                    mapped_text_features = model(text_features)
+                    mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True)
 
-                in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
-                val_running_loss += loss.item()
-                val_corrects += in_batch_corrects
-                val_total += labels.size(0)
-                
-                del image_features
-                del text_features
-                del mapped_text_features
-        
-        val_logs["val_loss"] = val_running_loss / len(val_loader)
-        val_logs["val_accuracy"] = round(val_corrects/val_total * 100, 2)
-        logs[f"epoch_{epoch+1}"] = {"train": train_logs, "val": val_logs}
+                    sim = args.logit_scale * (image_features @ mapped_text_features.T).to(args.device)
+                    labels = torch.arange(batch_size).long().to(args.device)
+                    print(sim)
+                    print(labels)
+                    sys.exit(0)
+                    loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
-        if args.use_wandb:
-            wandb.log({"val_loss": val_running_loss / len(val_loader), "val_accuracy": val_logs["val_accuracy"]}, step=epoch+1)  
+                    in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
+                    val_running_loss += loss.item()
+                    val_corrects += in_batch_corrects
+                    val_total += labels.size(0)
+                    
+                    del image_features
+                    del text_features
+                    del mapped_text_features
+            
+            val_logs["val_loss"] = val_running_loss / len(val_loader)
+            val_logs["val_accuracy"] = round(val_corrects/val_total * 100, 2)
+            logs[f"epoch_{epoch+1}"] = {"train": train_logs, "val": val_logs}
+
+            if args.use_wandb:
+                wandb.log({"val_loss": val_running_loss / len(val_loader), "val_accuracy": val_logs["val_accuracy"]}, step=epoch+1)  
 
 
         # update the progress bar
@@ -195,7 +200,7 @@ def train_separate_mapper(args):
             "train_acc": train_logs["train_accuracy"],
             "val_loss": val_logs["val_loss"],
             "val_acc": val_logs["val_accuracy"]
-        }
+        } if args.validate else {"train_loss": train_logs["train_loss"], "train_acc": train_logs["train_accuracy"]}
         bar.set_postfix(to_log)
 
         # save every some epochs for safety
