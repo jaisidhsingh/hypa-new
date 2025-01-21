@@ -100,9 +100,11 @@ def train_separate_mapper(args):
 
                 image_features = image_features.float().to(args.device)
                 image_features = image_features.view(batch_size, args.image_embed_dim)
+                image_features = image_features / image_features.norm(dim=-1, keepdim=True).to(args.device)
 
                 text_features = text_features.float().to(args.device)
                 text_features = text_features.view(batch_size, args.text_embed_dim)
+                text_features = text_features / text_features.norm(dim=-1, keepdim=True).to(args.device)
 
                 if scheduler is not None:
                     scheduler(step)
@@ -162,6 +164,9 @@ def train_separate_mapper(args):
 
                 sim = model.logit_scale.exp().to(args.device) * (image_features @ mapped_text_features.T).to(args.device)
                 labels = torch.arange(batch_size).long().to(args.device)
+                print(sim)
+                print(labels)
+                sys.exit(0)
                 loss = (F.cross_entropy(sim, labels) + F.cross_entropy(sim.T, labels)) / 2
 
                 in_batch_corrects = (sim.argmax(dim=-1) == labels).sum().item()
