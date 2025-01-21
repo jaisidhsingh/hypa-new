@@ -30,12 +30,12 @@ def train_separate_mapper(args):
 
     # load in dataset for training
     train_dataset_config = data_configs.separate_embedding_dataset_configs(args)
-    train_dataset = SeparateEmbeddings(train_dataset_config, split="train")
+    train_dataset = SeparateEmbeddings(train_dataset_config, split="train", args=args)
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True)
     print(f"Training data of {len(train_dataset)} samples loaded.")
 
     # load in dataset for validation
-    val_dataset = SeparateEmbeddings(train_dataset_config, split="val", split_ratio=args.train_val_split_ratio)
+    val_dataset = SeparateEmbeddings(train_dataset_config, split="val", args=args)
     val_loader = DataLoader(val_dataset, batch_size=args.eval_batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=False)
     print(f"Validation data of {len(val_dataset)} samples loaded.")
 
@@ -71,7 +71,7 @@ def train_separate_mapper(args):
 
     # trackers
     bar = tqdm(total=args.num_epochs)
-    flop_counter = FlopCounterMode(model, display=True, depth=2)
+    flop_counter = FlopCounterMode(model, display=False, depth=2)
 
     # saving preparation
     ckpt_save_folder = os.path.join(args.checkpoint_folder, "ape", args.experiment_name, f"seed_{args.random_seed}")
