@@ -146,6 +146,13 @@ def train_separate_mapper(args):
             val_logs = {}
             model.eval()
 
+            x = torch.randn((256, 768)).to(args.device)
+            y = torch.randn((256, 768)).to(args.device)
+            z = torch.cat([model(x), model(y)], dim=0)
+            u = model(torch.cat([x, y], dim=0))
+            print(torch.equal(z, u))
+            sys.exit(0)
+
             with torch.no_grad():
                 for idx, (image_features, text_features) in enumerate(val_loader):
                     step = int(epoch * len(train_loader)) + idx
@@ -164,11 +171,9 @@ def train_separate_mapper(args):
                         mapped_text_features = mapped_text_features / mapped_text_features.norm(dim=-1, keepdim=True).to(args.device)
                         
                         sim = args.logit_scale * (image_features @ mapped_text_features.T)
-                        print(sim)
-                        sys.exit(0)
                         
                         if torch.isnan(sim).any():
-                            print("[Val]: Nan encountered in sim at step=", step)
+                            print("[Val]: Nan encountered in sim at step =", step)
                             break
                         
                         labels = torch.arange(batch_size).long().to(args.device)
