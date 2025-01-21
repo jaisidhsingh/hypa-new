@@ -61,6 +61,15 @@ python3 src/evaluation.py \
     --image-embed-dim=384 \
     --benchmarks="imagenet1k";
 
+python3 src/evaluation.py \
+    --exp-name="ie_12_mlp_c_32_norm" \
+    --seed=0 \
+    --run-type="mm" \
+    --epoch=1 \
+    --encoder-index=0 \
+    --image-embed-dim=384 \
+    --benchmarks="imagenet1k";
+
 # python3 src/evaluation.py \
 #     --exp-name="flexivit_small.300ep_in1k" \
 #     --seed=0 \

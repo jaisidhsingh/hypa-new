@@ -72,7 +72,7 @@ class SeparateEmbeddings(Dataset):
         elif split == "val":
             self.num_samples = data_config["num_samples"] - round(self.split_ratio * data_config["num_samples"])
 
-        self.indices = [i for i in range(data_config["num_samples"])]
+        # self.indices = [i for i in range(data_config["num_samples"])]
         # random.seed(args.random_seed)
         # random.shuffle(self.indices)
         
