@@ -204,7 +204,7 @@ def run(args, input_config):
                         encoder_info[index] = {"index": index, "image_embed_dim": D_img, "embedding": model.lookup_embedding_table(index)}
 
                     elif args.cond_type == "features":
-                        encoder_info[index] = {"index": index, "image_embed_dim": D_img, "embedding": cond_id[ii, :]}
+                        encoder_info[index] = {"index": index, "image_embed_dim": D_img, "embedding": cond_id[ii, :].view(1, args.largest_image_dim)}
                 
         # make sure we have saved info correctly
         assert len(encoder_info.keys()) == args.num_image_encoders, "Something went wrong during storing info for H-Net."
