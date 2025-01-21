@@ -56,24 +56,36 @@ class JointEmbeddings(Dataset):
 
 
 class SeparateEmbeddings(Dataset):
-    def __init__(self, data_config):
+    def __init__(self, data_config, split="train", split_ratio=0.9):
         # self.image_embeddings = torch.load(data_config["image_embeddings_path"])[data_config["image_embed_dim"]][data_config["image_encoder"]].cpu()
         # self.text_embeddings = torch.load(data_config["text_embeddings_path"])[data_config["text_embed_dim"]][data_config["text_encoder"]].cpu()
         self.image_embeddings = np.memmap(data_config["image_embeddings_path"], dtype="float32", mode="r", shape=(data_config["num_samples"], data_config["image_embed_dim"]))
         self.text_embeddings = np.memmap(data_config["text_embeddings_path"], dtype="float32", mode="r", shape=(data_config["num_samples"], data_config["text_embed_dim"]))
+
+        self.split = split
+        self.split_ratio = split_ratio
+        self.data_config = data_config
+
+        if split == "train":
+            self.num_samples = round(split_ratio * data_config["num_samples"])
+        elif split == "val":
+            self.num_samples = data_config["num_samples"] - round(split_ratio * data_config["num_samples"])
         
         self.image_embed_dim = data_config["image_embed_dim"]
         self.text_embed_dim = data_config["text_embed_dim"]
         self.feature_dataset = data_config["feature_dataset"]
         
     def __len__(self):
-        return self.image_embeddings.shape[0]
+        return self.num_samples
     
     def __getitem__(self, idx):
         # image_embedding = self.image_embeddings[idx].view(1, self.image_embed_dim)
         # text_embedding = self.text_embeddings[idx].view(1, self.text_embed_dim)
-        image_embedding = np.array(deepcopy(self.image_embeddings[idx, :])).astype(np.float32)
-        text_embedding = np.array(deepcopy(self.text_embeddings[idx, :])).astype(np.float32)
+        
+        offset = 0 if self.split == "train" else round(self.split_ratio * self.data_config["num_samples"])
+
+        image_embedding = np.array(deepcopy(self.image_embeddings[offset + idx, :])).astype(np.float32)
+        text_embedding = np.array(deepcopy(self.text_embeddings[offset + idx, :])).astype(np.float32)
 
         return torch.from_numpy(image_embedding), torch.from_numpy(text_embedding)
 

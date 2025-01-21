@@ -14,6 +14,13 @@ def count_hnet_flops(bs, include_backward=True):
         [[1024, 768], [1024]], cond_emb_dim=32,
         num_cond_embs=12, image_embed_dims=[384,768,1024], kwargs=kwargs 
     )
+    print(model)
+    param_counts = 0
+    for p in model.parameters():
+        param_counts += p.numel()
+    
+    print(param_counts)
+    
     opt = torch.optim.AdamW(model.parameters(), lr=1e-2)
     x = torch.randn(bs, 32)
     y = torch.randn(1, bs, 384)
@@ -46,6 +53,12 @@ def count_ape_flops(bs, include_backward=True):
     flop_counter = FlopCounterMode(model, display=True, depth=4)
     criterion = ClipLoss(None)
 
+    param_counts = 0
+    for p in model.parameters():
+        param_counts += p.numel()
+    
+    print(param_counts)
+    
     with flop_counter:
         for i in range(1):
             if include_backward:
@@ -65,3 +78,8 @@ if sys.argv[1] == "ape":
 
 elif sys.argv[1] == "hnet":
     count_hnet_flops(int(sys.argv[2]), ib)
+
+
+"""
+
+"""

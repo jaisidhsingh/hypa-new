@@ -170,6 +170,6 @@ model_configs.hnet_decoder_configs = {
 	},
     "mlp": {
         "decoder_type": "mlp",
-        "hidden_layer_factors": [],
+        "hidden_layer_factors": [4, 16],
 	}
 }
