@@ -79,7 +79,7 @@ class ConditionalHyperNetwork(nn.Module):
         self.in_proj = nn.Linear(param_shapes[0][0], cond_emb_dim)
         self.num_cond_embs = num_cond_embs
         self.cond_embs = nn.Embedding(num_cond_embs, cond_emb_dim)
-        self.shape_embs = nn.Embedding(len(image_embed_dims), cond_emb_dim)
+        # self.shape_embs = nn.Embedding(len(image_embed_dims), cond_emb_dim)
 
         # self.in_proj = nn.Linear(cond_emb_dim, 4*cond_emb_dim)
         # self.attn = nn.TransformerEncoderLayer(4*cond_emb_dim, 8, batch_first=True)
@@ -135,12 +135,12 @@ class ConditionalHyperNetwork(nn.Module):
             num_conds = cond_id.shape[0]
             cond_emb = self.in_proj(cond_id)
 
-        shape_id = torch.tensor([self.image_embed_dims.index(image_embed_dim)]).long().to(self.cond_embs.weight.device)
-        shape_emb = self.shape_embs(shape_id) # shape: [1, cond_emb_dim]
-        shape_emb = shape_emb.repeat((num_conds, 1)) # shape: [num_conds, cond_emb_dim]
+        # shape_id = torch.tensor([self.image_embed_dims.index(image_embed_dim)]).long().to(self.cond_embs.weight.device)
+        # shape_emb = self.shape_embs(shape_id) # shape: [1, cond_emb_dim]
+        # shape_emb = shape_emb.repeat((num_conds, 1)) # shape: [num_conds, cond_emb_dim]
 
-        final_cond_emb = cond_emb + shape_emb
-        # final_cond_emb = self.in_proj(final_cond_emb)
+        final_cond_emb = cond_emb # + shape_emb
+        final_cond_emb = self.in_proj(final_cond_emb)
         # final_cond_emb = self.attn(final_cond_emb.unsqueeze(0)).squeeze(0)
 
         pred_weight, pred_bias = self.decoder(final_cond_emb)

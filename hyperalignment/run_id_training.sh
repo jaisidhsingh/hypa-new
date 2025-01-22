@@ -68,12 +68,12 @@
 
 
 python3 src/learn_hnet.py \
-    --experiment-name="ie_12_mlp_c_32_norm_chunked_256_inproj" \
+    --experiment-name="ie_12_mlp_c_32_norm_chunked_256_inproj_nose" \
     --num-image-encoders=12 \
     --encoder-batch-size=4 \
     --hnet-cond-emb-dim=32 \
     --cond-type="features" \
-    --num-epochs=40 \
+    --num-epochs=1 \
     --learning-rate=1e-2 \
     --batch-size=512 \
     --scheduler="off" \
