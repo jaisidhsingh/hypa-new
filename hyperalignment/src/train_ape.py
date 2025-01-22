@@ -233,21 +233,21 @@ if __name__ == "__main__":
     # get args object
     args = parser.parse_args()
 
-    if not args.ablate:
-        suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
-        args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
-        train_separate_mapper(args)
+    # if not args.ablate:
+    suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
+    args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
+    train_separate_mapper(args)
     
-    else:
-        batch_sizes = [int(pow(2, i)) for i in range(8, 15, 2)]
-        lrs = [1e-3, 3e-3, 5e-3, 1e-2]
-        for bs, lr in zip(batch_sizes, lrs):
-            print(bs, lr)
-            suffix = f"bs-{bs}_lr-{lr}_ep-{args.num_epochs}"
-            args.batch_size = bs
-            args.learning_rate = lr
-            args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
-            train_separate_mapper(args)
+    # else:
+    #     batch_sizes = [int(pow(2, i)) for i in range(8, 15, 2)]
+    #     lrs = [1e-3, 3e-3, 5e-3, 1e-2]
+    #     for bs, lr in zip(batch_sizes, lrs):
+    #         print(bs, lr)
+    #         suffix = f"bs-{bs}_lr-{lr}_ep-{args.num_epochs}"
+    #         args.batch_size = bs
+    #         args.learning_rate = lr
+    #         args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
+    #         train_separate_mapper(args)
 
 
     # models = [
