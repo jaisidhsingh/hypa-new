@@ -140,7 +140,7 @@ class ConditionalHyperNetwork(nn.Module):
         # shape_emb = shape_emb.repeat((num_conds, 1)) # shape: [num_conds, cond_emb_dim]
 
         final_cond_emb = cond_emb # + shape_emb
-        final_cond_emb = self.in_proj(final_cond_emb)
+        # final_cond_emb = self.in_proj(final_cond_emb)
         # final_cond_emb = self.attn(final_cond_emb.unsqueeze(0)).squeeze(0)
 
         pred_weight, pred_bias = self.decoder(final_cond_emb)
