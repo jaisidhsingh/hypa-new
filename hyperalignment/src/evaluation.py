@@ -282,11 +282,12 @@ if __name__ == "__main__":
     # get args
     args = parser.parse_args()
 
-    batch_sizes = [16384] #[int(pow(2, i)) for i in range(10, 15, 2)]
-    lrs = [1e-2] #[3e-3, 5e-3, 1e-2]
+    batch_sizes = [256] #[int(pow(2, i)) for i in range(10, 15, 2)]
+    lrs = [1e-3] #[3e-3, 5e-3, 1e-2]
     for bs, lr in zip(batch_sizes, lrs):
         suffix = f"bs-{bs}_lr-{lr}_ep-10"
         args.exp_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
+        print(args.exp_name)
         args.epoch = 10
         result = main(args)
         print(f"Batch size: {bs} ---> {result[args.exp_name]['imagenet1k']}")
