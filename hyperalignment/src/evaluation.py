@@ -247,18 +247,19 @@ def main(args):
             metric = eval_fn(args, model, preprocess, bench)
             metrics[bench] = metric 
     
-    metrics.update({"config": vars(args)})
+    # metrics.update({"config": vars(args)})
     result = {args.exp_name: metrics}
+    return result
 
-    with open(result_save_file, "r") as f:
-        saved_results = json.load(f)
+    # with open(result_save_file, "r") as f:
+    #     saved_results = json.load(f)
 
-    saved_results.update(result)
+    # saved_results.update(result)
 
-    with open(result_save_file, "w+") as f:
-        json.dump(saved_results, f)
+    # with open(result_save_file, "w+") as f:
+        # json.dump(saved_results, f)
     
-    print("All done and saved.")
+    # print("All done and saved.")
 
 
 if __name__ == "__main__":
@@ -287,5 +288,6 @@ if __name__ == "__main__":
         suffix = f"bs-{bs}_lr-{lr}_ep-10"
         args.exp_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
         args.epoch = 10
-        main(args)
+        result = main(args)
+        print(f"Batch size: {bs} ---> {result[args.exp_name]["imagenet1k"]}")
     
