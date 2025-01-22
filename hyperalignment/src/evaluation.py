@@ -288,7 +288,7 @@ if __name__ == "__main__":
         suffix = f"bs-{bs}_lr-{lr}_ep-10"
         args.exp_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
         print(args.exp_name)
-        args.epoch = 10
+        args.epoch = 1
         result = main(args)
         print(f"Batch size: {bs} ---> {result[args.exp_name]['imagenet1k']}")
     
