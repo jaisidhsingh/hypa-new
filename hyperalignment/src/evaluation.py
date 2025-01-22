@@ -271,16 +271,21 @@ if __name__ == "__main__":
     parser.add_argument("--ood-results-path", type=str, default="ood_attempt_1.pt")
     parser.add_argument("--epoch", type=int, default=1)
     parser.add_argument("--encoder-index", type=int, default=0)
-    parser.add_argument("--benchmarks", type=str, default="mscoco,cifar10,cifar100,imagenet1k")
+    parser.add_argument("--benchmarks", type=str, default="cifar10,cifar100,imagenet1k")
     parser.add_argument("--clip-version", type=str, default="off")
     # model args
     parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-embed-dim", type=int, default=768)
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
-    parser.add_argument("--image-encoder", type=str, default="set-later")
+    parser.add_argument("--image-encoder", type=str, default="vit_small_patch16_224")
     # get args
     args = parser.parse_args()
 
-    print(args.image_encoder)
-    main(args)
+    batch_sizes = [int(pow(2, i)) for i in range(8, 15, 2)]
+    lrs = [1e-3, 3e-3, 5e-3, 1e-2]
+    for bs, lr in zip(batch_sizes, lrs):
+        suffix = f"bs-{bs}_lr-{lr}_ep-10"
+        args.exp_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
+        args.epoch = 10
+        main(args)
     
