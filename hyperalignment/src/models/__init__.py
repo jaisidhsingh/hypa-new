@@ -180,6 +180,15 @@ class ConditionalHyperNetwork(nn.Module):
         image_features = torch.permute(image_features, (1, 0, 2))
         logits1 = logit_scale * torch.einsum("nbd,ncd->nbc", image_features, text_features)
 
+        # n = encoder_bs
+        # n = 1, total encoders = 12. every step, we look at one encoder_batch
+        # 1163 steps and look at one encoder_batch per step.
+        # input to the hnet does vary with the encoder_batch_size
+        # loss computation varies linearly with the encoder_batch_size.
+
+        # if n = 1, FLOPs for loss should be 4x less than if n = 4 and also for the input.
+        # input.shape = [n, C]
+
         preds = [logits1[i, :, :].argmax(dim=-1) for i in range(num_mappers)]
         corrects = [(preds[i] == labels[i, :]).sum().item() for i in range(num_mappers)]
 

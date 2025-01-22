@@ -232,7 +232,7 @@ def main(args):
     assert args.num_image_encoders in num_encoders_ablation, "Incompatible number selected for ablation!"
 
     num_encoders = args.num_image_encoders
-    q = num_encoders // 3
+    q = 1 #num_encoders // 3
     config = {k:full_configs[k][:q] for k in full_configs.keys()}
     args.encoder_batch_size = q
 
