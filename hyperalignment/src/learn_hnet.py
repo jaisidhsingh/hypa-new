@@ -239,7 +239,8 @@ def main(args):
 
     num_encoders = args.num_image_encoders
     q = 1 #num_encoders // 3
-    config = {k:full_configs[k][:q] for k in full_configs.keys()}
+    # config = {k:full_configs[k][:q] for k in full_configs.keys()}
+    config = {k:full_configs[k] for k in full_configs.keys()}
     args.encoder_batch_size = q
 
     print(f"Started run with num_image_encoders: {num_encoders}")
