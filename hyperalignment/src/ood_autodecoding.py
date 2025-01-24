@@ -33,7 +33,7 @@ def main(args):
     embedding = embedding.to(args.device)
     print("Initialized embedding to auto-decode.")
 
-    decoder_type = args.hnet_ckpt_name.split("_")[2]
+    decoder_type = "chunked_mlp" #args.hnet_ckpt_name.split("_")[2]
     kwargs = model_configs.hnet_decoder_configs[decoder_type]
 
     hnet = ConditionalHyperNetwork(
@@ -130,10 +130,10 @@ if __name__ == "__main__":
     # hnet settings
     parser.add_argument("--hnet-ckpt-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper")
     parser.add_argument("--hnet-ckpt-epoch", type=int, default=1)
-    parser.add_argument("--hnet-ckpt-name", type=str, default="ie_12_mlp_c_32_norm")
+    parser.add_argument("--hnet-ckpt-name", type=str, default="ie_12-4_mlp_c-32_norm_chk-256_inproj")
     parser.add_argument("--hnet-cond-emb-dim", type=int, default=32)
     parser.add_argument("--hnet-ckpt-num-ie", type=int, default=12)
-    parser.add_argument("--largest-image-dim", type=int, default=1536)
+    parser.add_argument("--largest-image-dim", type=int, default=1024)
     parser.add_argument("--largest-text-dim", type=int, default=768)
     parser.add_argument("--image-embed-dims", type=str, default="384,768,1024")
     parser.add_argument("--hidden-layer-factors", type=str, default="4,16")
