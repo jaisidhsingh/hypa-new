@@ -67,6 +67,10 @@ def run(args, input_config):
     config["image_encoder_data"] = input_config
 
     dataset = MultiMapperEmbeddings(config)
+    print(dataset.image_encoder_data)
+    print(dataset.num_image_encoders)
+    sys.exit(0)
+
     num_batches = math.ceil(len(dataset) / args.batch_size)
     num_encoder_batches = math.ceil(args.num_image_encoders / args.encoder_batch_size)
     
