@@ -25,13 +25,13 @@ def main(args):
     image_embed_dims = [int(x) for x in args.image_embed_dims.split(",")]
     hidden_layer_factors = [int(x) for x in args.hidden_layer_factors.split(",")]
 
-    embedding = nn.Embedding(1, args.hnet_cond_emb_dim)
-    # nn.init.normal_(embedding, mean=0, std=1/math.sqrt(args.hnet_cond_emb_dim))
-    # embedding.requires_grad = True
-    for param in embedding.parameters():
-        param.requires_grad = True
-    embedding = embedding.to(args.device)
-    print("Initialized embedding to auto-decode.")
+    # embedding = nn.Embedding(1, args.hnet_cond_emb_dim)
+    # # nn.init.normal_(embedding, mean=0, std=1/math.sqrt(args.hnet_cond_emb_dim))
+    # # embedding.requires_grad = True
+    # for param in embedding.parameters():
+    #     param.requires_grad = True
+    # embedding = embedding.to(args.device)
+    # print("Initialized embedding to auto-decode.")
 
     decoder_type = "chunked_mlp" #args.hnet_ckpt_name.split("_")[2]
     kwargs = model_configs.hnet_decoder_configs[decoder_type]
@@ -47,14 +47,14 @@ def main(args):
     print("Initialized hypernetwork (decoder) with saved checkpoint:", args.hnet_ckpt_name)
 
     # freeze the hypernetwork which decodes the conditional embedding that we are optimizing
-    for p in hnet.parameters():
-        p.requires_grad = False #True
-    # set to eval mode 
-    hnet.eval()
-    print("Froze hypernetwork parameters.")
+    # for p in hnet.parameters():
+    #     p.requires_grad = False #True
+    # # set to eval mode 
+    # hnet.eval()
+    # print("Froze hypernetwork parameters.")
 
-    # Initialise the embedding to be learnt as the avg of the hnet's embeddings
-    embedding.weight.data = hnet.cond_embs.weight.data[:, :].mean(dim=0).unsqueeze(0)
+    # # Initialise the embedding to be learnt as the avg of the hnet's embeddings
+    # embedding.weight.data = hnet.cond_embs.weight.data[:, :].mean(dim=0).unsqueeze(0)
     
     dataset_config = data_configs.separate_embedding_dataset_configs(args)
     dataset = SeparateEmbeddings(dataset_config, split="train", args=None)
@@ -63,7 +63,7 @@ def main(args):
 
     # opts = [p for p in embedding.parameters()] + [p for p in hnet.parameters()]
 
-    optimizer = torch.optim.SGD(embedding.parameters(), lr=args.learning_rate)
+    optimizer = torch.optim.SGD(hnet.parameters(), lr=args.learning_rate)
     # optimizer = torch.optim.Adam(opts, lr=args.learning_rate)
     criterion = ClipLoss(args)
 
@@ -86,8 +86,11 @@ def main(args):
                     text_embeddings = text_embeddings.to(args.device)
 
                     optimizer.zero_grad()
-                    cond_emb = embedding(torch.tensor([0]).to(args.device))
-                    loss, corrects = hnet(cond_emb, image_embeddings, text_embeddings, image_embed_dim, normalize_output=True, nolookup=True)
+                    # cond_emb = embedding(torch.tensor([0]).to(args.device))
+
+                    cond_id = torch.zeros((1, args.largest_image_dim)).to(args.device)
+                    cond_id[:, :384] = image_embeddings.mean(dim=0)
+                    loss, corrects = hnet(cond_id, image_embeddings, text_embeddings, image_embed_dim, normalize_output=True, nolookup=True)
 
                     # pred_weight = pred_weight.squeeze(0)
                     # pred_bias = pred_bias.squeeze(0)
@@ -109,7 +112,7 @@ def main(args):
                     if idx == 12903:
                         break
         
-        pred_weight, pred_bias = hnet(cond_emb, image_embeddings, text_embeddings, image_embed_dim, normalize_output=True, nolookup=True, just_params=True)
+        pred_weight, pred_bias = hnet(cond_id, image_embeddings, text_embeddings, image_embed_dim, normalize_output=True, nolookup=True, just_params=True)
         store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
 
     store["config"] = vars(args)
