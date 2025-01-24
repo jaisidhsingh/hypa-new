@@ -67,15 +67,19 @@ def run(args, input_config):
     config["image_encoder_data"] = input_config
 
     dataset = MultiMapperEmbeddings(config)
-    print(dataset.image_encoder_data)
-    print(dataset.num_image_encoders)
-    sys.exit(0)
+    # print(dataset.image_encoder_data)
+    # print(dataset.num_image_encoders)
+    # sys.exit(0)
 
     num_batches = math.ceil(len(dataset) / args.batch_size)
     num_encoder_batches = math.ceil(args.num_image_encoders / args.encoder_batch_size)
     
     indices_loader = init_indices_loader(args, dataset)
     encoder_loader = init_encoder_loader(args, dataset)
+    for i in range(5):
+        print(next(encoder_loader))
+    sys.exit(0)
+
     print("Dataset loaded.")
 
     # optimizer + scheduler + scaler
