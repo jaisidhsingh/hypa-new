@@ -194,7 +194,7 @@ def train_separate_mapper(args):
 
     bar.close()
     print("All done.")
-    return model.layers[0].weight.data
+    return model.layers[0].weight.data, model.layers[0].bias.data
 
 
 if __name__ == "__main__":
@@ -240,41 +240,11 @@ if __name__ == "__main__":
     args.num_epochs = 1
     args.batch_size = 256
     args.learning_rate = 1e-3
-    w1 = train_separate_mapper(args)
+    w1, b1 = train_separate_mapper(args)
 
     args.batch_size = 16384
     args.learning_rate = 1e-2
-    w2 = train_separate_mapper(args)
+    w2, b2 = train_separate_mapper(args)
 
+    print((w1-w2).norm(), (b1-b2).norm())
     print(torch.isclose(w1, w2).all())
-    
-    # else:
-    #     batch_sizes = [int(pow(2, i)) for i in range(8, 15, 2)]
-    #     lrs = [1e-3, 3e-3, 5e-3, 1e-2]
-    #     for bs, lr in zip(batch_sizes, lrs):
-    #         print(bs, lr)
-    #         suffix = f"bs-{bs}_lr-{lr}_ep-{args.num_epochs}"
-    #         args.batch_size = bs
-    #         args.learning_rate = lr
-    #         args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
-    #         train_separate_mapper(args)
-
-
-    # models = [
-    #     # "vit_base_patch16_224"
-    #     # "vit_large_patch16_224.augreg_in21k_ft_in1k",
-    #     # "vit_large_patch14_clip_336.laion2b_ft_in12k_in1k", #
-    #     # "deit3_large_patch16_384.fb_in22k_ft_in1k", #
-    #     # "eva02_large_patch14_448.mim_m38m_ft_in22k_in1k", #
-    #     # "beit_large_patch16_384.in22k_ft_in22k_in1k", #
-    #     # "beitv2_large_patch16_224.in1k_ft_in22k_in1k", #
-    #     # "swin_base_patch4_window7_224.ms_in22k_ft_in1k", #
-    #     # "convnext_base.fb_in22k_ft_in1k", # 
-    #     # "convnextv2_base.fcmae_ft_in22k_in1k" #
-    # ]
-    # for model in models:
-    #     args.image_encoder = model
-    # args.experiment_name = args.image_encoder
-    #     train_separate_mapper(args)
-    # train_separate_mapper(args)
-    # print("All done.")
