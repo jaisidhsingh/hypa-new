@@ -146,7 +146,7 @@ def train_separate_mapper(args):
             wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_logs["train_accuracy"]}, step=epoch+1)
         
         model.eval()
-        val_acc = evaluate_mapper(args, model)
+        val_acc = evaluate_mapper(args, model) if epoch == args.num_epochs - 1 else -1
         
         # with torch.no_grad():
         #     val_image_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
@@ -250,7 +250,7 @@ if __name__ == "__main__":
     # if not args.ablate:
     # suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
     # args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
-    args.num_epochs = 1
+    args.num_epochs = 10
     args.batch_size = 256
     args.learning_rate = 1e-3
     w1, b1, c1 = train_separate_mapper(args)
