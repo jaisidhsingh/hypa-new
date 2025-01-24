@@ -98,7 +98,7 @@ def main(args):
 
                     # loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
                     
-                    correct += corrects
+                    correct += corrects[0]
                     total += image_embeddings.shape[0]
                     accuracy = round(correct/total * 100, 2)
 
