@@ -21,7 +21,17 @@ from configs.model_configs import model_configs
 from training import SeparateTrainer
 from training.schedulers import cosine_lr
 from training.loss_functions import ClipLoss
+from evaluation import eval_classification, image_classification_eval
 warnings.simplefilter("ignore")
+
+
+@torch.no_grad()
+def evaluate_mapper(args, model):
+    model.eval()
+    vlm = CustomVLM(args.image_encoder, args.text_encoder).to(args.device)
+    vlm.mapper = model.to(args.device)
+    acc = eval_classification(args, vlm, vlm.image_encoder.transform, "imagenet1k")
+    return acc
 
 
 def train_separate_mapper(args):
@@ -135,6 +145,9 @@ def train_separate_mapper(args):
         if args.use_wandb:
             wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_logs["train_accuracy"]}, step=epoch+1)
         
+        model.eval()
+        val_acc = evaluate_mapper(args, model)
+        
         # with torch.no_grad():
         #     val_image_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
         #     val_text_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
@@ -174,7 +187,7 @@ def train_separate_mapper(args):
             "train_loss": train_logs["train_loss"],
             "train_acc": train_logs["train_accuracy"],
             # "val_loss": val_logs["val_loss"],
-            # "val_acc": val_logs["val_accuracy"]
+            "val_acc": val_acc
         } 
         bar.set_postfix(to_log)
 
