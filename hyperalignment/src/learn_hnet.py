@@ -119,7 +119,7 @@ def run(args, input_config):
             correct_store = [0 for _ in range(args.num_image_encoders)]
             running_loss = 0
 
-        # iterate over dataset batches
+            # iterate over dataset batches
             for idx in range(num_batches):
                 model.train()
 
@@ -128,6 +128,7 @@ def run(args, input_config):
 
                 # first sample the encoders to use in this step
                 encoder_indices, encoder_dims = next(encoder_loader)
+                print(encoder_indices)
 
                 # then get the features made by the sampled encoders
                 image_features, text_features = dataset.get_minibatch(batch_indices, encoder_indices, encoder_dims)
