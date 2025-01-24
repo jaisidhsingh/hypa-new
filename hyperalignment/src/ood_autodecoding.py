@@ -89,8 +89,8 @@ def main(args):
                     # cond_emb = embedding(torch.tensor([0]).to(args.device))
 
                     cond_id = torch.zeros((1, args.largest_image_dim)).to(args.device)
-                    cond_id[:, :384] = image_embeddings.mean(dim=0)
-                    loss, corrects = hnet(cond_id, image_embeddings, text_embeddings, image_embed_dim, normalize_output=True, nolookup=True)
+                    cond_id[:, :384] = image_embeddings.mean(dim=0).unsqueeze(0)
+                    loss, corrects = hnet(cond_id, image_embeddings.unsqueeze(1), text_embeddings, image_embed_dim, normalize_output=True, nolookup=True)
 
                     # pred_weight = pred_weight.squeeze(0)
                     # pred_bias = pred_bias.squeeze(0)
@@ -112,7 +112,7 @@ def main(args):
                     if idx == 12903:
                         break
         
-        pred_weight, pred_bias = hnet(cond_id, image_embeddings, text_embeddings, image_embed_dim, normalize_output=True, nolookup=True, just_params=True)
+        pred_weight, pred_bias = hnet(cond_id, image_embeddings.unsqueeze(1), text_embeddings, image_embed_dim, normalize_output=True, nolookup=True, just_params=True)
         store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
 
     store["config"] = vars(args)
