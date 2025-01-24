@@ -73,7 +73,7 @@ def main(args):
     bar = tqdm(total=int(args.num_epochs * len(loader)))
     store = {}
 
-    flop_counter = FlopCounterMode(embedding, display=True, depth=2)
+    flop_counter = FlopCounterMode(hnet, display=True, depth=2)
 
     with flop_counter:
         for epoch in range(args.num_epochs):
