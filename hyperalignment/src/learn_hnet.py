@@ -76,7 +76,7 @@ def run(args, input_config):
     
     indices_loader = init_indices_loader(args, dataset)
     encoder_loader = init_encoder_loader(args, dataset)
-    for i in range(5):
+    for i in range(12):
         print(next(encoder_loader))
     sys.exit(0)
 
@@ -242,10 +242,10 @@ def main(args):
     assert args.num_image_encoders in num_encoders_ablation, "Incompatible number selected for ablation!"
 
     num_encoders = args.num_image_encoders
-    q = 1 #num_encoders // 3
-    # config = {k:full_configs[k][:q] for k in full_configs.keys()}
-    config = {k:full_configs[k] for k in full_configs.keys()}
-    args.encoder_batch_size = q
+    q = num_encoders // 3
+    config = {k:full_configs[k][:q] for k in full_configs.keys()}
+    # config = {k:full_configs[k] for k in full_configs.keys()}
+    # args.encoder_batch_size = q
 
     print(f"Started run with num_image_encoders: {num_encoders}")
     run(args, input_config=config)
