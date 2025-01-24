@@ -76,9 +76,9 @@ def run(args, input_config):
     
     indices_loader = init_indices_loader(args, dataset)
     encoder_loader = init_encoder_loader(args, dataset)
-    for i in range(12):
-        print(next(encoder_loader))
-    sys.exit(0)
+    # for i in range(12):
+    #     print(next(encoder_loader))
+    # sys.exit(0)
 
     print("Dataset loaded.")
 
@@ -216,8 +216,8 @@ def run(args, input_config):
                         encoder_info[index] = {"index": index, "image_embed_dim": D_img, "embedding": cond_id[ii, :].view(1, args.largest_image_dim)}
                 
         # make sure we have saved info correctly
-        print(list(encoder_info.keys()))
-        # assert len(encoder_info.keys()) == args.num_image_encoders, "Something went wrong during storing info for H-Net."
+        # print(list(encoder_info.keys()))
+        assert len(encoder_info.keys()) == args.num_image_encoders, "Something went wrong during storing info for H-Net."
         
         # make sure that we save
         if (epoch+1) in [1, 2, 5, 10, 20, 40, 100, 200] and args.saving:
