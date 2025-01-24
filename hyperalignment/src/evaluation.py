@@ -206,8 +206,8 @@ def eval_classification(args, model, transform, dataset):
     dataset = ImageClassificationDataset(kwargs)
     print(dataset.classes[0])
     loader = DataLoader(dataset, batch_size=1024, num_workers=4, pin_memory=True)
-    using_clip = args.clip_version != "off"
-    accuracy = image_classification_eval(model, loader, using_clip=using_clip, device=args.device)
+    # using_clip = args.clip_version != "off"
+    accuracy = image_classification_eval(model, loader, using_clip=False, device=args.device)
     return accuracy
 
 
