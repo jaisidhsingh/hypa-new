@@ -68,9 +68,9 @@
 
 
 python3 src/learn_hnet.py \
-    --experiment-name="ie_12_mlp_c_32_norm_chunked_256_inproj_ebs_1" \
+    --experiment-name="ie_12-4_mlp_c-32_norm_chk-256_inproj" \
     --num-image-encoders=12 \
-    --encoder-batch-size=1 \
+    --encoder-batch-size=4 \
     --hnet-cond-emb-dim=32 \
     --cond-type="features" \
     --num-epochs=1 \

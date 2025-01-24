@@ -243,13 +243,13 @@ if __name__ == "__main__":
     parser.add_argument("--seeds", type=str, default="0,1,2,3,4")
     parser.add_argument("--random-seed", type=int, default=0)
     parser.add_argument("--num-workers", type=int, default=4)
-    parser.add_argument("--saving", type=bool, default=False)
+    parser.add_argument("--saving", type=bool, default=True)
     # get args object
     args = parser.parse_args()
 
     # if not args.ablate:
-    # suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
-    # args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
+    suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
+    args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
     args.num_epochs = 10
     args.batch_size = 256
     args.learning_rate = 1e-3
