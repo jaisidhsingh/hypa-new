@@ -87,13 +87,13 @@ def main(args):
 
                     optimizer.zero_grad()
                     cond_emb = embedding(torch.tensor([0]).to(args.device))
-                    pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
+                    loss, corrects = hnet(cond_emb, image_embeddings, text_embeddings, image_embed_dim, normalize_output=True, nolookup=True)
 
-                    pred_weight = pred_weight.squeeze(0)
-                    pred_bias = pred_bias.squeeze(0)
-                    mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
+                    # pred_weight = pred_weight.squeeze(0)
+                    # pred_bias = pred_bias.squeeze(0)
+                    # mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
 
-                    loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
+                    # loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
                     
                     correct += corrects
                     total += image_embeddings.shape[0]
@@ -109,7 +109,7 @@ def main(args):
                     if idx == 12903:
                         break
         
-        pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
+        pred_weight, pred_bias = hnet(cond_emb, image_embeddings, text_embeddings, image_embed_dim, normalize_output=True, nolookup=True, just_params=True)
         store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
 
     store["config"] = vars(args)
