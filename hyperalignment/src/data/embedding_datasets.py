@@ -64,7 +64,7 @@ class SeparateEmbeddings(Dataset):
         self.text_embeddings = np.memmap(data_config["text_embeddings_path"], dtype="float32", mode="r", shape=(data_config["num_samples"], data_config["text_embed_dim"]))
 
         self.split = split
-        self.split_ratio = args.train_val_split_ratio
+        self.split_ratio = args.train_val_split_ratio if args is not None else 0
         self.data_config = data_config
 
         if split == "train" and args is not None:
