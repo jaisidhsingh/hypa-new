@@ -67,10 +67,12 @@ class SeparateEmbeddings(Dataset):
         self.split_ratio = args.train_val_split_ratio
         self.data_config = data_config
 
-        if split == "train":
+        if split == "train" and args is not None:
             self.num_samples = round(self.split_ratio * data_config["num_samples"])
         elif split == "val":
             self.num_samples = data_config["num_samples"] - round(self.split_ratio * data_config["num_samples"])
+        elif split == "train" and args is None:
+            self.num_samples = data_config["num_samples"]
 
         # self.indices = [i for i in range(data_config["num_samples"])]
         # random.seed(args.random_seed)

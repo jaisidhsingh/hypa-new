@@ -57,7 +57,7 @@ def main(args):
     embedding.weight.data = hnet.cond_embs.weight.data[:, :].mean(dim=0).unsqueeze(0)
     
     dataset_config = data_configs.separate_embedding_dataset_configs(args)
-    dataset = SeparateEmbeddings(dataset_config)
+    dataset = SeparateEmbeddings(dataset_config, split="train", args=None)
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True)
     print("Loaded dataset for OOD image encoder.")
 
