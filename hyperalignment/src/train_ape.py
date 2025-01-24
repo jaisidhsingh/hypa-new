@@ -207,7 +207,7 @@ def train_separate_mapper(args):
 
     bar.close()
     print("All done.")
-    return model.layers[0].weight.data, model.layers[0].bias.data
+    return model.layers[0].weight.data, model.layers[0].bias.data, val_acc
 
 
 if __name__ == "__main__":
@@ -253,11 +253,11 @@ if __name__ == "__main__":
     args.num_epochs = 1
     args.batch_size = 256
     args.learning_rate = 1e-3
-    w1, b1 = train_separate_mapper(args)
+    w1, b1, c1 = train_separate_mapper(args)
 
     args.batch_size = 16384
     args.learning_rate = 1e-2
-    w2, b2 = train_separate_mapper(args)
+    w2, b2, c2 = train_separate_mapper(args)
 
-    print((w1-w2).norm(), (b1-b2).norm())
+    print((w1-w2).norm(), (b1-b2).norm(), [c1, c2])
     print(torch.isclose(w1, w2).all())
