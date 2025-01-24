@@ -16,7 +16,7 @@ from models import *
 from training.loss_functions import ClipLoss
 from configs.data_configs import data_configs
 from configs.model_configs import model_configs
-from utils.backward_flops import FlopCounterMode
+from torch.utils.flop_counter import FlopCounterMode
 
 def main(args):
     torch.manual_seed(args.random_seed)
@@ -73,40 +73,41 @@ def main(args):
     bar = tqdm(total=int(args.num_epochs * len(loader)))
     store = {}
 
-    # flop_counter = FlopCounterMode(embedding)
+    flop_counter = FlopCounterMode(embedding, display=True, depth=2)
 
-    for epoch in range(args.num_epochs):
-        running_loss = 0.0
-        correct, total = 0, 0
+    with flop_counter:
+        for epoch in range(args.num_epochs):
+            running_loss = 0.0
+            correct, total = 0, 0
 
-        if True:
-            for idx, (image_embeddings, text_embeddings) in enumerate(loader):
-                image_embeddings = image_embeddings.to(args.device)
-                text_embeddings = text_embeddings.to(args.device)
+            if True:
+                for idx, (image_embeddings, text_embeddings) in enumerate(loader):
+                    image_embeddings = image_embeddings.to(args.device)
+                    text_embeddings = text_embeddings.to(args.device)
 
-                optimizer.zero_grad()
-                cond_emb = embedding(torch.tensor([0]).to(args.device))
-                pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
+                    optimizer.zero_grad()
+                    cond_emb = embedding(torch.tensor([0]).to(args.device))
+                    pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
 
-                pred_weight = pred_weight.squeeze(0)
-                pred_bias = pred_bias.squeeze(0)
-                mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
+                    pred_weight = pred_weight.squeeze(0)
+                    pred_bias = pred_bias.squeeze(0)
+                    mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
 
-                loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
-                
-                correct += corrects
-                total += image_embeddings.shape[0]
-                accuracy = round(correct/total * 100, 2)
+                    loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
+                    
+                    correct += corrects
+                    total += image_embeddings.shape[0]
+                    accuracy = round(correct/total * 100, 2)
 
-                loss.backward()
-                optimizer.step()
+                    loss.backward()
+                    optimizer.step()
 
-                running_loss = round(loss.item(), 2)
-                bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
-                bar.update(1)
+                    running_loss = round(loss.item(), 2)
+                    bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
+                    bar.update(1)
 
-                if idx == 12903:
-                    break
+                    if idx == 12903:
+                        break
         
         pred_weight, pred_bias = hnet(cond_emb, image_embed_dim, normalize_output=True, nolookup=True)
         store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
