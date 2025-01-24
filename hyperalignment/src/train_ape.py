@@ -194,6 +194,7 @@ def train_separate_mapper(args):
 
     bar.close()
     print("All done.")
+    return model.layers[0].weight.data
 
 
 if __name__ == "__main__":
@@ -229,14 +230,23 @@ if __name__ == "__main__":
     parser.add_argument("--seeds", type=str, default="0,1,2,3,4")
     parser.add_argument("--random-seed", type=int, default=0)
     parser.add_argument("--num-workers", type=int, default=4)
-    parser.add_argument("--saving", type=bool, default=True)
+    parser.add_argument("--saving", type=bool, default=False)
     # get args object
     args = parser.parse_args()
 
     # if not args.ablate:
-    suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
-    args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
-    train_separate_mapper(args)
+    # suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
+    # args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
+    args.num_epochs = 1
+    args.batch_size = 256
+    args.learning_rate = 1e-3
+    w1 = train_separate_mapper(args)
+
+    args.batch_size = 16384
+    args.learning_rate = 1e-2
+    w2 = train_separate_mapper(args)
+
+    print(torch.isclose(w1, w2).all())
     
     # else:
     #     batch_sizes = [int(pow(2, i)) for i in range(8, 15, 2)]
