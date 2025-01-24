@@ -157,6 +157,7 @@ class MultiMapperEmbeddings(Dataset):
     def get_minibatch(self, batch_indices, sampled_encoder_indices, encoder_dims):
         # first get the encoder names from indices
         sampled_encoders = [self.image_encoders[i] for i in sampled_encoder_indices]
+        print(sampled_encoders)
     
         chosen_dim = encoder_dims[0]
         assert chosen_dim in self.image_embed_dims, "Error in dimension sampling!"
