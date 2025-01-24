@@ -151,7 +151,8 @@ def run(args, input_config):
                     scheduler(step)
 
                 # zero grads
-                optimizer.zero_grad()
+                if (idx+1) % args.accumulate_steps == 0:
+                    optimizer.zero_grad()
 
                 # forward pass + loss calculation
                 with autocast():
@@ -177,7 +178,7 @@ def run(args, input_config):
                 accuracies = [str(item)+"*" if jdx in encoder_indices else str(item) for (jdx, item) in enumerate(accuracies)]
 
                 # backward pass
-                if scaler is not None:
+                if (idx+1) % args.accumulate_steps == 0:
                     scaler.scale(loss).backward()
 
                     if args.clip_grad_norm != -1:
@@ -187,9 +188,9 @@ def run(args, input_config):
                     scaler.step(optimizer)
                     scaler.update()
                 
-                else:
-                    loss.backward()
-                    optimizer.step()
+                # else:
+                    # loss.backward()
+                    # optimizer.step()
                 
                 # add to logs
                 logs[f"epoch_{epoch+1}"] = {"loss": running_loss}
@@ -289,6 +290,7 @@ if __name__ == "__main__":
     parser.add_argument("--clip-grad-norm", type=float, default=-1)
     parser.add_argument("--saving", type=bool, default=True)
     parser.add_argument("--scaling-ablation", type=bool, default=False)
+    parser.add_argument("--accumulate-steps", type=int, default=4)
 
     args = parser.parse_args()
 
