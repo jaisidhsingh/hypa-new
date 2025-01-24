@@ -28,7 +28,7 @@ warnings.simplefilter("ignore")
 @torch.no_grad()
 def evaluate_mapper(args, model):
     model.eval()
-    vlm = CustomVLM(args.image_encoder, args.text_encoder).to(args.device)
+    vlm = CustomVLM(args.image_encoder, args.text_encoder)
     vlm.mapper = model.to(args.device)
     acc = eval_classification(args, vlm, vlm.image_encoder.transform, "imagenet1k")
     return acc
