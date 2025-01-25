@@ -66,8 +66,8 @@ def train_multi_ape(args):
 
             step = epoch * loader_len + idx
             scheduler(step)
-
             optimizer.zero_grad()
+
             with autocast(args.device):
                 mapped_text_embeddings = model(text_embeddings)
                 mapped_text_embeddings /= mapped_text_embeddings.norm(dim=-1, keepdim=True)
@@ -81,8 +81,7 @@ def train_multi_ape(args):
                     corrects[encoder_names[j]] += (logits[j].argmax(dim=-1) == labels).sum().item()
                     total[encoder_names[j]] += bs
                 
-                loss = loss / args.num_image_encoders
-            
+            loss = loss / args.num_image_encoders
             accuracies = {name: round(corrects[name] / total[name] * 100, 2) for name in encoder_names}
         
             scaler.scale(loss).backward()
