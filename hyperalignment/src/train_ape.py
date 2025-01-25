@@ -147,10 +147,10 @@ def train_separate_mapper(args):
         
         model.eval()
 
-        if (epoch+1) % args.eval_every == 0: 
-            val_acc, val_loss = evaluate_mapper(args, model)
-        else:
-            val_acc, val_loss = -1, -1
+        # if (epoch+1) % args.eval_every == 0: 
+        #     val_acc, val_loss = evaluate_mapper(args, model)
+        # else:
+        #     val_acc, val_loss = -1, -1
         
         # with torch.no_grad():
         #     val_image_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
@@ -213,7 +213,8 @@ def train_separate_mapper(args):
 
     bar.close()
     print("All done.")
-    return model.layers[0].weight.data, model.layers[0].bias.data, val_acc
+    return ckpt_save_folder
+    # return model.layers[0].weight.data, model.layers[0].bias.data, val_acc
 
 
 if __name__ == "__main__":
@@ -262,12 +263,35 @@ if __name__ == "__main__":
     args.experiment_name = "vits_bs_256_lr_1e-3"
     args.batch_size = 256
     args.learning_rate = 1e-3
-    w1, b1, c1 = train_separate_mapper(args)
+    print(args.experiment_name, args.batch_size, args.learning_rate)
+    f1 = train_separate_mapper(args)
+
+    for ep in [1, 2, 5, 10]:
+        ckpt = torch.load(os.path.join(f1, f"ckpt_{ep}.pt"))["model"]
+        model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
+        model.load_state_dict(ckpt)
+        model.to(args.device)
+        acc, loss = evaluate_mapper(args, model)
+        print(f"Epoch {ep} - ImageNet1k top-1 accuracy: {acc}")
+    
+    print(" ")
+
 
     args.experiment_name = "vits_bs_16384_lr_1e-2"
     args.batch_size = 16384
     args.learning_rate = 1e-2
-    w2, b2, c2 = train_separate_mapper(args)
+    print(args.experiment_name, args.batch_size, args.learning_rate)
+    f2 = train_separate_mapper(args)
 
-    print((w1-w2).norm(), (b1-b2).norm(), [c1, c2])
-    print(torch.isclose(w1, w2).all())
+
+    for ep in [1, 2, 5, 10]:
+        ckpt = torch.load(os.path.join(f2, f"ckpt_{ep}.pt"))["model"]
+        model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
+        model.load_state_dict(ckpt)
+        model.to(args.device)
+        acc, loss = evaluate_mapper(args, model)
+        print(f"Epoch {ep} - ImageNet1k top-1 accuracy: {acc}")
+    
+
+    # print((w1-w2).norm(), (b1-b2).norm(), [c1, c2])
+    # print(torch.isclose(w1, w2).all())
