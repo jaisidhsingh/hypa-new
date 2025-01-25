@@ -258,7 +258,7 @@ if __name__ == "__main__":
     # if not args.ablate:
     # suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
     # args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
-    args.num_epochs = 10
+    args.num_epochs = 20
     args.saving = True
 
     args.experiment_name = "vits_bs_256_lr_1e-3"
@@ -268,7 +268,7 @@ if __name__ == "__main__":
     f1 = train_separate_mapper(args)
 
     res = {}
-    for ep in [1, 2, 5, 10]:
+    for ep in [10, 20]:
         ckpt = torch.load(os.path.join(f1, f"ckpt_{ep}.pt"))["model"]
         model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
         model.load_state_dict(ckpt)
@@ -287,7 +287,7 @@ if __name__ == "__main__":
     f2 = train_separate_mapper(args)
 
     res = {}
-    for ep in [1, 2, 5, 10]:
+    for ep in [10, 20]:
         ckpt = torch.load(os.path.join(f2, f"ckpt_{ep}.pt"))["model"]
         model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
         model.load_state_dict(ckpt)
