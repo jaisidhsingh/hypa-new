@@ -188,7 +188,7 @@ def eval_retrieval(args, model, transform, bench):
     config.update({"transform": transform, "feature_dataset": "mscoco_val"})
 
     dataset = ImageCaptionDataset(config)
-    loader = DataLoader(dataset, batch_size=1, pin_memory=True, num_workers=4, collate_fn=dataset.collate_fn, shuffle=False)
+    loader = DataLoader(dataset, batch_size=1024, pin_memory=True, num_workers=4, collate_fn=dataset.collate_fn, shuffle=False)
     using_clip = args.clip_version != "off"
     recalls = coco_captions_eval(model, loader, using_clip=using_clip, device=args.device)
     return recalls, 0
