@@ -23,8 +23,9 @@ def one_encoder_embeds_images(args):
     loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False)
 
     store = np.zeros((len(dataset), args.image_embed_dim), dtype=np.float32)
+    bar = tqdm(total=len(loader))
 
-    for idx, (images, _) in tqdm(enumerate(loader)):
+    for idx, (images, _) in enumerate(loader):
         bs = len(images)
         images = images.float().to(args.device)
 
@@ -35,7 +36,9 @@ def one_encoder_embeds_images(args):
         start = idx * args.batch_size
         end = start + bs 
         store[start : end] = image_features.astype(np.float32)
+        bar.update(1)
     
+    bar.close()
     save_folder = f"{args.image_results_folder}/dim_{args.image_embed_dim}/{args.image_encoder}"
     os.makedirs(save_folder, exist_ok=True)
     np.save(os.path.join(save_folder, "cc3m595k_embeddings.npy"), store)
@@ -54,8 +57,9 @@ def one_encoder_embeds_texts(args):
     loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False)
 
     store = np.zeros((len(dataset), args.text_embed_dim), dtype=np.float32)
+    bar = tqdm(total=len(loader))
 
-    for idx, (_, captions) in tqdm(enumerate(loader)):
+    for idx, (_, captions) in enumerate(loader):
         bs = len(captions)
 
         text_features = model(captions)
@@ -65,7 +69,9 @@ def one_encoder_embeds_texts(args):
         start = idx * args.batch_size
         end = start + bs 
         store[start : end] = text_features.astype(np.float32)
+        bar.update(1)
     
+    bar.close()
     save_folder = f"{args.text_results_folder}/dim_{args.text_embed_dim}/{args.text_encoder}"
     os.makedirs(save_folder, exist_ok=True)
     np.save(os.path.join(save_folder, "cc3m595k_embeddings.npy"), store)
