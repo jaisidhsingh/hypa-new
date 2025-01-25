@@ -88,15 +88,15 @@ def main():
     args.num_workers = 4
 
     args.image_embed_dim = 384
-    args.image_encoder = "vit_small_patch16_224"
+    args.image_encoder = "deit_small_patch16_224"
     args.image_results_folder = "/network/scratch/s/sparsha.mishra/hyperalignment/results/image_embeddings/icml"
-    # one_encoder_embeds_images(args)
+    one_encoder_embeds_images(args)
     
     args.text_embed_dim = 1024
     # args.text_encoder = "all-MiniLM-L12-v2"
     args.text_encoder = "all-roberta-large-v1"
     args.text_results_folder = "/network/scratch/s/sparsha.mishra/hyperalignment/results/text_embeddings/icml"
-    one_encoder_embeds_texts(args)
+    # one_encoder_embeds_texts(args)
 
 
 if __name__ == "__main__":

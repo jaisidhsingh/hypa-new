@@ -60,7 +60,7 @@ data_configs.separate_embedding_dataset_configs = lambda args: {
 }
 
 data_configs.multi_embedding_dataset_configs = {
-    "cc3m595k": {
+    "cc3m558k": {
 		"image_data_folder": f"{data_configs.STORE}/hyperalignment/results/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie",
 		"image_encoder_data": None,
 		"text_data_folder": f"{data_configs.STORE}/hyperalignment/results/text_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie",
