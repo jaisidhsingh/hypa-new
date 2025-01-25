@@ -40,7 +40,7 @@
 ## 1. `bs=256` & `lr=1e-3`
 
 - FLOPs for 20 epochs = 179.0 Trillion
-- ImageNet-1k top-1 accuracy = 
+- ImageNet-1k top-1 accuracy = 18.2 
 
 ## 2. `bs=512` & `lr=1e-3` 
 
