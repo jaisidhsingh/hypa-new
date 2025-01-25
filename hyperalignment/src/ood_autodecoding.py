@@ -147,7 +147,7 @@ if __name__ == "__main__":
     parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
     parser.add_argument("--text-embed-dim", type=int, default=768)
-    parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
+    parser.add_argument("--feature-dataset", type=str, default="cc3m558k")
     # training settings
     parser.add_argument("--num-epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=8)

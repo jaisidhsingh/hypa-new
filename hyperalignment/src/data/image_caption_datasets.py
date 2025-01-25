@@ -34,7 +34,7 @@ class CC3M300k(Dataset):
         return image, [caption]
 
 
-class CC3M595k(Dataset):
+class CC3M558k(Dataset):
     def __init__(self, preprocessed_data_path, transform=None, path_appendage=None):
         with open(preprocessed_data_path) as f:
             data = json.load(f)
@@ -72,9 +72,9 @@ class ImageCaptionDataset(Dataset):
         elif kwargs["feature_dataset"] == "cc3m300k":
             kwargs.pop("feature_dataset")
             self.dataset_helper = CC3M300k(**kwargs)
-        elif kwargs["feature_dataset"] == "cc3m595k":
+        elif kwargs["feature_dataset"] == "cc3m558k":
             kwargs.pop("feature_dataset")
-            self.dataset_helper = CC3M595k(**kwargs)
+            self.dataset_helper = CC3M558k(**kwargs)
 
     def __len__(self):
         return len(self.dataset_helper)

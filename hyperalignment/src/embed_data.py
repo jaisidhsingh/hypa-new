@@ -16,8 +16,8 @@ def one_encoder_embeds_images(args):
     model = ImageEncoder(args.image_encoder)
     model = model.to(args.device)
 
-    config = data_configs.image_caption_dataset_configs["cc3m595k"]
-    config.update({"transform": model.transform, "feature_dataset": "cc3m595k"})
+    config = data_configs.image_caption_dataset_configs["cc3m558k"]
+    config.update({"transform": model.transform, "feature_dataset": "cc3m558k"})
 
     dataset = ImageCaptionDataset(config)
     loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False, collate_fn=dataset.collate_fn)
@@ -41,7 +41,7 @@ def one_encoder_embeds_images(args):
     bar.close()
     save_folder = f"{args.image_results_folder}/dim_{args.image_embed_dim}/{args.image_encoder}"
     os.makedirs(save_folder, exist_ok=True)
-    np.save(os.path.join(save_folder, "cc3m595k_embeddings.npy"), store)
+    np.save(os.path.join(save_folder, "cc3m558k_embeddings.npy"), store)
     print("Done for images")
         
 
@@ -50,8 +50,8 @@ def one_encoder_embeds_texts(args):
     model = TextEncoder(args.text_encoder)
     model = model.to(args.device)
     
-    config = data_configs.image_caption_dataset_configs["cc3m595k"]
-    config.update({"transform": None, "feature_dataset": "cc3m595k"})
+    config = data_configs.image_caption_dataset_configs["cc3m558k"]
+    config.update({"transform": None, "feature_dataset": "cc3m558k"})
     
     dataset = ImageCaptionDataset(config)
     loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False, collate_fn=dataset.collate_fn)
@@ -74,7 +74,7 @@ def one_encoder_embeds_texts(args):
     bar.close()
     save_folder = f"{args.text_results_folder}/dim_{args.text_embed_dim}/{args.text_encoder}"
     os.makedirs(save_folder, exist_ok=True)
-    np.save(os.path.join(save_folder, "cc3m595k_embeddings.npy"), store)
+    np.save(os.path.join(save_folder, "cc3m558k_embeddings.npy"), store)
     print("Done for texts")
 
 

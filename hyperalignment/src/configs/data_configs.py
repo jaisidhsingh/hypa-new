@@ -21,7 +21,7 @@ data_configs.image_caption_dataset_configs = {
 	"cc3m300k": {
 		"preprocessed_data_path": f"{data_configs.STORE}/cc3m300k/preprocessed_data.pt",
 	},
-    "cc3m595k": {
+    "cc3m558k": {
 		"preprocessed_data_path": f"{data_configs.STORE}/tinyllava-pretrain/tinyllava_558k/blip_laion_cc_sbu_558k_meta.json",
         "path_appendage": f"{data_configs.STORE}/tinyllava-pretrain/tinyllava_558k/images",
 	},
@@ -55,7 +55,7 @@ data_configs.separate_embedding_dataset_configs = lambda args: {
 	"text_embed_dim": args.text_embed_dim,
 	"image_encoder": args.image_encoder,
 	"text_encoder": args.text_encoder,
-    "num_samples": 595375,
+    "num_samples": 558128,
 	"feature_dataset": args.feature_dataset
 }
 
@@ -66,7 +66,7 @@ data_configs.multi_embedding_dataset_configs = {
 		"text_data_folder": f"{data_configs.STORE}/hyperalignment/results/text_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie",
 		"text_encoder": "sentence-t5-base",
 		"text_embed_dim": 768,
-		"num_samples": 595375
+		"num_samples": 558128 # 595375
 	},
 
     "cc3m595k_8-4": {
@@ -75,6 +75,6 @@ data_configs.multi_embedding_dataset_configs = {
 		"text_data_folder": f"{data_configs.STORE}/hyperalignment/results/text_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie",
 		"text_encoder": "sentence-t5-base",
 		"text_embed_dim": 768,
-		"num_samples": 595375
+		"num_samples": 558128 # 595375
 	}
 }

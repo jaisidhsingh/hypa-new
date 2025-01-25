@@ -265,7 +265,7 @@ if __name__ == "__main__":
     parser.add_argument("--use-wandb", type=bool, default=False)
     parser.add_argument("--cond-type", type=str, default="features", choices=["indices", "features"])
     # model args
-    parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
+    parser.add_argument("--feature-dataset", type=str, default="cc3m558k")
     parser.add_argument("--largest-image-dim", type=int, default=1024)
     parser.add_argument("--largest-text-dim", type=int, default=768)
     parser.add_argument("--image-embed-dims", type=str, default="384,768,1024")

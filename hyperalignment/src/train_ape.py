@@ -230,7 +230,7 @@ if __name__ == "__main__":
     # model and dataset settings
     parser.add_argument("--image-encoder", type=str, default="vit_small_patch16_224")
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
-    parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
+    parser.add_argument("--feature-dataset", type=str, default="cc3m558k")
     parser.add_argument("--val-dataset", type=str, default="cc3mval")
     parser.add_argument("--train-val-split-ratio", type=float, default=0.9)
     parser.add_argument("--image-embed-dim", type=int, default=384)
