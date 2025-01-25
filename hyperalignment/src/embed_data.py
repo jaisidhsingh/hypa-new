@@ -59,11 +59,13 @@ def one_encoder_embeds_texts(args):
 
     store = np.zeros((len(dataset), args.text_embed_dim), dtype=np.float32)
     bar = tqdm(total=len(loader))
+    autocast = torch.amp.autocast
 
     for idx, (_, captions) in enumerate(loader):
         bs = len(captions)
 
-        text_features = model.encode_text(captions)
+        with autocast(args.device):
+            text_features = model.encode_text(captions)
         text_features /= text_features.norm(dim=-1, keepdim=True)
         text_features = text_features.cpu().numpy()
 
