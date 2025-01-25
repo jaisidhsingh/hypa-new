@@ -50,7 +50,6 @@ def one_encoder_embeds_images(args):
 @torch.no_grad()
 def one_encoder_embeds_texts(args):
     model = TextEncoder(args.text_encoder)
-    model = model.to(args.device)
     
     config = data_configs.image_caption_dataset_configs["cc3m558k"]
     config.update({"transform": None, "feature_dataset": "cc3m558k"})
@@ -64,7 +63,7 @@ def one_encoder_embeds_texts(args):
     for idx, (_, captions) in enumerate(loader):
         bs = len(captions)
 
-        text_features = model(captions)
+        text_features = model.encode_text(captions)
         text_features /= text_features.norm(dim=-1, keepdim=True)
         text_features = text_features.cpu().numpy()
 
