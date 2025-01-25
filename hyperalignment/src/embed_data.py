@@ -88,7 +88,7 @@ def main():
     args.image_embed_dim = 384
     args.image_encoder = "vit_small_patch16_224"
     args.image_results_folder = "/network/scratch/s/sparsha.mishra/hyperalignment/results/image_embeddings/icml"
-    one_encoder_embeds_images(args)
+    # one_encoder_embeds_images(args)
     
     args.text_embed_dim = 384
     args.text_encoder = "all-MiniLM-L12-v2"
