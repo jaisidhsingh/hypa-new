@@ -81,7 +81,7 @@ def train_separate_mapper(args):
 
     # trackers
     bar = tqdm(total=args.num_epochs)
-    flop_counter = FlopCounterMode(model, display=True, depth=2)
+    flop_counter = FlopCounterMode(model, display=False, depth=2)
 
     # saving preparation
     ckpt_save_folder = os.path.join(args.checkpoint_folder, "ape", args.experiment_name, f"seed_{args.random_seed}")
@@ -232,7 +232,7 @@ if __name__ == "__main__":
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
     parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
     parser.add_argument("--val-dataset", type=str, default="cc3mval")
-    parser.add_argument("--train-val-split-ratio", type=float, default=1)
+    parser.add_argument("--train-val-split-ratio", type=float, default=0.9)
     parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-embed-dim", type=int, default=768)
     parser.add_argument("--use-bias", type=bool, default=True)
@@ -266,15 +266,15 @@ if __name__ == "__main__":
     print(args.experiment_name, args.batch_size, args.learning_rate)
     f1 = train_separate_mapper(args)
 
-    for ep in [1, 2, 5, 10]:
-        ckpt = torch.load(os.path.join(f1, f"ckpt_{ep}.pt"))["model"]
-        model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
-        model.load_state_dict(ckpt)
-        model.to(args.device)
-        acc, loss = evaluate_mapper(args, model)
-        print(f"Epoch {ep} - ImageNet1k top-1 accuracy: {acc}")
+    # for ep in [1, 2, 5, 10]:
+    #     ckpt = torch.load(os.path.join(f1, f"ckpt_{ep}.pt"))["model"]
+    #     model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
+    #     model.load_state_dict(ckpt)
+    #     model.to(args.device)
+    #     acc, loss = evaluate_mapper(args, model)
+    #     print(f"Epoch {ep} - ImageNet1k top-1 accuracy: {acc}")
     
-    print(" ")
+    # print(" ")
 
 
     args.experiment_name = "vits_bs_16384_lr_1e-2"
@@ -284,13 +284,13 @@ if __name__ == "__main__":
     f2 = train_separate_mapper(args)
 
 
-    for ep in [1, 2, 5, 10]:
-        ckpt = torch.load(os.path.join(f2, f"ckpt_{ep}.pt"))["model"]
-        model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
-        model.load_state_dict(ckpt)
-        model.to(args.device)
-        acc, loss = evaluate_mapper(args, model)
-        print(f"Epoch {ep} - ImageNet1k top-1 accuracy: {acc}")
+    # for ep in [1, 2, 5, 10]:
+    #     ckpt = torch.load(os.path.join(f2, f"ckpt_{ep}.pt"))["model"]
+    #     model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
+    #     model.load_state_dict(ckpt)
+    #     model.to(args.device)
+    #     acc, loss = evaluate_mapper(args, model)
+    #     print(f"Epoch {ep} - ImageNet1k top-1 accuracy: {acc}")
     
 
     # print((w1-w2).norm(), (b1-b2).norm(), [c1, c2])
