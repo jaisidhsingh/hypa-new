@@ -1,12 +1,12 @@
 python3 src/learn_hnet.py \
-    --experiment-name="hnet_12-4_chkmlp_c-32_bs-16384-lr-5e-2" \
+    --experiment-name="hnet_12-4_chkmlp_c-32_bs-4096-lr-3e-2" \
     --num-image-encoders=12 \
     --encoder-batch-size=4 \
     --hnet-cond-emb-dim=32 \
     --cond-type="features" \
     --num-epochs=20 \
-    --learning-rate=5e-2 \
-    --batch-size=16384 \
+    --learning-rate=3e-2 \
+    --batch-size=4096 \
     --scheduler="off" \
     --warmup-steps=100 \
     --emb-loss=False \

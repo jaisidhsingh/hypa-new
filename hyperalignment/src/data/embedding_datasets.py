@@ -63,21 +63,7 @@ class SeparateEmbeddings(Dataset):
         self.image_embeddings = np.memmap(data_config["image_embeddings_path"], dtype="float32", mode="r", shape=(data_config["num_samples"], data_config["image_embed_dim"]))
         self.text_embeddings = np.memmap(data_config["text_embeddings_path"], dtype="float32", mode="r", shape=(data_config["num_samples"], data_config["text_embed_dim"]))
 
-        # self.split = split
-        # self.split_ratio = args.train_val_split_ratio if args is not None else 0
         self.data_config = data_config
-
-        # if split == "train" and args is not None:
-        #     self.num_samples = round(self.split_ratio * data_config["num_samples"])
-        # elif split == "val":
-        #     self.num_samples = data_config["num_samples"] - round(self.split_ratio * data_config["num_samples"])
-        # elif split == "train" and args is None:
-        #     self.num_samples = data_config["num_samples"]
-
-        # self.indices = [i for i in range(data_config["num_samples"])]
-        # random.seed(args.random_seed)
-        # random.shuffle(self.indices)
-        
         self.image_embed_dim = data_config["image_embed_dim"]
         self.text_embed_dim = data_config["text_embed_dim"]
         self.feature_dataset = data_config["feature_dataset"]
@@ -86,12 +72,6 @@ class SeparateEmbeddings(Dataset):
         return 558128 #self.data_config["num_samples"]
     
     def __getitem__(self, idx):
-        # image_embedding = self.image_embeddings[idx].view(1, self.image_embed_dim)
-        # text_embedding = self.text_embeddings[idx].view(1, self.text_embed_dim)
-        
-        # offset = 0 if self.split == "train" else round(self.split_ratio * self.data_config["num_samples"])
-        # index = offset + idx
-
         image_embedding = np.array(deepcopy(self.image_embeddings[idx, :])).astype(np.float32)
         text_embedding = np.array(deepcopy(self.text_embeddings[idx, :])).astype(np.float32)
 
@@ -100,6 +80,38 @@ class SeparateEmbeddings(Dataset):
         # image_embedding = torch.from_numpy(self.image_embeddings[idx]).view(self.image_embed_dim)
         # text_embedding = torch.from_numpy(self.text_embeddings[idx]).view(self.text_embed_dim)
         # return image_embedding, text_embedding
+
+
+class ImageEmbeddings(Dataset):
+    def __init__(self, data_config, split=None, args=None):
+        self.image_embeddings = np.memmap(data_config["image_embeddings_path"], dtype="float32", mode="r", shape=(data_config["num_samples"], data_config["image_embed_dim"]))
+
+        self.data_config = data_config
+        self.image_embed_dim = data_config["image_embed_dim"]
+        self.feature_dataset = data_config["feature_dataset"]
+        
+    def __len__(self):
+        return 558128 #self.data_config["num_samples"]
+    
+    def __getitem__(self, idx):
+        image_embedding = np.array(deepcopy(self.image_embeddings[idx, :])).astype(np.float32)
+        return torch.from_numpy(image_embedding)
+
+
+class TextEmbeddings(Dataset):
+    def __init__(self, data_config, split=None, args=None):
+        self.text_embeddings = np.memmap(data_config["text_embeddings_path"], dtype="float32", mode="r", shape=(data_config["num_samples"], data_config["text_embed_dim"]))
+
+        self.data_config = data_config
+        self.text_embed_dim = data_config["text_embed_dim"]
+        self.feature_dataset = data_config["feature_dataset"]
+        
+    def __len__(self):
+        return 558128 #self.data_config["num_samples"]
+    
+    def __getitem__(self, idx):
+        text_embedding = np.array(deepcopy(self.text_embeddings[idx, :])).astype(np.float32)
+        return torch.from_numpy(text_embedding)
 
 
 class MultiMapperEmbeddings(Dataset):
