@@ -83,7 +83,7 @@ class SeparateEmbeddings(Dataset):
         self.feature_dataset = data_config["feature_dataset"]
         
     def __len__(self):
-        return self.data_config["num_samples"]
+        return 558128 #self.data_config["num_samples"]
     
     def __getitem__(self, idx):
         # image_embedding = self.image_embeddings[idx].view(1, self.image_embed_dim)
