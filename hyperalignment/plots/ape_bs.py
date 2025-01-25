@@ -17,6 +17,7 @@ plt.title("APE: Batch size vs ImageNet-1k Top-1 Accuracy for ViT-S/16")
 
 # Data
 flops = [877.7, 1097.2, 1536.1, 4161.8, 14675.9]  # FLOPs in billions
+flops = [x * 20 * 1e-3 for x in flops]
 accuracies = [25.45, 26.27, 26.96, 27.70, 27.85]  # ImageNet-1k top-1 accuracy
 # 'vits_bs-512_lr-0.001': 26.27
 labels = [
@@ -29,13 +30,13 @@ labels = [
 # Create the plot
 plt.figure(figsize=(10, 6))
 plt.plot(flops, accuracies, color='tab:blue', marker="o")  # Plot points
-plt.xlabel('FLOPs (Billions)', fontsize=12)
+plt.xlabel('FLOPs (Trillions)', fontsize=12)
 plt.ylabel('ImageNet-1k Top-1 Accuracy', fontsize=12)
-plt.title('APE: FLOPs vs ImageNet-1k Top-1 Accuracy\n(Training batch size reported)', fontsize=14)
+plt.title('APE: best performance after 20 epochs of training\n(Training batch size reported)', fontsize=14)
 
 # Add labels to each point
-for i, label in enumerate(labels):
-    plt.text(flops[i] - flops[0] / 4, accuracies[i], lbl[i], fontsize=12, ha='right')
+for i, label in enumerate(lbl):
+    plt.text(flops[i] - flops[0] / 4, accuracies[i], label, fontsize=12, ha="right")
 
 # Show the plot
 plt.grid(True)

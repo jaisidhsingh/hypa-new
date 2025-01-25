@@ -2,7 +2,8 @@
 
 - Training dataset = cc595k (558k slice)
 - Num epochs = 20
-- 12 encoders total, `encoder_batch_size=4`.
+- 12 encoders total, `encoder_batch_size=4`
+- `chunk_size=256`
 
 ## 1. `bs=256` & `lr=1e-3`
 
