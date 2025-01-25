@@ -55,7 +55,7 @@ data_configs.separate_embedding_dataset_configs = lambda args: {
 	"text_embed_dim": args.text_embed_dim,
 	"image_encoder": args.image_encoder,
 	"text_encoder": args.text_encoder,
-    "num_samples": 558128,
+    "num_samples": 595375, #558128,
 	"feature_dataset": args.feature_dataset
 }
 
