@@ -40,14 +40,14 @@ def train_separate_mapper(args):
 
     # load in dataset for training
     train_dataset_config = data_configs.separate_embedding_dataset_configs(args)
-    train_dataset = SeparateEmbeddings(train_dataset_config, split="train", args=args)
+    train_dataset = SeparateEmbeddings(train_dataset_config, split="train", args=None)
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True, drop_last=True)
     print(f"Training data of {len(train_dataset)} samples loaded.")
 
-    # load in dataset for validation
-    val_dataset = SeparateEmbeddings(train_dataset_config, split="val", args=args)
-    val_loader = DataLoader(val_dataset, batch_size=args.eval_batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True, drop_last=True)
-    print(f"Validation data of {len(val_dataset)} samples loaded.")
+    # # load in dataset for validation
+    # val_dataset = SeparateEmbeddings(train_dataset_config, split="val", args=args)
+    # val_loader = DataLoader(val_dataset, batch_size=args.eval_batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True, drop_last=True)
+    # print(f"Validation data of {len(val_dataset)} samples loaded.")
 
     # the connector
     model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
