@@ -1,10 +1,8 @@
-# Verifying effect of batch size
+# APE
 
 - Training dataset = cc595k (558k slice)
 - Num epochs = 20
 - Only one encoder-pair.
-
-# APE
 
 ## 1. `bs=256` & `lr=1e-3`
 
@@ -30,4 +28,3 @@
 
 - FLOPs for 20 epochs = 293.5 Trillion (14675.9 Billion x 20)
 - ImageNet-1k top-1 accuracy = 27.85
-
