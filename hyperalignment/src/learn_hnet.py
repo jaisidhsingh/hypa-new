@@ -151,8 +151,8 @@ def run(args, input_config):
                     scheduler(step)
 
                 # zero grads
-                if (idx+1) % args.accumulate_steps == 0:
-                    optimizer.zero_grad()
+                # if (idx+1) % args.accumulate_steps == 0:
+                optimizer.zero_grad()
 
                 # forward pass + loss calculation
                 with autocast():
@@ -178,15 +178,15 @@ def run(args, input_config):
                 accuracies = [str(item)+"*" if jdx in encoder_indices else str(item) for (jdx, item) in enumerate(accuracies)]
 
                 # backward pass
-                if (idx+1) % args.accumulate_steps == 0:
-                    scaler.scale(loss).backward()
+                # if (idx+1) % args.accumulate_steps == 0:
+                scaler.scale(loss).backward()
 
-                    if args.clip_grad_norm != -1:
-                        scaler.unscale_(optimizer)
-                        torch.nn.utils.clip_grad_norm_(model.parameters(), args.clip_grad_norm)
-                    
-                    scaler.step(optimizer)
-                    scaler.update()
+                if args.clip_grad_norm != -1:
+                    scaler.unscale_(optimizer)
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), args.clip_grad_norm)
+                
+                scaler.step(optimizer)
+                scaler.update()
                 
                 # else:
                     # loss.backward()
