@@ -164,7 +164,7 @@ def load_ood_ckpt(args, model):
 def load_mm_ckpt(args, model):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper"
     path = os.path.join(folder, args.exp_name, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
-    chunk_size = int(args.exp_name.split("_")[1]) // 3
+    chunk_size = 12 // 3 #int(args.exp_name.split("_")[1]) // 3
     
     if args.image_embed_dim == 384:
         offset = 0
