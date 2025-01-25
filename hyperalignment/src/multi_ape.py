@@ -70,7 +70,7 @@ def train_multi_ape(args):
 
             with autocast(args.device):
                 mapped_text_embeddings = model(text_embeddings)
-                mapped_text_embeddings /= mapped_text_embeddings.norm(dim=-1, keepdim=True)
+                mapped_text_embeddings = mapped_text_embeddings / mapped_text_embeddings.norm(dim=-1, keepdim=True)
 
                 logits = torch.einsum("ncd,bd->ncb", image_embeddings, mapped_text_embeddings) * logit_scale
                 labels = torch.arange(bs).long().to(args.device)
