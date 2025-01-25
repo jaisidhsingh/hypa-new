@@ -154,13 +154,11 @@ class MultiMapperEmbeddings(Dataset):
         assert re_mmap[0, :3].all() == embeddings[0, :3].all(), "Mismatch in memmap!"
 
     def __len__(self):
-        return  self.num_samples # 558128
+        return 558128
 
     def get_minibatch(self, batch_indices, sampled_encoder_indices, encoder_dims):
         # first get the encoder names from indices
         sampled_encoders = [self.image_encoders[i] for i in sampled_encoder_indices]
-        # print(sampled_encoders)
-    
         chosen_dim = encoder_dims[0]
         assert chosen_dim in self.image_embed_dims, "Error in dimension sampling!"
 
@@ -190,7 +188,6 @@ class MultiMapperEmbeddings(Dataset):
 
         # get text embeddings
         text_embeddings_path = os.path.join(self.text_data_folder, f"dim_{self.text_embed_dim}", self.text_encoder, "memmap.npy")
-        # text_embeddings = torch.from_numpy(np.load(text_embeddings_path))[start:end, :]
         text_embeddings_memmap = np.memmap(text_embeddings_path, dtype="float32", mode="r", shape=(self.num_samples, self.text_embed_dim))
         text_embeddings = torch.from_numpy(np.array(text_embeddings_memmap[start:end, :]))
         assert text_embeddings.shape == torch.Size([end-start, self.text_embed_dim]), "Text embeddings prepared incorrectly!"

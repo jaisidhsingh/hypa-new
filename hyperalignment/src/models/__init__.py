@@ -81,11 +81,7 @@ class ConditionalHyperNetwork(nn.Module):
         self.cond_embs = nn.Embedding(num_cond_embs, cond_emb_dim)
         # self.shape_embs = nn.Embedding(len(image_embed_dims), cond_emb_dim)
 
-        # self.in_proj = nn.Linear(cond_emb_dim, 4*cond_emb_dim)
-        # self.attn = nn.TransformerEncoderLayer(4*cond_emb_dim, 8, batch_first=True)
-
         self.cond_dim = cond_emb_dim
-
         self.decoder = None
         
         if kwargs["decoder_type"] == "mlp":
@@ -93,9 +89,6 @@ class ConditionalHyperNetwork(nn.Module):
         
         elif kwargs["decoder_type"] == "chunked_mlp":
             self.decoder = ChunkedMlpDecoder(param_shapes[0], cond_emb_dim, kwargs["chunk_dim"], kwargs["hidden_layer_factors"])
-        
-        elif kwargs["decoder_type"] == "attention":
-            self.decoder = AttentionDecoder(param_shapes[0], cond_emb_dim, kwargs["num_layers"], kwargs["num_heads"], kwargs["expansion_factor"])
 
         assert self.decoder is not None, "Decoder type not recognized."
         self.logit_scale = torch.tensor(np.log(100.0))
@@ -140,8 +133,6 @@ class ConditionalHyperNetwork(nn.Module):
         # shape_emb = shape_emb.repeat((num_conds, 1)) # shape: [num_conds, cond_emb_dim]
 
         final_cond_emb = cond_emb # + shape_emb
-        # final_cond_emb = self.in_proj(final_cond_emb)
-        # final_cond_emb = self.attn(final_cond_emb.unsqueeze(0)).squeeze(0)
 
         pred_weight, pred_bias = self.decoder(final_cond_emb)
         pred_weight = pred_weight[:, :image_embed_dim, :]
