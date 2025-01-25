@@ -53,7 +53,7 @@ python3 src/evaluation.py \
     --benchmarks="cifar10,cifar100,imagenet1k";
 
 python3 src/evaluation.py \
-    --exp-name="hnet_12-4_chkmlp_c-32_bs-4096_lr-3e-2" \
+    --exp-name="hnet_12-4_chkmlp_c-32_bs-4096-lr-3e-2" \
     --seed=0 \
     --run-type="mm" \
     --epoch=20 \
@@ -62,7 +62,7 @@ python3 src/evaluation.py \
     --benchmarks="imagenet1k";
 
 python3 src/evaluation.py \
-    --exp-name="hnet_12-4_chkmlp_c-32_bs-16384_lr-5e-2" \
+    --exp-name="hnet_12-4_chkmlp_c-32_bs-16384-lr-5e-2" \
     --seed=0 \
     --run-type="mm" \
     --epoch=20 \
