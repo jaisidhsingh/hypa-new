@@ -161,6 +161,15 @@ model_configs.ID_experiment_configs = {
 	}
 }
 
+model_configs.icml_encoder_configs = {
+    "image_encoders": model_configs.ID_multi_mapper_configs,
+    "text_encoders": {
+        384: ["all-MiniLM-L12-v2"],
+        768: ["all-mpnet-base-v1"],
+        1024: ["all-roberta-large-v1"]
+	}
+}
+
 model_configs.hnet_decoder_configs = {
     "attention": {
         "decoder_type": "attention",
