@@ -147,10 +147,10 @@ if __name__ == "__main__":
     args.num_epochs = 20
     args.saving = True
 
-    bs, lr = 16384, 1e-2
-    args.experiment_name = f"vits_bs-{bs}_lr-{lr}"
-    args.batch_size = bs
-    args.learning_rate = lr
+    # bs, lr = 16384, 1e-2
+    args.experiment_name = f"vits_bs-{args.batch_size}_lr-{args.learning_rate}"
+    # args.batch_size = bs
+    # args.learning_rate = lr
 
     print(args.experiment_name, args.batch_size, args.learning_rate)
     f1 = train_multi_ape(args)
