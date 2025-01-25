@@ -92,7 +92,7 @@ def main():
     args.image_results_folder = "/network/scratch/s/sparsha.mishra/hyperalignment/results/image_embeddings/icml"
     # one_encoder_embeds_images(args)
     
-    args.text_embed_dim = 384
+    args.text_embed_dim = 768
     # args.text_encoder = "all-MiniLM-L12-v2"
     args.text_encoder = "all-mpnet-base-v1"
     args.text_results_folder = "/network/scratch/s/sparsha.mishra/hyperalignment/results/text_embeddings/icml"
