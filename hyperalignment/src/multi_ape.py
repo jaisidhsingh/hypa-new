@@ -65,7 +65,7 @@ def train_multi_ape(args):
             image_embeddings /= image_embeddings.norm(dim=-1, keepdim=True)
 
             step = epoch * loader_len + idx
-            scheduler.step(step)
+            scheduler(step)
 
             optimizer.zero_grad()
             with autocast(args.device):
