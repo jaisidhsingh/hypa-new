@@ -41,7 +41,7 @@ def train_multi_ape(args):
     scaler = torch.cuda.amp.GradScaler()
     autocast = torch.amp.autocast
 
-    bar = tqdm(total=range(args.num_epochs))
+    bar = tqdm(total=args.num_epochs)
     logit_scale = torch.tensor(np.log(args.logit_scale)).to(args.device)
     
     ckpt_save_folder = os.path.join(args.checkpoint_folder, "multi_ape", args.experiment_name, f"seed_{args.random_seed}")
@@ -89,6 +89,8 @@ def train_multi_ape(args):
             scaler.step(optimizer)
             scaler.update()
         
+        bar.update(1)
+        
         if epoch+1 in [1, 2, 5, 10, 20, 40] and args.saving:
             dump = {
                 "model": model.state_dict(),
@@ -98,6 +100,7 @@ def train_multi_ape(args):
             torch.save(dump, os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt"))
             tqdm.write(f"Checkpoint saved at epoch {epoch+1}.")
     
+    bar.close()
     return ckpt_save_folder
         
 
