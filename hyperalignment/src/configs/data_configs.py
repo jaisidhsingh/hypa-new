@@ -66,7 +66,7 @@ data_configs.multi_embedding_dataset_configs = {
 		"text_data_folder": f"{data_configs.STORE}/hyperalignment/results/text_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie",
 		"text_encoder": "sentence-t5-base",
 		"text_embed_dim": 768,
-		"num_samples": 558128 # 595375
+		"num_samples":  595375
 	},
 
     "cc3m595k_8-4": {
@@ -75,6 +75,6 @@ data_configs.multi_embedding_dataset_configs = {
 		"text_data_folder": f"{data_configs.STORE}/hyperalignment/results/text_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie",
 		"text_encoder": "sentence-t5-base",
 		"text_embed_dim": 768,
-		"num_samples": 558128 # 595375
+		"num_samples":  595375
 	}
 }
