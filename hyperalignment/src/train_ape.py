@@ -40,7 +40,7 @@ def train_separate_mapper(args):
 
     # load in dataset for training
     train_dataset_config = data_configs.separate_embedding_dataset_configs(args)
-    train_dataset = SeparateEmbeddings(train_dataset_config, split="train", args=None)
+    train_dataset = SeparateEmbeddings(train_dataset_config, split="train", args=args)
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True, drop_last=True)
     print(f"Training data of {len(train_dataset)} samples loaded.")
 
@@ -145,7 +145,7 @@ def train_separate_mapper(args):
         if args.use_wandb:
             wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_logs["train_accuracy"]}, step=epoch+1)
         
-        model.eval()
+        # model.eval()
 
         # if (epoch+1) % args.eval_every == 0: 
         #     val_acc, val_loss = evaluate_mapper(args, model)
@@ -201,7 +201,7 @@ def train_separate_mapper(args):
             dump = {
                 "model": model.state_dict(),
                 "optimizer": optimizer.state_dict(),
-                "logs": logs,
+                # "logs": logs,
                 "flops": train_logs["flops"]
             }
 
@@ -232,7 +232,7 @@ if __name__ == "__main__":
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
     parser.add_argument("--feature-dataset", type=str, default="cc3m595k")
     parser.add_argument("--val-dataset", type=str, default="cc3mval")
-    parser.add_argument("--train-val-split-ratio", type=float, default=0.9)
+    parser.add_argument("--train-val-split-ratio", type=float, default=1)
     parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-embed-dim", type=int, default=768)
     parser.add_argument("--use-bias", type=bool, default=True)
@@ -243,14 +243,14 @@ if __name__ == "__main__":
     parser.add_argument("--batch-size", type=int, default=int(pow(2, 14)))
     parser.add_argument("--eval-batch-size", type=int, default=int(pow(2, 14)))
     parser.add_argument("--learning-rate", type=float, default=1e-3)
-    parser.add_argument("--weight-decay", type=float, default=0.01)
+    parser.add_argument("--weight-decay", type=float, default=0.0)
     parser.add_argument("--num-epochs", type=int, default=10)
     parser.add_argument("--warmup-steps", type=int, default=50)
     parser.add_argument("--shuffle-data", type=bool, default=False)
     parser.add_argument("--seeds", type=str, default="0,1,2,3,4")
     parser.add_argument("--random-seed", type=int, default=0)
     parser.add_argument("--num-workers", type=int, default=4)
-    parser.add_argument("--saving", type=bool, default=True)
+    parser.add_argument("--saving", type=bool, default=False)
     parser.add_argument("--eval-every", type=int, default=1)
     # get args object
     args = parser.parse_args()
