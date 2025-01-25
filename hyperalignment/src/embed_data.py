@@ -17,7 +17,7 @@ def one_encoder_embeds_images(args):
     model = model.to(args.device)
 
     config = data_configs.image_caption_dataset_configs["cc3m595k"]
-    config.update({"transform": model.transform})
+    config.update({"transform": model.transform, "feature_dataset": "cc3m595k"})
 
     dataset = ImageCaptionDataset(config)
     loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False)
@@ -44,11 +44,14 @@ def one_encoder_embeds_images(args):
 
 @torch.no_grad()
 def one_encoder_embeds_texts(args):
-    config = data_configs.image_caption_dataset_configs["cc3m595k"]
-    dataset = ImageCaptionDataset(config)
-    loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False)
     model = TextEncoder(args.text_encoder)
     model = model.to(args.device)
+    
+    config = data_configs.image_caption_dataset_configs["cc3m595k"]
+    config.update({"transform": None, "feature_dataset": "cc3m595k"})
+    
+    dataset = ImageCaptionDataset(config)
+    loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False)
 
     store = np.zeros((len(dataset), args.text_embed_dim), dtype=np.float32)
 
