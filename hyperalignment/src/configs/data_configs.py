@@ -2,7 +2,7 @@ from types import SimpleNamespace
 
 
 data_configs = SimpleNamespace(**{})
-data_configs.STORE = "/home/mila/s/sparsha.mishra/scratch"
+data_configs.STORE = "/network/scratch/s/sparsha.mishra"
 
 # data_configs.LOGS = "/home/mila/s/sparsha.mishra/projects/Hyper-Alignment/logs"
 data_configs.LOGS = "./logs"
@@ -22,7 +22,7 @@ data_configs.image_caption_dataset_configs = {
 		"preprocessed_data_path": f"{data_configs.STORE}/cc3m300k/preprocessed_data.pt",
 	},
     "cc3m595k": {
-		"preprocessed_data_path": f"{data_configs.STORE}/LLaVA-CC3M-Pretrain-595K/metadata.json",
+		"preprocessed_data_path": "/network/scratch/s/sparsha.mishra/LLaVA-CC3M-Pretrain-595K",  #f"{data_configs.STORE}/LLaVA-CC3M-Pretrain-595K/metadata.json",
         "caption_type": "raw"
 	},
 }
