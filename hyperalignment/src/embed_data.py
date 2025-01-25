@@ -24,12 +24,14 @@ def one_encoder_embeds_images(args):
 
     store = np.zeros((len(dataset), args.image_embed_dim), dtype=np.float32)
     bar = tqdm(total=len(loader))
+    autocast = torch.amp.autocast
 
     for idx, (images, _) in enumerate(loader):
         bs = len(images)
         images = images.float().to(args.device)
 
-        image_features = model(images)
+        with autocast(args.device):
+            image_features = model(images)
         image_features /= image_features.norm(dim=-1, keepdim=True)
         image_features = image_features.cpu().numpy()
 
