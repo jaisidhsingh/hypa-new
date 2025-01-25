@@ -109,6 +109,7 @@ def image_classification_eval(model, loader, progress_bar=True, device="cuda", u
 
     class_features = model.encode_text(class_prompt).to(device)
 
+    running_loss = 0.0
     for idx, (images, labels) in enumerate(loader):
         batch_size = images.shape[0]
         labels = labels.long().to(device)
@@ -123,6 +124,7 @@ def image_classification_eval(model, loader, progress_bar=True, device="cuda", u
         preds = torch.argmax(sim, dim=-1)
         correct += (preds == labels).sum().item()
         total += batch_size
+        running_loss += torch.nn.functional.cross_entropy(sim, labels).item()
 
         accuracy = round(correct/total * 100, 2)
 
@@ -131,7 +133,7 @@ def image_classification_eval(model, loader, progress_bar=True, device="cuda", u
 
         bar.update(1)
     
-    return accuracy
+    return accuracy, running_loss / len(loader)
 
 
 def load_separate_ckpt(args, model):
@@ -189,7 +191,7 @@ def eval_retrieval(args, model, transform, bench):
     loader = DataLoader(dataset, batch_size=1, pin_memory=True, num_workers=4, collate_fn=dataset.collate_fn, shuffle=False)
     using_clip = args.clip_version != "off"
     recalls = coco_captions_eval(model, loader, using_clip=using_clip, device=args.device)
-    return recalls
+    return recalls, 0
 
 
 def eval_classification(args, model, transform, dataset):
@@ -207,8 +209,8 @@ def eval_classification(args, model, transform, dataset):
     print(dataset.classes[0])
     loader = DataLoader(dataset, batch_size=1024, num_workers=4, pin_memory=True)
     # using_clip = args.clip_version != "off"
-    accuracy = image_classification_eval(model, loader, using_clip=False, device=args.device)
-    return accuracy
+    accuracy, loss = image_classification_eval(model, loader, using_clip=False, device=args.device)
+    return accuracy, loss
 
 
 def main(args):
@@ -237,7 +239,7 @@ def main(args):
         
         for bench in benchmarks:
             eval_fn = benchmark_mapping[bench]
-            metric = eval_fn(args, model, model.image_encoder.transform, bench)
+            metric = eval_fn(args, model, model.image_encoder.transform, bench)[0]
             metrics[bench] = metric
 
     else:

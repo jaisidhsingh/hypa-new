@@ -30,8 +30,8 @@ def evaluate_mapper(args, model):
     model.eval()
     vlm = CustomVLM(args.image_encoder, args.text_encoder)
     vlm.mapper = model.to(args.device)
-    acc = eval_classification(args, vlm, vlm.image_encoder.transform, "imagenet1k")
-    return acc
+    acc, loss = eval_classification(args, vlm, vlm.image_encoder.transform, "imagenet1k")
+    return acc, loss
 
 
 def train_separate_mapper(args):
@@ -146,7 +146,11 @@ def train_separate_mapper(args):
             wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_logs["train_accuracy"]}, step=epoch+1)
         
         model.eval()
-        val_acc = evaluate_mapper(args, model) if epoch == args.num_epochs - 1 else -1
+
+        if (epoch+1) % args.eval_every == 0: 
+            val_acc, val_loss = evaluate_mapper(args, model)
+        else:
+            val_acc, val_loss = -1, -1
         
         # with torch.no_grad():
         #     val_image_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
@@ -186,16 +190,18 @@ def train_separate_mapper(args):
         to_log = {
             "train_loss": train_logs["train_loss"],
             "train_acc": train_logs["train_accuracy"],
-            # "val_loss": val_logs["val_loss"],
-            "val_acc": val_acc
+            "val_acc": val_acc,
+            "val_loss": val_loss,
         } 
         bar.set_postfix(to_log)
+        logs[f"epoch_{epoch+1}"] = to_log
 
         # save every some epochs for safety
         if (epoch+1) in [1, 2, 5, 10, 20, 40, 100, 200] and args.saving:
             dump = {
                 "model": model.state_dict(),
                 "optimizer": optimizer.state_dict(),
+                "logs": logs,
                 "flops": train_logs["flops"]
             }
 
@@ -218,7 +224,7 @@ if __name__ == "__main__":
     parser.add_argument("--experiment-type", type=str, default="multi_mapper")
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--results-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results")
-    parser.add_argument("--logs-folder", type=str, default="/home/mila/s/sparsha.mishra/projects/Hyper-Alignment/logs")
+    parser.add_argument("--logs-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/logs")
     parser.add_argument("--checkpoint-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints")
     # model and dataset settings
     parser.add_argument("--image-encoder", type=str, default="vit_small_patch16_224")
@@ -244,17 +250,21 @@ if __name__ == "__main__":
     parser.add_argument("--random-seed", type=int, default=0)
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--saving", type=bool, default=True)
+    parser.add_argument("--eval-every", type=int, default=1)
     # get args object
     args = parser.parse_args()
 
     # if not args.ablate:
-    suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
-    args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
+    # suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
+    # args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
     args.num_epochs = 10
+
+    args.experiment_name = "vits_bs_256_lr_1e-3"
     args.batch_size = 256
     args.learning_rate = 1e-3
     w1, b1, c1 = train_separate_mapper(args)
 
+    args.experiment_name = "vits_bs_16384_lr_1e-2"
     args.batch_size = 16384
     args.learning_rate = 1e-2
     w2, b2, c2 = train_separate_mapper(args)
