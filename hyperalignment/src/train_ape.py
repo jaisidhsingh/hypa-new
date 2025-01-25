@@ -258,25 +258,41 @@ if __name__ == "__main__":
     args.num_epochs = 20
     args.saving = True
 
-    bss = [int(pow(2, i)) for i in range(8, 15, 2)]
-    lrs = [1e-3, 3e-3, 5e-3, 1e-2]
+    args.experiment_name = f"vits_bs-{512}_lr-{1e-3}"
+    args.batch_size = 512
+    args.learning_rate = 1e-3
+    print(args.experiment_name, args.batch_size, args.learning_rate)
+    f1 = train_separate_mapper(args)
     res = {}
+    ckpt = torch.load(os.path.join(f1, "ckpt_20.pt"))["model"]
 
-    for bs, lr in zip(bss, lrs):
-        args.experiment_name = f"vits_bs-{bs}_lr-{lr}"
-        args.batch_size = bs
-        args.learning_rate = lr
-        print(args.experiment_name, args.batch_size, args.learning_rate)
-        f1 = train_separate_mapper(args)
-        ckpt = torch.load(os.path.join(f1, "ckpt_20.pt"))["model"]
-
-        model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
-        model.load_state_dict(ckpt)
-        model.to(args.device)
-        acc, loss = evaluate_mapper(args, model)
-        res[args.experiment_name] = acc
-
+    model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
+    model.load_state_dict(ckpt)
+    model.to(args.device)
+    acc, loss = evaluate_mapper(args, model)
+    res[args.experiment_name] = acc
     print(res)
+
+
+    # bss = [int(pow(2, i)) for i in range(8, 15, 2)]
+    # lrs = [1e-3, 3e-3, 5e-3, 1e-2]
+    # res = {}
+
+    # for bs, lr in zip(bss, lrs):
+    #     args.experiment_name = f"vits_bs-{bs}_lr-{lr}"
+    #     args.batch_size = bs
+    #     args.learning_rate = lr
+    #     print(args.experiment_name, args.batch_size, args.learning_rate)
+    #     f1 = train_separate_mapper(args)
+    #     ckpt = torch.load(os.path.join(f1, "ckpt_20.pt"))["model"]
+
+    #     model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
+    #     model.load_state_dict(ckpt)
+    #     model.to(args.device)
+    #     acc, loss = evaluate_mapper(args, model)
+    #     res[args.experiment_name] = acc
+
+    # print(res)
 
 
         # res = {}
