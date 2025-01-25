@@ -35,19 +35,13 @@ class CC3M300k(Dataset):
 
 
 class CC3M595k(Dataset):
-    def __init__(self, preprocessed_data_path, transform=None, path_appendage=None, caption_type="raw"):
+    def __init__(self, preprocessed_data_path, transform=None, path_appendage=None):
         with open(preprocessed_data_path) as f:
             data = json.load(f)
 
         self.image_paths = [item["image"] for item in data]
-        self.captions = []
-        if caption_type == "raw":
-            self.captions = [item["caption"] for item in data]
-        elif caption_type == "blip":
-            self.captions = [item["blip_caption"] for item in data]
-
-        if path_appendage is not None:
-            self.image_paths = [os.path.join(path_appendage, path) for path in self.image_paths]
+        self.captions = [item["blip_caption"] for item in data]
+        self.image_paths = [os.path.join(path_appendage, path) for path in self.image_paths]
 
         self.transform = transform
         del data

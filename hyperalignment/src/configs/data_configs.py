@@ -22,8 +22,8 @@ data_configs.image_caption_dataset_configs = {
 		"preprocessed_data_path": f"{data_configs.STORE}/cc3m300k/preprocessed_data.pt",
 	},
     "cc3m595k": {
-		"preprocessed_data_path": f"{data_configs.STORE}/LLaVA-CC3M-Pretrain-595K/metadata.json",
-        "caption_type": "raw"
+		"preprocessed_data_path": f"{data_configs.STORE}/tinyllava-pretrain/tinyllava_558k/blip_laion_cc_sbu_558k_meta.json",
+        "path_appendage": f"{data_configs.STORE}/tinyllava-pretrain/tinyllava_558k/images",
 	},
 }
 
