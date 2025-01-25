@@ -190,8 +190,8 @@ def train_separate_mapper(args):
         to_log = {
             "train_loss": train_logs["train_loss"],
             "train_acc": train_logs["train_accuracy"],
-            "val_acc": val_acc,
-            "val_loss": val_loss,
+            # "val_acc": val_acc,
+            # "val_loss": val_loss,
         } 
         bar.set_postfix(to_log)
         logs[f"epoch_{epoch+1}"] = to_log
