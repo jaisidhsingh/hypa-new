@@ -39,25 +39,25 @@
 
 ## 1. `bs=256` & `lr=1e-3`
 
-- FLOPs for 1 epoch = 179.0 Trillion
+- FLOPs for 20 epochs = 179.0 Trillion
 - ImageNet-1k top-1 accuracy = 
 
 ## 2. `bs=512` & `lr=1e-3` 
 
-- FLOPs for 1 epoch = 1097.2 B
+- FLOPs for 20 epochs = 238.7 Trillion
 - ImageNet-1k top-1 accuracy = 
 
 ## 3. `bs=1024` & `lr=3e-3`
 
-- FLOPs for 1 epoch = 1536.1 Billion
+- FLOPs for 20 epochs = 367.8 Trillion
 - ImageNet-1k top-1 accuracy = 
 
 ## 4. `bs=4096` & `le=5e-3`
 
-- FLOPs for 1 epoch = 4161.8 Billion
+- FLOPs for 20 epochs = 1160.0 Trillion
 - ImageNet-1k top-1 accuracy = 
 
 ## 5. `bs=16384` & `lr=1e-2`
 
-- FLOPs for 1 epoch = 4336.6 Trillion
+- FLOPs for 20 epochs = 4336.6 Trillion
 - ImageNet-1k top-1 accuracy = 
