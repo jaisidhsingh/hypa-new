@@ -13,11 +13,14 @@ from configs.data_configs import data_configs
 
 @torch.no_grad()
 def one_encoder_embeds_images(args):
-    config = data_configs.image_caption_dataset_configs["cc3m595k"]
-    dataset = ImageCaptionDataset(config)
-    loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False)
     model = ImageEncoder(args.image_encoder)
     model = model.to(args.device)
+
+    config = data_configs.image_caption_dataset_configs["cc3m595k"]
+    config.update({"transform": model.transform})
+
+    dataset = ImageCaptionDataset(config)
+    loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False)
 
     store = np.zeros((len(dataset), args.image_embed_dim), dtype=np.float32)
 
