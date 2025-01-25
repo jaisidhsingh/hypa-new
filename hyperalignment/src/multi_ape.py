@@ -3,6 +3,7 @@ import torch
 import argparse
 import numpy as np
 from tqdm import tqdm
+from itertools import cycle
 from copy import deepcopy
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
@@ -28,7 +29,7 @@ def train_multi_ape(args):
         loader_len = len(image_loaders[name])
     
     for k, v in image_loaders.items():
-        image_loaders[k] = iter(v)
+        image_loaders[k] = cycle(v)
     
     text_dataset = TextEmbeddings(data_configs.separate_embedding_dataset_configs(args), split=None, args=None)
     text_loader = DataLoader(text_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, drop_last=True)
