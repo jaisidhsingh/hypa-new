@@ -20,7 +20,7 @@ def one_encoder_embeds_images(args):
     config.update({"transform": model.transform, "feature_dataset": "cc3m595k"})
 
     dataset = ImageCaptionDataset(config)
-    loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False)
+    loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False, collate_fn=dataset.collate_fn)
 
     store = np.zeros((len(dataset), args.image_embed_dim), dtype=np.float32)
     bar = tqdm(total=len(loader))
@@ -54,7 +54,7 @@ def one_encoder_embeds_texts(args):
     config.update({"transform": None, "feature_dataset": "cc3m595k"})
     
     dataset = ImageCaptionDataset(config)
-    loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False)
+    loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, shuffle=False, collate_fn=dataset.collate_fn)
 
     store = np.zeros((len(dataset), args.text_embed_dim), dtype=np.float32)
     bar = tqdm(total=len(loader))
