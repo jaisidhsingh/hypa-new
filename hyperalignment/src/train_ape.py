@@ -259,6 +259,7 @@ if __name__ == "__main__":
     # suffix = f"bs-{args.batch_size}_lr-{args.learning_rate}_ep-{args.num_epochs}"
     # args.experiment_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
     args.num_epochs = 10
+    args.saving = True
 
     args.experiment_name = "vits_bs_256_lr_1e-3"
     args.batch_size = 256
