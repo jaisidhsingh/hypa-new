@@ -83,7 +83,7 @@ def train_multi_ape(args):
                     total[encoder_names[j]] += bs
                 
             loss = loss / args.num_image_encoders
-            bar.set_postfix({"total_loss": loss.item()})
+            bar.set_postfix({"step": step, "total_loss": loss.item()})
             accuracies = {name: round(corrects[name] / total[name] * 100, 2) for name in encoder_names}
         
             scaler.scale(loss).backward()
