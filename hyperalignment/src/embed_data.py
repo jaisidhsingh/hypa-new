@@ -83,10 +83,5 @@ def main():
     one_encoder_embeds_texts(args)
 
 
-# def embed_images_per_family(config):
-#     image_encoders = model_configs.ID_experiment_configs["multi_mapper"][config.image_embed_dim]["image_encoders"]
-#     args = SimpleNamespace(**{})
-#     args.device = "cuda"
-#     args.image_embed_dim = config.image_embed_dim
-    
-#     for ie in image_encoders:
+if __name__ == "__main__":
+    main()
