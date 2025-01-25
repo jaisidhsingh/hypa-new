@@ -266,15 +266,17 @@ if __name__ == "__main__":
     print(args.experiment_name, args.batch_size, args.learning_rate)
     f1 = train_separate_mapper(args)
 
-    # for ep in [1, 2, 5, 10]:
-    #     ckpt = torch.load(os.path.join(f1, f"ckpt_{ep}.pt"))["model"]
-    #     model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
-    #     model.load_state_dict(ckpt)
-    #     model.to(args.device)
-    #     acc, loss = evaluate_mapper(args, model)
-    #     print(f"Epoch {ep} - ImageNet1k top-1 accuracy: {acc}")
-    
-    # print(" ")
+    res = {}
+    for ep in [1, 2, 5, 10]:
+        ckpt = torch.load(os.path.join(f1, f"ckpt_{ep}.pt"))["model"]
+        model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
+        model.load_state_dict(ckpt)
+        model.to(args.device)
+        acc, loss = evaluate_mapper(args, model)
+        res[ep] = acc
+
+    print(res)
+    print(" ")
 
 
     args.experiment_name = "vits_bs_16384_lr_1e-2"
@@ -283,14 +285,17 @@ if __name__ == "__main__":
     print(args.experiment_name, args.batch_size, args.learning_rate)
     f2 = train_separate_mapper(args)
 
-
-    # for ep in [1, 2, 5, 10]:
-    #     ckpt = torch.load(os.path.join(f2, f"ckpt_{ep}.pt"))["model"]
-    #     model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
-    #     model.load_state_dict(ckpt)
-    #     model.to(args.device)
-    #     acc, loss = evaluate_mapper(args, model)
-    #     print(f"Epoch {ep} - ImageNet1k top-1 accuracy: {acc}")
+    res = {}
+    for ep in [1, 2, 5, 10]:
+        ckpt = torch.load(os.path.join(f2, f"ckpt_{ep}.pt"))["model"]
+        model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
+        model.load_state_dict(ckpt)
+        model.to(args.device)
+        acc, loss = evaluate_mapper(args, model)
+        res[ep] = acc
+        # print(f"Epoch {ep} - ImageNet1k top-1 accuracy: {acc}")
+    
+    print(res)
     
 
     # print((w1-w2).norm(), (b1-b2).norm(), [c1, c2])
