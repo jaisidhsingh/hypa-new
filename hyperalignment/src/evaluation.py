@@ -276,7 +276,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     res = {"exp_name": args.exp_name, "seed": args.seed, "eval": {}}
-    for ep in [20]:
+    for ep in [1, 2, 5, 10, 20]:
         args.epoch = ep
         out = main(args)
         res["eval"].update(out)
