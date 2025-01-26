@@ -160,21 +160,22 @@ if __name__ == "__main__":
 
         print(args.experiment_name, args.batch_size, args.learning_rate)
         f1 = train_multi_ape(args)
+        output[args.experiment_name] = f1
         
-        res = {}
-        for ep in [1, 2, 5, 10, 20]:
-            ckpt = torch.load(os.path.join(f1, f"ckpt_{ep}.pt"))["model"]
+    #     res = {}
+    #     for ep in [1, 2, 5, 10, 20]:
+    #         ckpt = torch.load(os.path.join(f1, f"ckpt_{ep}.pt"))["model"]
 
-            model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
-            model.load_state_dict(ckpt)
-            model.to(args.device)
+    #         model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
+    #         model.load_state_dict(ckpt)
+    #         model.to(args.device)
             
-            acc, loss = evaluate_mapper(args, model)
-            res.update({"epoch": ep, "imagenet1k_acc": acc})
+    #         acc, loss = evaluate_mapper(args, model)
+    #         res.update({"epoch": ep, "imagenet1k_acc": acc})
         
-        output[args.experiment_name] = res
+    #     output[args.experiment_name] = res
     
-    torch.save(output, "multi_ape_bs_abl.pt")
+    # torch.save(output, "multi_ape_bs_abl.pt")
 
 
     
