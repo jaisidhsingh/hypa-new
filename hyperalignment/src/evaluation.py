@@ -138,7 +138,7 @@ def image_classification_eval(model, loader, progress_bar=True, device="cuda", u
 
 def load_separate_ckpt(args, model):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints"
-    path = os.path.join(folder, "separate", args.image_encoder, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
+    path = os.path.join(folder, "multi_ape", args.image_encoder, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
     ckpt = torch.load(path)["model"]
     model.mapper.load_state_dict(ckpt)
     model.mapper = model.mapper.to(args.device)
