@@ -17,3 +17,13 @@
 
 - FLOPs across 20 epochs = 118.7 Trillion 
 - ImageNet top-1 accuracy = 
+
+## 4. `bs=4096` & `lr=5e-3`
+
+- FLOPs across 20 epochs = 432 Trillion 
+- ImageNet top-1 accuracy = 
+
+## 5. `bs=16384` & `lr=1e-2`
+
+- FLOPs across 20 epochs = 432 Trillion 
+- ImageNet top-1 accuracy = 
