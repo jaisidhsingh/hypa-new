@@ -216,23 +216,23 @@ def run(args, input_config):
                     elif args.cond_type == "features":
                         encoder_info[index] = {"index": index, "image_embed_dim": D_img, "embedding": cond_id[ii, :].view(1, args.largest_image_dim)}
                 
-        # make sure we have saved info correctly
-        # print(list(encoder_info.keys()))
-        assert len(encoder_info.keys()) == args.num_image_encoders, "Something went wrong during storing info for H-Net."
-        
-        # make sure that we save
-        if (epoch+1) in [1, 2, 5, 10, 20, 40, 100, 200] and args.saving:
-            model.eval()
-            logs.update({"args": args.__dict__})
-            dump = {
-                "model": model.state_dict(),
-                "logs": logs,
-                "mapper_params": predict_params_for_saving(model, encoder_info),
-                "info": encoder_info
-            }
-            save_path = os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt")
-            torch.save(dump, save_path)
-            print(f"Checkpoint saved at epoch {epoch+1}.")
+            # make sure we have saved info correctly
+            # print(list(encoder_info.keys()))
+            assert len(encoder_info.keys()) == args.num_image_encoders, "Something went wrong during storing info for H-Net."
+            
+            # make sure that we save
+            if (epoch+1) in [1, 2, 5, 10, 20, 40, 100, 200] and args.saving:
+                model.eval()
+                logs.update({"args": args.__dict__})
+                dump = {
+                    "model": model.state_dict(),
+                    "logs": logs,
+                    "mapper_params": predict_params_for_saving(model, encoder_info),
+                    "info": encoder_info
+                }
+                save_path = os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt")
+                torch.save(dump, save_path)
+                print(f"Checkpoint saved at epoch {epoch+1}.")
         
     print("All done.")
 
