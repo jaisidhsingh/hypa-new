@@ -15,7 +15,7 @@ from configs.model_configs import model_configs
 from training.schedulers import cosine_lr
 from train_ape import evaluate_mapper
 
-torch.multiprocessing.set_sharing_strategy('file_system')
+# torch.multiprocessing.set_sharing_strategy('file_system')
 
 def train_multi_ape(args):
     encoder_names = model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim]["image_encoders"][:args.num_image_encoders]
@@ -149,8 +149,8 @@ if __name__ == "__main__":
     args.saving = True
 
     # bs, lr = 16384, 1e-2
-    bss = [int(pow(2, i)) for i in [8, 9, 10, 12, 14]]
-    lrs = [1e-3, 1e-3, 3e-3, 5e-3, 1e-2]
+    bss = [int(pow(2, i)) for i in [9, 10, 12, 14]]
+    lrs = [1e-3, 3e-3, 5e-3, 1e-2]
     for bs, lr in zip(bss, lrs):
         args.experiment_name = f"vits_bs-{args.batch_size}_lr-{args.learning_rate}"
         args.batch_size = bs
