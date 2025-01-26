@@ -15,6 +15,7 @@ from configs.model_configs import model_configs
 from training.schedulers import cosine_lr
 from train_ape import evaluate_mapper
 
+torch.multiprocessing.set_sharing_strategy('file_system')
 
 def train_multi_ape(args):
     encoder_names = model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim]["image_encoders"][:args.num_image_encoders]
