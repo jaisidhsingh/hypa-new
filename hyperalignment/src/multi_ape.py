@@ -155,8 +155,8 @@ if __name__ == "__main__":
     bss = [int(pow(2, i)) for i in [8, 9, 10, 12, 14]]
     lrs = [1e-3, 1e-3, 3e-3, 5e-3, 1e-2]
 
-    bss = [4096]
-    lrs = [5e-3]
+    bss = [16384]
+    lrs = [1e-2]
     output = {}
     for bs, lr in zip(bss, lrs):
         args.experiment_name = f"vits_bs-{args.batch_size}_lr-{args.learning_rate}"
