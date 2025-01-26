@@ -25,7 +25,7 @@ plt.axhline(y=0.1, color="black", linestyle="--", label="random chance")
 
 plt.title(f'APE: Averaging InfoNCE loss across all combinations\nEvaluation done on ViT-S/16')
 plt.xlabel('Epochs')
-plt.ylabel('ImageNet Accuracy (%)')
+plt.ylabel('ImageNet-1k top-1 accuracy (%)')
 plt.ylim([0.0, 0.2])
 plt.xticks([1, 2, 5, 10, 20])
 plt.grid(True)
