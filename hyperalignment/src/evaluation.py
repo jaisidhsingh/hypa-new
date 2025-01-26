@@ -207,7 +207,7 @@ def eval_classification(args, model, transform, dataset):
     }
     dataset = ImageClassificationDataset(kwargs)
     print(dataset.classes[0])
-    loader = DataLoader(dataset, batch_size=1024, num_workers=4, pin_memory=True)
+    loader = DataLoader(dataset, batch_size=1024, num_workers=args.num_workers, pin_memory=True)
     # using_clip = args.clip_version != "off"
     accuracy, loss = image_classification_eval(model, loader, using_clip=False, device=args.device)
     return accuracy, loss
@@ -250,18 +250,8 @@ def main(args):
             metrics[bench] = metric 
     
     # metrics.update({"config": vars(args)})
-    result = {args.exp_name: metrics}
+    result = {f"epoch_{args.epoch}": metrics}
     return result
-
-    # with open(result_save_file, "r") as f:
-    #     saved_results = json.load(f)
-
-    # saved_results.update(result)
-
-    # with open(result_save_file, "w+") as f:
-        # json.dump(saved_results, f)
-    
-    # print("All done and saved.")
 
 
 if __name__ == "__main__":
@@ -279,19 +269,17 @@ if __name__ == "__main__":
     # model args
     parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-embed-dim", type=int, default=768)
+    parser.add_argument("--num-workers", type=int, default=8)
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
     parser.add_argument("--image-encoder", type=str, default="vit_small_patch16_224")
     # get args
     args = parser.parse_args()
-    main(args)
 
-    # batch_sizes = [256] #[int(pow(2, i)) for i in range(10, 15, 2)]
-    # lrs = [1e-3] #[3e-3, 5e-3, 1e-2]
-    # for bs, lr in zip(batch_sizes, lrs):
-    #     suffix = f"bs-{bs}_lr-{lr}_ep-10"
-    #     args.exp_name = f"{args.image_encoder}_{args.text_encoder}_{suffix}"
-    #     print(args.exp_name)
-    #     args.epoch = 1
-    #     result = main(args)
-    #     print(f"Batch size: {bs} ---> {result[args.exp_name]['imagenet1k']}")
+    res = {"exp_name": args.exp_name, "seed": args.seed, "eval": {}}
+    for ep in [1, 2, 5, 10, 20]:
+        args.epoch = ep
+        out = main(args)
+        res["eval"].update(out)
+    
+    print(res)
     
