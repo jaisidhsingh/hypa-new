@@ -149,8 +149,10 @@ if __name__ == "__main__":
     args.saving = True
 
     # bs, lr = 16384, 1e-2
-    bss = [int(pow(2, i)) for i in [9, 10, 12, 14]]
-    lrs = [1e-3, 3e-3, 5e-3, 1e-2]
+    bss = [int(pow(2, i)) for i in [8, 9, 10, 12, 14]]
+    lrs = [1e-3, 1e-3, 3e-3, 5e-3, 1e-2]
+
+    output = {}
     for bs, lr in zip(bss, lrs):
         args.experiment_name = f"vits_bs-{args.batch_size}_lr-{args.learning_rate}"
         args.batch_size = bs
@@ -159,7 +161,7 @@ if __name__ == "__main__":
         print(args.experiment_name, args.batch_size, args.learning_rate)
         f1 = train_multi_ape(args)
         
-        res = {"exp_name": args.exp_name, "eval": {}}
+        res = {}
         for ep in [1, 2, 5, 10, 20]:
             ckpt = torch.load(os.path.join(f1, f"ckpt_{ep}.pt"))["model"]
 
@@ -168,10 +170,11 @@ if __name__ == "__main__":
             model.to(args.device)
             
             acc, loss = evaluate_mapper(args, model)
-            res["eval"].update({"epoch": ep, "imagenet1k_acc": acc})
-
-        print(res)
-
+            res.update({"epoch": ep, "imagenet1k_acc": acc})
+        
+        output[args.experiment_name] = res
+    
+    torch.save(output, "multi_ape_bs_abl.pt")
 
 
     
