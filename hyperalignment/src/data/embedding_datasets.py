@@ -149,3 +149,7 @@ class MultiMapperEmbeddings(Dataset):
         assert text_embeddings.shape == torch.Size([end-start, self.text_embed_dim]), "Text embeddings prepared incorrectly!"
 
         return image_embeddings, text_embeddings
+
+class JointEmbeddings(Dataset):
+    def __init__(self, config):
+        self.image_encoder = config["image_encoders"]
