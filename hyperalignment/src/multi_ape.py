@@ -3,17 +3,18 @@ import torch
 import argparse
 import numpy as np
 from tqdm import tqdm
-from itertools import cycle
 from copy import deepcopy
-from torch.utils.data import DataLoader
+from itertools import cycle
 import torch.nn.functional as F
+from torch.utils.data import DataLoader
+from torch.utils.flop_counter import FlopCounterMode
 
-from data.embedding_datasets import ImageEmbeddings, TextEmbeddings
+from train_ape import evaluate_mapper
 from models.param_decoders import MLP
+from training.schedulers import cosine_lr
 from configs.data_configs import data_configs
 from configs.model_configs import model_configs
-from training.schedulers import cosine_lr
-from train_ape import evaluate_mapper
+from data.embedding_datasets import ImageEmbeddings, TextEmbeddings
 
 # torch.multiprocessing.set_sharing_strategy('file_system')
 
@@ -51,56 +52,58 @@ def train_multi_ape(args):
 
     logs_save_folder = os.path.join(args.logs_folder, "multi_ape", args.experiment_name, f"seed_{args.random_seed}")
     os.makedirs(logs_save_folder, exist_ok=True)
+    flop_counter = FlopCounterMode(model, display=True, depth=2)
 
-    for epoch in range(args.num_epochs):
-        corrects = {name: 0 for name in encoder_names}
-        total = {name: 0 for name in encoder_names}
-        accuracies = {name: 0 for name in encoder_names}
+    with flop_counter:
+        for epoch in range(args.num_epochs):
+            corrects = {name: 0 for name in encoder_names}
+            total = {name: 0 for name in encoder_names}
+            accuracies = {name: 0 for name in encoder_names}
 
-        for idx, text_embeddings in enumerate(text_loader):
-            bs = len(text_embeddings)
-            text_embeddings = text_embeddings.float().to(args.device)
-            text_embeddings /= text_embeddings.norm(dim=-1, keepdim=True)
+            for idx, text_embeddings in enumerate(text_loader):
+                bs = len(text_embeddings)
+                text_embeddings = text_embeddings.float().to(args.device)
+                text_embeddings /= text_embeddings.norm(dim=-1, keepdim=True)
 
-            image_embeddings = torch.cat([next(image_loaders[name]).unsqueeze(0) for name in encoder_names], dim=0).to(args.device)
-            image_embeddings = image_embeddings.float().view(args.num_image_encoders, bs, args.image_embed_dim)
-            image_embeddings /= image_embeddings.norm(dim=-1, keepdim=True)
+                image_embeddings = torch.cat([next(image_loaders[name]).unsqueeze(0) for name in encoder_names], dim=0).to(args.device)
+                image_embeddings = image_embeddings.float().view(args.num_image_encoders, bs, args.image_embed_dim)
+                image_embeddings /= image_embeddings.norm(dim=-1, keepdim=True)
 
-            step = epoch * loader_len + idx
-            scheduler(step)
-            optimizer.zero_grad()
+                step = epoch * loader_len + idx
+                scheduler(step)
+                optimizer.zero_grad()
 
-            with autocast(args.device):
-                mapped_text_embeddings = model(text_embeddings)
-                mapped_text_embeddings = mapped_text_embeddings / mapped_text_embeddings.norm(dim=-1, keepdim=True)
+                with autocast(args.device):
+                    mapped_text_embeddings = model(text_embeddings)
+                    mapped_text_embeddings = mapped_text_embeddings / mapped_text_embeddings.norm(dim=-1, keepdim=True)
 
-                logits = torch.einsum("ncd,bd->ncb", image_embeddings, mapped_text_embeddings) * logit_scale
-                labels = torch.arange(bs).long().to(args.device)
+                    logits = torch.einsum("ncd,bd->ncb", image_embeddings, mapped_text_embeddings) * logit_scale
+                    labels = torch.arange(bs).long().to(args.device)
 
-                loss = 0
-                for j in range(args.num_image_encoders):
-                    loss = loss + (F.cross_entropy(logits[j, :, :], labels) + F.cross_entropy(logits[j, :, :].T, labels)) / 2
-                    corrects[encoder_names[j]] += (logits[j].argmax(dim=-1) == labels).sum().item()
-                    total[encoder_names[j]] += bs
-                
-            loss = loss / args.num_image_encoders
-            bar.set_postfix({"step": step, "total_loss": loss.item()})
-            accuracies = {name: round(corrects[name] / total[name] * 100, 2) for name in encoder_names}
+                    loss = 0
+                    for j in range(args.num_image_encoders):
+                        loss = loss + (F.cross_entropy(logits[j, :, :], labels) + F.cross_entropy(logits[j, :, :].T, labels)) / 2
+                        corrects[encoder_names[j]] += (logits[j].argmax(dim=-1) == labels).sum().item()
+                        total[encoder_names[j]] += bs
+                    
+                loss = loss / args.num_image_encoders
+                bar.set_postfix({"step": step, "total_loss": loss.item()})
+                accuracies = {name: round(corrects[name] / total[name] * 100, 2) for name in encoder_names}
+            
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
+            
+            bar.update(1)
         
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
-        
-        bar.update(1)
-        
-        if epoch+1 in [1, 2, 5, 10, 20, 40] and args.saving:
-            dump = {
-                "model": model.state_dict(),
-                "optimizer": optimizer.state_dict(),
-            }
+    if epoch+1 in [1, 2, 5, 10, 20, 40] and args.saving:
+        dump = {
+            "model": model.state_dict(),
+            "optimizer": optimizer.state_dict(),
+        }
 
-            torch.save(dump, os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt"))
-            tqdm.write(f"Checkpoint saved at epoch {epoch+1}.")
+        torch.save(dump, os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt"))
+        tqdm.write(f"Checkpoint saved at epoch {epoch+1}.")
     
     bar.close()
     return ckpt_save_folder
@@ -145,8 +148,8 @@ if __name__ == "__main__":
     # get args object
     args = parser.parse_args()
 
-    args.num_epochs = 20
-    args.saving = True
+    args.num_epochs = 1
+    args.saving = False
 
     # bs, lr = 16384, 1e-2
     bss = [int(pow(2, i)) for i in [8, 9, 10, 12, 14]]
