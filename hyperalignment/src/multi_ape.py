@@ -148,23 +148,26 @@ if __name__ == "__main__":
     args.saving = True
 
     # bs, lr = 16384, 1e-2
-    args.experiment_name = f"vits_bs-{args.batch_size}_lr-{args.learning_rate}"
-    # args.batch_size = bs
-    # args.learning_rate = lr
+    bss = [int(pow(2, i)) for i in [8, 9, 10, 12, 14]]
+    lrs = [1e-3, 1e-3, 3e-3, 5e-3, 1e-2]
+    for bs, lr in zip(bss, lrs):
+        args.experiment_name = f"vits_bs-{args.batch_size}_lr-{args.learning_rate}"
+        args.batch_size = bs
+        args.learning_rate = lr
 
-    print(args.experiment_name, args.batch_size, args.learning_rate)
-    f1 = train_multi_ape(args)
-    
-    res = {}
-    ckpt = torch.load(os.path.join(f1, "ckpt_20.pt"))["model"]
+        print(args.experiment_name, args.batch_size, args.learning_rate)
+        f1 = train_multi_ape(args)
+        
+        res = {}
+        ckpt = torch.load(os.path.join(f1, "ckpt_20.pt"))["model"]
 
-    model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
-    model.load_state_dict(ckpt)
-    model.to(args.device)
-    
-    acc, loss = evaluate_mapper(args, model)
-    res[args.experiment_name] = acc
-    print(res)
+        model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
+        model.load_state_dict(ckpt)
+        model.to(args.device)
+        
+        acc, loss = evaluate_mapper(args, model)
+        res[args.experiment_name] = acc
+        print(res)
 
 
 
