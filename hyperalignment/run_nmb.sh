@@ -8,7 +8,7 @@ python3 src/learn_hnet.py \
     --num-epochs=20 \
     --learning-rate=1e-2 \
     --batch-size=512 \
-    --random-seed=1 \
+    --random-seed=0 \
     --scheduler="off" \
     --warmup-steps=100 \
     --emb-loss=False \
