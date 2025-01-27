@@ -77,7 +77,7 @@ def one_encoder_embeds_texts(args):
     bar.close()
     save_folder = f"{args.text_results_folder}/dim_{args.text_embed_dim}/{args.text_encoder}"
     os.makedirs(save_folder, exist_ok=True)
-    np.save(os.path.join(save_folder, "cc3m558k_embeddings.npy"), store)
+    np.save(os.path.join(save_folder, "embeddings.npy"), store)
     print("Done for texts")
 
 
@@ -95,7 +95,8 @@ def main():
     args.text_embed_dim = 1024
     # args.text_encoder = "all-MiniLM-L12-v2"
     args.text_encoder = "all-roberta-large-v1"
-    args.text_results_folder = "/network/scratch/s/sparsha.mishra/hyperalignment/results/text_embeddings/icml"
+    # args.text_results_folder = "/network/scratch/s/sparsha.mishra/hyperalignment/results/text_embeddings/icml"
+    args.text_results_folder = "/network/scratch/s/sparsha.mishra/hyperalignment/results/text_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie"
     # one_encoder_embeds_texts(args)
 
 

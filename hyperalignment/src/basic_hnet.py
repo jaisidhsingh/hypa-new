@@ -96,14 +96,14 @@ def train_basic_hnet(args):
             
                 bar.update(1)
         
-        if epoch+1 in [1, 2, 5, 10, 20, 40] and args.saving:
-            dump = {
-                "model": model.state_dict(),
-                "optimizer": optimizer.state_dict(),
-            }
+            if epoch+1 in [1, 2, 5, 10, 20, 40] and args.saving:
+                dump = {
+                    "model": model.state_dict(),
+                    "optimizer": optimizer.state_dict(),
+                }
 
-            torch.save(dump, os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt"))
-            tqdm.write(f"Checkpoint saved at epoch {epoch+1}.")
+                torch.save(dump, os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt"))
+                tqdm.write(f"Checkpoint saved at epoch {epoch+1}.")
     
     bar.close()
     return ckpt_save_folder
