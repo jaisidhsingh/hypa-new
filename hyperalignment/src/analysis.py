@@ -47,8 +47,8 @@ def embed_imagenet(args):
     
     bar.close()
 
-    store["inputs"] = torch.stack(store["inputs"])
-    store["labels"] = torch.stack(store["labels"])
+    store["inputs"] = torch.cat(store["inputs"], dim=0)
+    store["labels"] = torch.cat(store["labels"], dim=0)
     
     save_folder = os.path.join(args.results_folder, f"dim_{args.image_embed_dim}", args.image_encoder)
     os.makedirs(save_folder, exist_ok=True)
