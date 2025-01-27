@@ -44,11 +44,6 @@ def train_separate_mapper(args):
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True, drop_last=True)
     print(f"Training data of {len(train_dataset)} samples loaded.")
 
-    # # load in dataset for validation
-    # val_dataset = SeparateEmbeddings(train_dataset_config, split="val", args=args)
-    # val_loader = DataLoader(val_dataset, batch_size=args.eval_batch_size, num_workers=args.num_workers, pin_memory=True, shuffle=True, drop_last=True)
-    # print(f"Validation data of {len(val_dataset)} samples loaded.")
-
     # the connector
     model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
     model = model.to(args.device)
@@ -144,46 +139,6 @@ def train_separate_mapper(args):
         
         if args.use_wandb:
             wandb.log({"train_loss": train_running_loss / (idx+1), "train_accuracy": train_logs["train_accuracy"]}, step=epoch+1)
-        
-        # model.eval()
-
-        # if (epoch+1) % args.eval_every == 0: 
-        #     val_acc, val_loss = evaluate_mapper(args, model)
-        # else:
-        #     val_acc, val_loss = -1, -1
-        
-        # with torch.no_grad():
-        #     val_image_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
-        #     val_text_store = torch.zeros(len(val_dataset), args.image_embed_dim).to(args.device)
-        #     val_labels = torch.arange(len(val_dataset)).long().to(args.device)
-        #     val_logs = {}
-
-        #     for idx, (image_features, text_features) in enumerate(val_loader):
-        #         batch_size = image_features.shape[0]
-        #         image_features = image_features.float().to(args.device)
-        #         image_features = image_features.view(batch_size, args.image_embed_dim)
-        #         image_features /= image_features.norm(dim=-1, keepdim=True).to(args.device)
-
-        #         text_features = text_features.float().to(args.device)
-        #         text_features = text_features.view(batch_size, args.text_embed_dim)
-        #         text_features /= text_features.norm(dim=-1, keepdim=True).to(args.device)
-
-        #         mapped_text_features = model(text_features)
-        #         mapped_text_features /= mapped_text_features.norm(dim=-1, keepdim=True).to(args.device)
-            
-        #         val_image_store[idx * batch_size : (idx+1) * batch_size] = image_features
-        #         val_text_store[idx * batch_size : (idx+1) * batch_size] = mapped_text_features
-            
-        #     sim = args.logit_scale * (val_image_store @ val_text_store.T)
-        #     val_corrects = (sim.argmax(dim=-1) == val_labels).sum().item()
-        #     val_accuracy = round(val_corrects / len(val_dataset) * 100, 2)
-        #     val_loss = (F.cross_entropy(sim, val_labels) + F.cross_entropy(sim.T, val_labels)) / 2
-            
-        #     print(val_corrects)
-        #     val_logs = {"val_loss": val_loss.item(), "val_accuracy": val_accuracy}
-        
-        # if args.use_wandb:
-        #     wandb.log({"val_loss": val_loss.item(), "val_accuracy": val_accuracy}, step=epoch+1)
 
         # update the progress bar
         bar.update(1)
@@ -242,90 +197,16 @@ if __name__ == "__main__":
     # training settings
     parser.add_argument("--batch-size", type=int, default=int(pow(2, 14)))
     parser.add_argument("--eval-batch-size", type=int, default=int(pow(2, 14)))
-    parser.add_argument("--learning-rate", type=float, default=1e-3)
+    parser.add_argument("--learning-rate", type=float, default=1e-2)
     parser.add_argument("--weight-decay", type=float, default=0.0)
-    parser.add_argument("--num-epochs", type=int, default=10)
+    parser.add_argument("--num-epochs", type=int, default=20)
     parser.add_argument("--warmup-steps", type=int, default=50)
     parser.add_argument("--shuffle-data", type=bool, default=False)
     parser.add_argument("--seeds", type=str, default="0,1,2,3,4")
     parser.add_argument("--random-seed", type=int, default=0)
     parser.add_argument("--num-workers", type=int, default=4)
-    parser.add_argument("--saving", type=bool, default=False)
+    parser.add_argument("--saving", type=bool, default=True)
     parser.add_argument("--eval-every", type=int, default=1)
     # get args object
     args = parser.parse_args()
-
-    args.num_epochs = 20
-    args.saving = True
-
-    args.experiment_name = f"vits_bs-{512}_lr-{1e-3}"
-    args.batch_size = 512
-    args.learning_rate = 1e-3
-    print(args.experiment_name, args.batch_size, args.learning_rate)
-    f1 = train_separate_mapper(args)
-    res = {}
-    ckpt = torch.load(os.path.join(f1, "ckpt_20.pt"))["model"]
-
-    model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
-    model.load_state_dict(ckpt)
-    model.to(args.device)
-    acc, loss = evaluate_mapper(args, model)
-    res[args.experiment_name] = acc
-    print(res)
-
-
-    # bss = [int(pow(2, i)) for i in range(8, 15, 2)]
-    # lrs = [1e-3, 3e-3, 5e-3, 1e-2]
-    # res = {}
-
-    # for bs, lr in zip(bss, lrs):
-    #     args.experiment_name = f"vits_bs-{bs}_lr-{lr}"
-    #     args.batch_size = bs
-    #     args.learning_rate = lr
-    #     print(args.experiment_name, args.batch_size, args.learning_rate)
-    #     f1 = train_separate_mapper(args)
-    #     ckpt = torch.load(os.path.join(f1, "ckpt_20.pt"))["model"]
-
-    #     model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
-    #     model.load_state_dict(ckpt)
-    #     model.to(args.device)
-    #     acc, loss = evaluate_mapper(args, model)
-    #     res[args.experiment_name] = acc
-
-    # print(res)
-
-
-        # res = {}
-        # for ep in [10, 20]:
-        #     ckpt = torch.load(os.path.join(f1, f"ckpt_{ep}.pt"))["model"]
-        #     model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
-        #     model.load_state_dict(ckpt)
-        #     model.to(args.device)
-        #     acc, loss = evaluate_mapper(args, model)
-        #     res[ep] = acc
-
-        # print(res)
-        # print(" ")
-
-
-        # args.experiment_name = "vits_bs_16384_lr_1e-2"
-        # args.batch_size = 16384
-        # args.learning_rate = 1e-2
-        # print(args.experiment_name, args.batch_size, args.learning_rate)
-        # f2 = train_separate_mapper(args)
-
-        # res = {}
-        # for ep in [10, 20]:
-        #     ckpt = torch.load(os.path.join(f2, f"ckpt_{ep}.pt"))["model"]
-        #     model = MLP(args.text_embed_dim, [], args.image_embed_dim, use_bias=args.use_bias, logit_scale=args.logit_scale)
-        #     model.load_state_dict(ckpt)
-        #     model.to(args.device)
-        #     acc, loss = evaluate_mapper(args, model)
-        #     res[ep] = acc
-        #     # print(f"Epoch {ep} - ImageNet1k top-1 accuracy: {acc}")
-        
-        # print(res)
-        
-
-    # print((w1-w2).norm(), (b1-b2).norm(), [c1, c2])
-    # print(torch.isclose(w1, w2).all())
+    train_separate_mapper(args)
