@@ -65,6 +65,8 @@ def run(args, input_config):
     # load in dataset and encoder sampler
     config = data_configs.multi_embedding_dataset_configs[args.feature_dataset]
     config["image_encoder_data"] = input_config
+    config["text_encoder"] = args.text_encoder
+    config["text_embed_dim"] = args.text_embed_dim
 
     dataset = MultiMapperEmbeddings(config)
     # print(dataset.image_encoder_data)
@@ -248,6 +250,8 @@ def main(args):
     # config = {k:full_configs[k] for k in full_configs.keys()}
     # args.encoder_batch_size = q
 
+    args.largest_text_dim = args.text_embed_dim
+
     print(f"Started run with num_image_encoders: {num_encoders}")
     run(args, input_config=config)
     print(f"Finished run with num_image_encoders: {num_encoders}")
@@ -265,6 +269,9 @@ if __name__ == "__main__":
     parser.add_argument("--use-wandb", type=bool, default=False)
     parser.add_argument("--cond-type", type=str, default="features", choices=["indices", "features"])
     # model args
+    parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
+    parser.add_argument("--text-embed-dim", type=int, default=768)
+    #
     parser.add_argument("--feature-dataset", type=str, default="cc3m558k")
     parser.add_argument("--largest-image-dim", type=int, default=1024)
     parser.add_argument("--largest-text-dim", type=int, default=768)

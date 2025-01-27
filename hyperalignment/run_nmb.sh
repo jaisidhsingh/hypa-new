@@ -13,6 +13,7 @@ python3 src/learn_hnet.py \
     --warmup-steps=100 \
     --emb-loss=False \
     --normalize-output=True \
-    --chunk-dim=256 \
+    --hnet-decoder-type="mlp" \
     --largest-text-dim=384 \
-    --hnet-decoder-type="mlp";
+    --text-embed-dim=384 \
+    --text-encoder="all-MiniLM-L12-v2";
