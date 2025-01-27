@@ -5,6 +5,8 @@ python3 src/evaluation.py \
     --epoch=1 \
     --encoder-index=0 \
     --image-embed-dim=384 \
+    --text-embed-dim=384 \
+    --text-encoder="all-MiniLM-L12-v2" \
     --benchmarks="cifar10,cifar100,imagenet1k";
 
 python3 src/evaluation.py \
@@ -14,6 +16,8 @@ python3 src/evaluation.py \
     --epoch=1 \
     --encoder-index=0 \
     --image-embed-dim=384 \
+    --text-embed-dim=1024 \
+    --text-encoder="all-roberta-large-v1" \
     --benchmarks="cifar10,cifar100,imagenet1k";
 
 python3 src/evaluation.py \
