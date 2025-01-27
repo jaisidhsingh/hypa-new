@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=mape_bs_abl
+#SBATCH --job-name=fmlp_hnet_100ep
 #SBATCH --gres=gpu:rtx8000:1
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
