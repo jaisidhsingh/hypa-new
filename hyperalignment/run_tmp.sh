@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=fmlp_hnet_100ep
+#SBATCH --job-name=basic_hnet
 #SBATCH --gres=gpu:rtx8000:1
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --partition=long
-#SBATCH --output=/home/mila/s/sparsha.mishra/projects/hypa-new/mape_bs_abl.out
-#SBATCH --error=/home/mila/s/sparsha.mishra/projects/hypa-new/mape_bs_abl.err
+#SBATCH --output=/home/mila/s/sparsha.mishra/projects/hypa-new/basic_hnet.out
+#SBATCH --error=/home/mila/s/sparsha.mishra/projects/hypa-new/basic_hnet.err
 
 module load anaconda/3
 
@@ -16,26 +16,26 @@ conda activate /home/mila/s/sparsha.mishra/scratch/generate2
 
 ulimit -Sn $(ulimit -Hn)
 
-# pyfile="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/src/learn_hnet.py"
+pyfile="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/src/basic_hnet.py"
 
-# python3 $pyfile --num-workers=8;
+python3 $pyfile --num-workers=8;
 
 
-python3 src/learn_hnet.py \
-    --experiment-name="hnet_12-4_fmlp_c-32_bs-512_lr-1e-2_ep-100" \
-    --num-image-encoders=12 \
-    --encoder-batch-size=4 \
-    --hnet-cond-emb-dim=32 \
-    --cond-type="features" \
-    --num-epochs=100 \
-    --learning-rate=1e-2 \
-    --batch-size=512 \
-    --scheduler="off" \
-    --warmup-steps=100 \
-    --emb-loss=False \
-    --normalize-output=True \
-    --chunk-dim=256 \
-    --hnet-decoder-type="mlp";
+# python3 src/learn_hnet.py \
+#     --experiment-name="hnet_12-4_fmlp_c-32_bs-512_lr-1e-2_ep-100" \
+#     --num-image-encoders=12 \
+#     --encoder-batch-size=4 \
+#     --hnet-cond-emb-dim=32 \
+#     --cond-type="features" \
+#     --num-epochs=100 \
+#     --learning-rate=1e-2 \
+#     --batch-size=512 \
+#     --scheduler="off" \
+#     --warmup-steps=100 \
+#     --emb-loss=False \
+#     --normalize-output=True \
+#     --chunk-dim=256 \
+#     --hnet-decoder-type="mlp";
 
 # python3 src/learn_hnet.py \
 #     --experiment-name="hnet_12-4_fmlp_c-32_bs-4096_lr-3e-2" \

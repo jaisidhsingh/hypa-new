@@ -68,6 +68,7 @@ def train_basic_hnet(args):
             corrects = {name: 0 for name in encoder_names}
             total = {name: 0 for name in encoder_names}
             accuracies = {name: 0 for name in encoder_names}
+            model.train()
 
             for idx, text_embeddings in enumerate(text_loader):
                 bs = len(text_embeddings)
@@ -97,9 +98,12 @@ def train_basic_hnet(args):
                 bar.update(1)
         
             if epoch+1 in [1, 2, 5, 10, 20, 40] and args.saving:
+                model.eval()
+                weights, biases = model(cond_id, None, None, image_embeddings=args.image_embed_dim, normalize_output=True, nolookup=True, only_params=True)
                 dump = {
                     "model": model.state_dict(),
                     "optimizer": optimizer.state_dict(),
+                    "mapper_params": [[weights[j], biases[j]] for j in range(args.num_image_encoders)]
                 }
 
                 torch.save(dump, os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt"))
