@@ -99,7 +99,7 @@ def train_basic_hnet(args):
         
             if epoch+1 in [1, 2, 5, 10, 20, 40] and args.saving:
                 model.eval()
-                weights, biases = model(cond_id, None, None, image_embeddings=args.image_embed_dim, normalize_output=True, nolookup=True, only_params=True)
+                weights, biases = model(cond_id, None, None, image_embed_dim=args.image_embed_dim, normalize_output=True, nolookup=True, only_params=True)
                 dump = {
                     "model": model.state_dict(),
                     "optimizer": optimizer.state_dict(),

@@ -5,7 +5,6 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader
 
 from models import ImageEncoder
-from configs.data_configs import data_configs
 from configs.model_configs import model_configs
 from data.classification_datasets import ImageClassificationDataset
 
@@ -40,13 +39,16 @@ def embed_imagenet(args):
         with autocast(args.device):
             image_features = model(images)
         
-        store["inputs"].append(image_features)
-        store["labels"].append(labels)
+        store["inputs"].append(image_features.cpu())
+        store["labels"].append(labels.cpu())
 
         bar.set_description(f"{args.image_encoder}")
         bar.update(1)
     
     bar.close()
+
+    store["inputs"] = torch.stack(store["inputs"])
+    store["labels"] = torch.stack(store["labels"])
     
     save_folder = os.path.join(args.results_folder, f"dim_{args.image_embed_dim}", args.image_encoder)
     os.makedirs(save_folder, exist_ok=True)
