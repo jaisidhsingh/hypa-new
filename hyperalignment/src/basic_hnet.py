@@ -135,7 +135,7 @@ if __name__ == "__main__":
     parser.add_argument("--use-wandb", type=bool, default=False)
     parser.add_argument("--normalize-output", type=bool, default=True)
     # training settings
-    parser.add_argument("--batch-size", type=int, default=int(pow(2, 9)))
+    parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--eval-batch-size", type=int, default=int(pow(2, 14)))
     parser.add_argument("--learning-rate", type=float, default=1e-2)
     parser.add_argument("--weight-decay", type=float, default=0.0)
