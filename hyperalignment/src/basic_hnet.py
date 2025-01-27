@@ -53,7 +53,7 @@ def train_basic_hnet(args):
     scaler = torch.cuda.amp.GradScaler()
     autocast = torch.amp.autocast
 
-    bar = tqdm(total=args.num_epochs)
+    bar = tqdm(total=len(text_loader) * args.num_epochs)
     logit_scale = torch.tensor(np.log(args.logit_scale)).to(args.device)
     
     ckpt_save_folder = os.path.join(args.checkpoint_folder, "basic_hnet", args.experiment_name, f"seed_{args.random_seed}")
@@ -94,7 +94,7 @@ def train_basic_hnet(args):
                 scaler.step(optimizer)
                 scaler.update()
             
-            bar.update(1)
+                bar.update(1)
         
     if epoch+1 in [1, 2, 5, 10, 20, 40] and args.saving:
         dump = {
@@ -133,6 +133,7 @@ if __name__ == "__main__":
     parser.add_argument("--use-bias", type=bool, default=True)
     parser.add_argument("--logit-scale", type=float, default=100.0)
     parser.add_argument("--use-wandb", type=bool, default=False)
+    parser.add_argument("--normalize-output", type=bool, default=True)
     # training settings
     parser.add_argument("--batch-size", type=int, default=int(pow(2, 9)))
     parser.add_argument("--eval-batch-size", type=int, default=int(pow(2, 14)))
