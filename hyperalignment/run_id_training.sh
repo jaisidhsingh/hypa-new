@@ -6,7 +6,7 @@
 #SBATCH --time=24:00:00
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
-#SBATCH --partition=long
+#SBATCH --partition=main
 #SBATCH --output=/home/mila/s/sparsha.mishra/projects/hypa-new/mape_bs_abl.out
 #SBATCH --error=/home/mila/s/sparsha.mishra/projects/hypa-new/mape_bs_abl.err
 

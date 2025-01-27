@@ -96,14 +96,14 @@ def train_basic_hnet(args):
             
                 bar.update(1)
         
-    if epoch+1 in [1, 2, 5, 10, 20, 40] and args.saving:
-        dump = {
-            "model": model.state_dict(),
-            "optimizer": optimizer.state_dict(),
-        }
+        if epoch+1 in [1, 2, 5, 10, 20, 40] and args.saving:
+            dump = {
+                "model": model.state_dict(),
+                "optimizer": optimizer.state_dict(),
+            }
 
-        torch.save(dump, os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt"))
-        tqdm.write(f"Checkpoint saved at epoch {epoch+1}.")
+            torch.save(dump, os.path.join(ckpt_save_folder, f"ckpt_{epoch+1}.pt"))
+            tqdm.write(f"Checkpoint saved at epoch {epoch+1}.")
     
     bar.close()
     return ckpt_save_folder
@@ -137,7 +137,7 @@ if __name__ == "__main__":
     # training settings
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--eval-batch-size", type=int, default=int(pow(2, 14)))
-    parser.add_argument("--learning-rate", type=float, default=1e-2)
+    parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=0.0)
     parser.add_argument("--num-epochs", type=int, default=20)
     parser.add_argument("--warmup-steps", type=int, default=50)
