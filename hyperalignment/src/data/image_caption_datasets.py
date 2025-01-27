@@ -40,7 +40,7 @@ class CC3M558k(Dataset):
             data = json.load(f)
 
         self.image_paths = [item["image"] for item in data]
-        self.captions = [item["blip_caption"] for item in data]
+        self.captions = [item["caption"] for item in data]
         self.image_paths = [os.path.join(path_appendage, path) for path in self.image_paths]
 
         self.transform = transform
@@ -51,11 +51,12 @@ class CC3M558k(Dataset):
 
     def __getitem__(self, idx):
         image_path = self.image_paths[idx]
-        image = Image.open(image_path).convert("RGB")
+        image = None
+        # image = Image.open(image_path).convert("RGB")
         caption = self.captions[idx]
 
-        if self.transform is not None:
-            image = self.transform(image).unsqueeze(0)
+        # if self.transform is not None:
+            # image = self.transform(image).unsqueeze(0)
 
         return image, [caption]
 
