@@ -76,7 +76,7 @@ def train_separate_mapper(args):
 
     # trackers
     bar = tqdm(total=args.num_epochs)
-    flop_counter = FlopCounterMode(model, display=False, depth=2)
+    flop_counter = FlopCounterMode(model, display=True, depth=2)
 
     # saving preparation
     ckpt_save_folder = os.path.join(args.checkpoint_folder, "ape", args.experiment_name, f"seed_{args.random_seed}")
