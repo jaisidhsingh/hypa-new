@@ -71,7 +71,7 @@ def one_encoder_embeds_texts(args):
 
         start = idx * args.batch_size
         end = start + bs 
-        store[start : end] = text_features.astype(np.float32)
+        store[start : end, :] = text_features.astype(np.float32)
         bar.update(1)
     
     bar.close()
