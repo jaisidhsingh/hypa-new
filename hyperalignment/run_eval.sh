@@ -1,16 +1,16 @@
-python3 src/evaluation.py \
-    --exp-name="vit_small_patch16_224_all-MiniLM-L12-v2" \
-    --seed=0 \
-    --run-type="sep" \
-    --epoch=1 \
-    --encoder-index=0 \
-    --image-embed-dim=384 \
-    --text-embed-dim=384 \
-    --text-encoder="all-MiniLM-L12-v2" \
-    --benchmarks="cifar10,cifar100,imagenet1k";
+# python3 src/evaluation.py \
+#     --exp-name="vit_small_patch16_224_all-MiniLM-L12-v2" \
+#     --seed=0 \
+#     --run-type="sep" \
+#     --epoch=1 \
+#     --encoder-index=0 \
+#     --image-embed-dim=384 \
+#     --text-embed-dim=384 \
+#     --text-encoder="all-MiniLM-L12-v2" \
+#     --benchmarks="cifar10,cifar100,imagenet1k";
 
 python3 src/evaluation.py \
-    --exp-name="vit_small_patch16_224_all-roberta-large-v2" \
+    --exp-name="vit_small_patch16_224_all-roberta-large-v1" \
     --seed=0 \
     --run-type="sep" \
     --epoch=1 \
@@ -27,6 +27,8 @@ python3 src/evaluation.py \
     --epoch=1 \
     --encoder-index=0 \
     --image-embed-dim=384 \
+    --text-embed-dim=384 \
+    --text-encoder="all-MiniLM-L12-v2" \
     --benchmarks="cifar10,cifar100,imagenet1k";
 
 python3 src/evaluation.py \
@@ -36,6 +38,8 @@ python3 src/evaluation.py \
     --epoch=1 \
     --encoder-index=0 \
     --image-embed-dim=384 \
+    --text-embed-dim=1024 \
+    --text-encoder="all-roberta-large-v1" \
     --benchmarks="cifar10,cifar100,imagenet1k";
 
 # python3 src/evaluation.py \
