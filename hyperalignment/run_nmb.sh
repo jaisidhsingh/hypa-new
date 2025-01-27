@@ -36,4 +36,4 @@ python3 src/learn_hnet.py \
     --hnet-decoder-type="mlp" \
     --largest-text-dim=1024 \
     --text-embed-dim=1024 \
-    --text-encoder="all-roberta-large-v1;
+    --text-encoder="all-roberta-large-v1";
