@@ -67,6 +67,7 @@ def run(args, input_config):
     config["image_encoder_data"] = input_config
     config["text_encoder"] = args.text_encoder
     config["text_embed_dim"] = args.text_embed_dim
+    config["args"] = args
 
     dataset = MultiMapperEmbeddings(config)
     # print(dataset.image_encoder_data)
@@ -273,6 +274,8 @@ if __name__ == "__main__":
     parser.add_argument("--text-embed-dim", type=int, default=768)
     #
     parser.add_argument("--feature-dataset", type=str, default="cc3m558k")
+    parser.add_argument("--dataset-scale", type=float, default=1.0)
+    #
     parser.add_argument("--largest-image-dim", type=int, default=1024)
     parser.add_argument("--largest-text-dim", type=int, default=768)
     parser.add_argument("--image-embed-dims", type=str, default="384,768,1024")

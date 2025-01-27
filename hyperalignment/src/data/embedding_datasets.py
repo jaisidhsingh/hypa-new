@@ -75,6 +75,7 @@ class MultiMapperEmbeddings(Dataset):
 
         # misc metadata
         self.num_samples = config["num_samples"]
+        self.args = config["args"]
 
         # make `np.memmaps` of all the data
         # first for image embeddings
@@ -110,7 +111,7 @@ class MultiMapperEmbeddings(Dataset):
         assert re_mmap[0, :3].all() == embeddings[0, :3].all(), "Mismatch in memmap!"
 
     def __len__(self):
-        return 558128
+        return round(558128 * self.args.dataset_scale)
 
     def get_minibatch(self, batch_indices, sampled_encoder_indices, encoder_dims):
         # first get the encoder names from indices
