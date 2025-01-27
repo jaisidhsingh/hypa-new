@@ -1,15 +1,18 @@
+# all-MiniLM-L12-v2
 python3 src/learn_hnet.py \
-    --experiment-name="nmb_test_0" \
-    --num-image-encoders=6 \
-    --encoder-batch-size=6 \
+    --experiment-name="allMiniLM_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2" \
+    --num-image-encoders=12 \
+    --encoder-batch-size=4 \
     --hnet-cond-emb-dim=32 \
     --cond-type="features" \
-    --num-epochs=10 \
-    --learning-rate=3e-3 \
-    --batch-size=256 \
+    --num-epochs=20 \
+    --learning-rate=1e-2 \
+    --batch-size=512 \
+    --random-seed=1 \
     --scheduler="off" \
     --warmup-steps=100 \
     --emb-loss=False \
     --normalize-output=True \
     --chunk-dim=256 \
+    --largest-text-dim=384 \
     --hnet-decoder-type="mlp";

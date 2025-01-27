@@ -68,7 +68,7 @@ data_configs.multi_embedding_dataset_configs = {
 		"image_data_folder": f"{data_configs.STORE}/hyperalignment/results/image_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie",
 		"image_encoder_data": None,
 		"text_data_folder": f"{data_configs.STORE}/hyperalignment/results/text_embeddings/multi_mapper/cc3m595k_multi_mapper_30_ie",
-		"text_encoder": "sentence-t5-base",
+		"text_encoder": "all-MiniLM-L12-v2",  #"sentence-t5-base",
 		"text_embed_dim": 768,
 		"num_samples":  595375
 	},
