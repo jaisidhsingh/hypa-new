@@ -9,6 +9,10 @@ from configs.model_configs import model_configs
 from data.classification_datasets import ImageClassificationDataset
 
 
+torch.backends.cuda.enable_mem_efficient_sdp(False)
+torch.backends.cuda.enable_flash_sdp(False)
+torch.backends.cuda.enable_math_sdp(True)
+
 ROOT_MAPPING = {
     "imagenet1k": "/home/mila/s/sparsha.mishra/scratch/imagenet/val_torchvision/val",
     "cifar10": "/home/mila/s/sparsha.mishra/scratch/cifar10_torchvision",
