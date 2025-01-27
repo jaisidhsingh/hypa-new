@@ -20,7 +20,7 @@
 
 # all-roberta-large-v1
 python3 src/learn_hnet.py \
-    --experiment-name="allMiniLM_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2" \
+    --experiment-name="roberta_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2" \
     --num-image-encoders=12 \
     --encoder-batch-size=4 \
     --hnet-cond-emb-dim=32 \
