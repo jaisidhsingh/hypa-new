@@ -4,7 +4,8 @@ import json
 import argparse
 import numpy as np
 from tqdm import tqdm
-
+import warnings
+warnings.simplefilter("ignore")
 import clip
 import torch
 from torch.utils.data import DataLoader
@@ -219,8 +220,8 @@ def emb_eval_classification(args, model, transform, dataset):
     path = os.path.join(imagenet_folder, f"dim_{args.image_embed_dim}", args.image_encoder, "embedded_data.pt")
     data = torch.load(path)
     
-    image_features = data["inputs"].cpu()
-    labels = data["labels"].cpu()
+    image_features = data["inputs"].to(args.device)
+    labels = data["labels"].to(args.device)
     
     root_mapping = {
         "imagenet1k": "/home/mila/s/sparsha.mishra/scratch/imagenet/val_torchvision/val",
@@ -240,7 +241,7 @@ def emb_eval_classification(args, model, transform, dataset):
 
     total = len(dataset)
     assert total == image_features.shape[0], "[ERROR]"
-    mapped_features = model(class_features)
+    mapped_features = model(class_features).to(args.device)
     mapped_features /= mapped_features.norm(dim=-1, keepdim=True)
 
     sim = logit_scale * (image_features @ mapped_features.T)
