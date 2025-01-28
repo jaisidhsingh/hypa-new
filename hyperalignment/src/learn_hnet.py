@@ -313,3 +313,4 @@ if __name__ == "__main__":
     print("Weights are normalized when predicted:", args.normalize_output)
 
     main(args)
+

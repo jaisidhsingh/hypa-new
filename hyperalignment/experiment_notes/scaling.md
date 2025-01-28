@@ -25,3 +25,7 @@
 ## 1/4
 
 - FLOPs for 1 epoch = 3453.154 T
+
+# H-Net num encoders scaling
+
+- FLOPs for 20 epochs = 1108.415T
