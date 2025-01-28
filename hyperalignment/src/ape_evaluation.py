@@ -131,7 +131,7 @@ if __name__ == "__main__":
         print(index)
         # args.encoder_index = index
         out = ape_main(args)
-        out.update({"encoder_index": index})
+        out.update({"encoder_index": args.encoder_index})
         res[out["image_encoder"]] = out
     
     print(res)
