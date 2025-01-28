@@ -65,9 +65,7 @@ def train_basic_hnet(args):
 
     with flop_counter:
         for epoch in range(args.num_epochs):
-            corrects = {name: 0 for name in encoder_names}
-            total = {name: 0 for name in encoder_names}
-            accuracies = {name: 0 for name in encoder_names}
+            total = 0
             model.train()
 
             for idx, text_embeddings in enumerate(text_loader):
@@ -87,8 +85,9 @@ def train_basic_hnet(args):
                     cond_id = image_embeddings.mean(dim=0)
                     loss, corrects = model(cond_id, image_embeddings, text_embeddings, image_embed_dim=args.image_embed_dim, normalize_output=args.normalize_output, nolookup=True)
                     
-                    
-                bar.set_postfix({"step": step, "running_loss": loss.item()})
+                total += bs
+                accuracies = {f"acc_{jdx}": round(corrects[jdx]/total * 100, 2) for jdx in range(args.num_image_encoders)} 
+                bar.set_postfix({"step": step, "running_loss": loss.item(), "accuracies": accuracies})
                 # accuracies = {name: round(corrects[name] / total[name] * 100, 2) for name in encoder_names}
             
                 scaler.scale(loss).backward()
