@@ -207,6 +207,7 @@ if __name__ == "__main__":
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--saving", type=bool, default=True)
     parser.add_argument("--eval-every", type=int, default=1)
+    parser.add_argument("--data-scaling", type=float, default=1.0)
     # get args object
     args = parser.parse_args()
     train_separate_mapper(args)

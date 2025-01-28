@@ -16,9 +16,10 @@ class SeparateEmbeddings(Dataset):
         self.image_embed_dim = data_config["image_embed_dim"]
         self.text_embed_dim = data_config["text_embed_dim"]
         self.feature_dataset = data_config["feature_dataset"]
+        self.data_scaling = args.data_scaling
         
     def __len__(self):
-        return 558128 #self.data_config["num_samples"]
+        return round(558128 * self.data_scaling) #self.data_config["num_samples"]
     
     def __getitem__(self, idx):
         image_embedding = np.array(deepcopy(self.image_embeddings[idx, :])).astype(np.float32)
