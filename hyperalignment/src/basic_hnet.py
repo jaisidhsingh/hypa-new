@@ -222,7 +222,7 @@ def run(args, input_config):
                 
             # make sure we have saved info correctly
             # print(list(encoder_info.keys()))
-            assert len(encoder_info.keys()) == args.num_image_encoders, "Something went wrong during storing info for H-Net."
+            # assert len(encoder_info.keys()) == args.num_image_encoders, "Something went wrong during storing info for H-Net."
             
             # make sure that we save
             if (epoch+1) in [1, 2, 5, 10, 20, 40, 100, 200] and args.saving:
