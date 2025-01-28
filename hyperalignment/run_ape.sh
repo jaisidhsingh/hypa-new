@@ -2,7 +2,7 @@ python3 src/train_ape.py \
     --experiment-name="three-fourth_vits_default_ape" \
     --image-encoder="vit_small_patch16_224" \
     --image-embed-dim=384 \
-    --num-epochs=1 \
+    --num-epochs=20 \
     --saving=False \
     --text-encoder="sentence-t5-base" \
     --text-embed-dim=768 \
@@ -12,7 +12,7 @@ python3 src/train_ape.py \
     --experiment-name="one-fourth_vits_default_ape" \
     --image-encoder="vit_small_patch16_224" \
     --image-embed-dim=384 \
-    --num-epochs=1 \
+    --num-epochs=20 \
     --saving=False \
     --text-encoder="sentence-t5-base" \
     --text-embed-dim=768 \
@@ -22,7 +22,7 @@ python3 src/train_ape.py \
     --experiment-name="half_vits_default_ape" \
     --image-encoder="vit_small_patch16_224" \
     --image-embed-dim=384 \
-    --num-epochs=1 \
+    --num-epochs=20 \
     --saving=False \
     --text-encoder="sentence-t5-base" \
     --text-embed-dim=768 \
