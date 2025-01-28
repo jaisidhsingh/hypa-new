@@ -183,7 +183,7 @@ if __name__ == "__main__":
     parser.add_argument("--logs-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/logs")
     parser.add_argument("--checkpoint-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints")
     # model and dataset settings
-    parser.add_argument("--image-encoder", type=str, default="deit3_small_patch16_224.fb_in22k_ft_in1k")
+    parser.add_argument("--image-encoder", type=str, default="flexivit_small.300ep_in1k")
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
     parser.add_argument("--feature-dataset", type=str, default="cc3m558k")
     parser.add_argument("--val-dataset", type=str, default="cc3mval")
