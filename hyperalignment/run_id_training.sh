@@ -10,9 +10,9 @@
 #SBATCH --output=/home/mila/s/sparsha.mishra/projects/hypa-new/30_10.out
 #SBATCH --error=/home/mila/s/sparsha.mishra/projects/hypa-new/30_10.err
 
-module load anaconda/3
+# module load anaconda/3
 
-conda activate /home/mila/s/sparsha.mishra/scratch/generate2
+# conda activate /home/mila/s/sparsha.mishra/scratch/generate2
 
 ulimit -Sn $(ulimit -Hn)
 
