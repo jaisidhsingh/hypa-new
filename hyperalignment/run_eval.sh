@@ -10,9 +10,32 @@
 #     --benchmarks="cifar10,cifar100,imagenet1k";
 
 python3 src/evaluation.py \
-    --exp-name="test" \
+    --exp-name="three-fourth_vits_default_ape" \
     --seed=0 \
-    --run-type="mm" \
+    --run-type="sep" \
+    --epoch=1 \
+    --encoder-index=0 \
+    --image-embed-dim=384 \
+    --text-embed-dim=768 \
+    --text-encoder="sentence-t5-base" \
+    --benchmarks="cifar10,cifar100,imagenet1k";
+
+
+python3 src/evaluation.py \
+    --exp-name="half_vits_default_ape" \
+    --seed=0 \
+    --run-type="sep" \
+    --epoch=1 \
+    --encoder-index=0 \
+    --image-embed-dim=384 \
+    --text-embed-dim=768 \
+    --text-encoder="sentence-t5-base" \
+    --benchmarks="cifar10,cifar100,imagenet1k";
+
+python3 src/evaluation.py \
+    --exp-name="one-fourth_vits_default_ape" \
+    --seed=0 \
+    --run-type="sep" \
     --epoch=1 \
     --encoder-index=0 \
     --image-embed-dim=384 \
