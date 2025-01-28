@@ -59,7 +59,7 @@ python3 $pyfile \
     --encoder-batch-size=10 \
     --hnet-cond-emb-dim=32 \
     --cond-type="features" \
-    --num-epochs=10 \
+    --num-epochs=20 \
     --learning-rate=1e-2 \
     --batch-size=512 \
     --scheduler="off" \
