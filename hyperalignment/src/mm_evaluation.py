@@ -165,7 +165,7 @@ def load_ood_ckpt(args, model):
 def load_mm_ckpt(args, model):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/basic_hnet"   # multi_mapper
     path = os.path.join(folder, args.exp_name, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
-    chunk_size = args.num_encoders // args.encoder_batch #int(args.exp_name.split("_")[1]) // 3
+    chunk_size = args.num_encoders // 3 #int(args.exp_name.split("_")[1]) // 3
     
     if args.image_embed_dim == 384:
         offset = 0
@@ -176,7 +176,7 @@ def load_mm_ckpt(args, model):
 
     index = int(offset * chunk_size) + args.encoder_index
     [weight, bias] = torch.load(path)["mapper_params"][index]
-    print(weight.shape, bias.shape)
+    # print(weight.shape, bias.shape)
     model.layers[0].weight.data = weight.to(args.device)
     model.layers[0].bias.data = bias.to(args.device)
     model = model.to(args.device)
@@ -207,7 +207,7 @@ def eval_classification(args, model, transform, dataset):
         "transform": transform
     }
     dataset = ImageClassificationDataset(kwargs)
-    print(dataset.classes[0])
+    # print(dataset.classes[0])
     loader = DataLoader(dataset, batch_size=1024, num_workers=args.num_workers, pin_memory=True)
     # using_clip = args.clip_version != "off"
     accuracy, loss = image_classification_eval(model, loader, using_clip=False, device=args.device)
@@ -317,7 +317,7 @@ def mm_main(args):
         
         result = {f"epoch_{args.epoch}": metrics}
         out["eval"].update(result)
-        print(out)
+        # print(out)
      
     return out
 
@@ -345,13 +345,13 @@ if __name__ == "__main__":
     # get args
     args = parser.parse_args()
 
-    args.exp_name = "mm_adapt_test"
+    args.exp_name = "hnet_12-4_fmlp_c-32_bs-512_lr-1e-2"
     args.encoder_index = 0
-    args.image_embed_dim = 384
+    args.image_embed_dim = 1024
     args.text_embed_dim = 768
     args.text_encoder = "sentence-t5-base"
-    args.num_encoders = 6
-    args.encoder_batch = 6
+    args.num_encoders = 12
+    args.encoder_batch = 4
 
     res = {}
     for index in range(args.num_encoders):
@@ -362,13 +362,4 @@ if __name__ == "__main__":
         res[out["image_encoder"]] = out
     
     print(res)
-
-
-    # res = {"exp_name": args.exp_name, "seed": args.seed, "eval": {}}
-    # for ep in [1, 2, 5, 10, 20]:
-    #     args.epoch = ep
-    #     out = mm_main(args)
-    #     res["eval"].update(out)
-    
-    # print(res)
-    
+ 
