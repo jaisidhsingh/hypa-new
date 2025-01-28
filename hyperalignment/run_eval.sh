@@ -32,8 +32,20 @@
 #     --benchmarks="cifar10,cifar100,imagenet1k";
 
 
+# python3 src/evaluation.py \
+#     --exp-name="three-fourth_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2" \
+#     --seed=0 \
+#     --run-type="mm" \
+#     --epoch=1 \
+#     --encoder-index=0 \
+#     --image-embed-dim=384 \
+#     --text-embed-dim=768 \
+#     --text-encoder="sentence-t5-base" \
+#     --benchmarks="cifar10,cifar100,imagenet1k";
+
+
 python3 src/evaluation.py \
-    --exp-name="three-fourth_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2" \
+    --exp-name="half_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2" \
     --seed=0 \
     --run-type="mm" \
     --epoch=1 \
@@ -44,28 +56,16 @@ python3 src/evaluation.py \
     --benchmarks="cifar10,cifar100,imagenet1k";
 
 
-python3 src/evaluation.py \
-    --exp-name="one-half_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2" \
-    --seed=0 \
-    --run-type="mm" \
-    --epoch=1 \
-    --encoder-index=0 \
-    --image-embed-dim=384 \
-    --text-embed-dim=768 \
-    --text-encoder="sentence-t5-base" \
-    --benchmarks="cifar10,cifar100,imagenet1k";
-
-
-python3 src/evaluation.py \
-    --exp-name="one-fourth_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2" \
-    --seed=0 \
-    --run-type="mm" \
-    --epoch=1 \
-    --encoder-index=0 \
-    --image-embed-dim=384 \
-    --text-embed-dim=768 \
-    --text-encoder="sentence-t5-base" \
-    --benchmarks="cifar10,cifar100,imagenet1k";
+# python3 src/evaluation.py \
+#     --exp-name="one-fourth_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2" \
+#     --seed=0 \
+#     --run-type="mm" \
+#     --epoch=1 \
+#     --encoder-index=0 \
+#     --image-embed-dim=384 \
+#     --text-embed-dim=768 \
+#     --text-encoder="sentence-t5-base" \
+#     --benchmarks="cifar10,cifar100,imagenet1k";
 
 
 # python3 src/evaluation.py \
