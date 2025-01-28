@@ -240,7 +240,10 @@ def emb_eval_classification(args, model, transform, dataset):
 
     total = len(dataset)
     assert total == image_features.shape[0], "[ERROR]"
-    sim = logit_scale * (image_features @ model(class_features).T)
+    mapped_features = model(class_features)
+    mapped_features /= mapped_features.norm(dim=-1, keepdim=True)
+
+    sim = logit_scale * (image_features @ mapped_features.T)
     corrects = (sim.argmax(dim=-1) == labels).sum().item()
     accuracy = round(corrects/total * 100, 2)
     return accuracy, 0
