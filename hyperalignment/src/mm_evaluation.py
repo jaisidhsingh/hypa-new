@@ -354,7 +354,7 @@ if __name__ == "__main__":
     args.encoder_batch = 4
 
     res = {}
-    for index in range(args.num_encoders):
+    for index in range(args.encoder_batch):
         print(index)
         args.encoder_index = index
         out = mm_main(args)
