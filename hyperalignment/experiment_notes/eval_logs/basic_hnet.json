@@ -1,0 +1,80 @@
+{
+  "vit_small_patch16_224": {
+    "image_encoder": "vit_small_patch16_224",
+    "seed": 0,
+    "eval": {
+      "epoch_1": { "imagenet1k": 25.26 },
+      "epoch_2": { "imagenet1k": 26.19 },
+      "epoch_5": { "imagenet1k": 26.72 },
+      "epoch_10": { "imagenet1k": 26.71 },
+      "epoch_20": { "imagenet1k": 26.77 }
+    },
+    "text_encoder": "sentence-t5-base",
+    "encoder_index": 0
+  },
+  "deit_small_patch16_224": {
+    "image_encoder": "deit_small_patch16_224",
+    "seed": 0,
+    "eval": {
+      "epoch_1": { "imagenet1k": 24.43 },
+      "epoch_2": { "imagenet1k": 26.21 },
+      "epoch_5": { "imagenet1k": 27.19 },
+      "epoch_10": { "imagenet1k": 27.5 },
+      "epoch_20": { "imagenet1k": 27.01 }
+    },
+    "text_encoder": "sentence-t5-base",
+    "encoder_index": 1
+  },
+  "deit3_small_patch16_224.fb_in1k": {
+    "image_encoder": "deit3_small_patch16_224.fb_in1k",
+    "seed": 0,
+    "eval": {
+      "epoch_1": { "imagenet1k": 31.28 },
+      "epoch_2": { "imagenet1k": 32.94 },
+      "epoch_5": { "imagenet1k": 33.83 },
+      "epoch_10": { "imagenet1k": 34.06 },
+      "epoch_20": { "imagenet1k": 33.17 }
+    },
+    "text_encoder": "sentence-t5-base",
+    "encoder_index": 2
+  },
+  "deit3_small_patch16_224.fb_in22k_ft_in1k": {
+    "image_encoder": "deit3_small_patch16_224.fb_in22k_ft_in1k",
+    "seed": 0,
+    "eval": {
+      "epoch_1": { "imagenet1k": 34.81 },
+      "epoch_2": { "imagenet1k": 36.29 },
+      "epoch_5": { "imagenet1k": 37.21 },
+      "epoch_10": { "imagenet1k": 37.49 },
+      "epoch_20": { "imagenet1k": 37.33 }
+    },
+    "text_encoder": "sentence-t5-base",
+    "encoder_index": 3
+  },
+  "efficientvit_m5.r224_in1k": {
+    "image_encoder": "efficientvit_m5.r224_in1k",
+    "seed": 0,
+    "eval": {
+      "epoch_1": { "imagenet1k": 14.78 },
+      "epoch_2": { "imagenet1k": 17.52 },
+      "epoch_5": { "imagenet1k": 20.51 },
+      "epoch_10": { "imagenet1k": 22.12 },
+      "epoch_20": { "imagenet1k": 22.72 }
+    },
+    "text_encoder": "sentence-t5-base",
+    "encoder_index": 4
+  },
+  "flexivit_small.300ep_in1k": {
+    "image_encoder": "flexivit_small.300ep_in1k",
+    "seed": 0,
+    "eval": {
+      "epoch_1": { "imagenet1k": 31.86 },
+      "epoch_2": { "imagenet1k": 33.39 },
+      "epoch_5": { "imagenet1k": 34.17 },
+      "epoch_10": { "imagenet1k": 34.43 },
+      "epoch_20": { "imagenet1k": 33.94 }
+    },
+    "text_encoder": "sentence-t5-base",
+    "encoder_index": 5
+  }
+}
