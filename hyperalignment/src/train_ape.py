@@ -188,7 +188,7 @@ if __name__ == "__main__":
     parser.add_argument("--feature-dataset", type=str, default="cc3m558k")
     parser.add_argument("--val-dataset", type=str, default="cc3mval")
     parser.add_argument("--train-val-split-ratio", type=float, default=0.9)
-    parser.add_argument("--image-embed-dim", type=int, default=384)
+    parser.add_argument("--image-embed-dim", type=int, default=1024)
     parser.add_argument("--text-embed-dim", type=int, default=768)
     parser.add_argument("--use-bias", type=bool, default=True)
     parser.add_argument("--logit-scale", type=float, default=100.0)

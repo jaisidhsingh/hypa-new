@@ -9,10 +9,10 @@ from torch.utils.data import Dataset
 
 class SeparateEmbeddings(Dataset):
     def __init__(self, data_config, split, args):
-        if os.path.exists(data_config["image_embeddings_path"]):
-            self.image_embeddings = np.memmap(data_config["image_embeddings_path"], dtype="float32", mode="r", shape=(data_config["num_samples"], data_config["image_embed_dim"]))
-        else:
-            self.image_embeddings = np.load(data_config["image_embeddings_path"].replace("memmap", "embeddings"), allow_pickle=True)
+        # if os.path.exists(data_config["image_embeddings_path"]):
+        self.image_embeddings = np.memmap(data_config["image_embeddings_path"], dtype="float32", mode="r", shape=(data_config["num_samples"], data_config["image_embed_dim"]))
+        # else:
+            # self.image_embeddings = np.load(data_config["image_embeddings_path"].replace("memmap", "embeddings"), allow_pickle=True)
         self.text_embeddings = np.memmap(data_config["text_embeddings_path"], dtype="float32", mode="r", shape=(data_config["num_samples"], data_config["text_embed_dim"]))
 
         self.data_config = data_config
