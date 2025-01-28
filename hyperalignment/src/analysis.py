@@ -62,7 +62,7 @@ def embed_imagenet(args):
 
 
 def main(args):
-    encoder_names = model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim]["image_encoders"][args.offset:]
+    encoder_names = model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim]["image_encoders"][args.offset:args.end]
     for name in encoder_names:
         print("Embedding imagenet for", name)
         args.image_encoder = name
@@ -77,6 +77,7 @@ if __name__ == "__main__":
     parser.add_argument("--batch-size", type=int, default=2048)
     parser.add_argument("--num-workers", type=int, default=8)
     parser.add_argument("--offset", type=int, default=0)
+    parser.add_argument("--end", type=int, default=1)
     
     args = parser.parse_args()
     main(args)

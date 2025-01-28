@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=basic_hnet
+#SBATCH --job-name=Ldim_2
 #SBATCH --gres=gpu:rtx8000:1
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --partition=long
-#SBATCH --output=/home/mila/s/sparsha.mishra/projects/hypa-new/basic_hnet.out
-#SBATCH --error=/home/mila/s/sparsha.mishra/projects/hypa-new/basic_hnet.err
+#SBATCH --output=/home/mila/s/sparsha.mishra/projects/hypa-new/Ldim_2.out
+#SBATCH --error=/home/mila/s/sparsha.mishra/projects/hypa-new/Ldim_2.err
 
 module load anaconda/3
 
@@ -16,9 +16,9 @@ conda activate /home/mila/s/sparsha.mishra/scratch/generate2
 
 ulimit -Sn $(ulimit -Hn)
 
-pyfile="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/src/basic_hnet.py"
+pyfile="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/src/analysis.py"
 
-python3 $pyfile --num-workers=8;
+python3 $pyfile --num-workers=8 --image-embed-dim=1024 --batch-size=128 --offset=2 --end=3;
 
 
 # python3 src/learn_hnet.py \
