@@ -79,11 +79,11 @@ def train_separate_mapper(args):
     flop_counter = FlopCounterMode(model, display=True, depth=2)
 
     # saving preparation
-    ckpt_save_folder = os.path.join(args.checkpoint_folder, "ape", args.experiment_name, f"seed_{args.random_seed}")
+    ckpt_save_folder = os.path.join(args.checkpoint_folder, "APE_final", args.image_encoder, args.text_encoder, f"seed_{args.random_seed}")
     os.makedirs(ckpt_save_folder, exist_ok=True)
 
     # logs and results saving
-    logs_save_folder = os.path.join(args.logs_folder, "ape", args.experiment_name, f"seed_{args.random_seed}")
+    logs_save_folder = os.path.join(args.logs_folder, "APE_final", args.image_encoder, args.text_encoder, f"seed_{args.random_seed}")
     os.makedirs(logs_save_folder, exist_ok=True)
 
     if args.use_wandb:
@@ -210,6 +210,48 @@ if __name__ == "__main__":
     parser.add_argument("--data-scaling", type=float, default=1.0)
     # get args object
     args = parser.parse_args()
-    model = train_separate_mapper(args)
-    # acc, loss = evaluate_mapper(args, model)
-    # print(acc)
+    meta = {
+        384: [
+            "vit_small_patch16_224",
+            "deit_small_patch16_224",
+            "deit3_small_patch16_224.fb_in1k",
+            "deit3_small_patch16_224.fb_in22k_ft_in1k",
+            "efficientvit_m5.r224_in1k",
+            "flexivit_small.300ep_in1k",
+            "visformer_tiny.in1k",
+            "volo_d1_224.sail_in1k",
+            "xcit_small_12_p8_224.fb_in1k", ## - isolated checked, repeated unchecked
+            "eva02_small_patch14_224.mim_in22k",
+        ],
+        768: [
+            "vit_base_patch16_224",
+            "vit_base_patch32_224.augreg_in21k_ft_in1k",
+            "vit_base_patch32_clip_224.laion2b_ft_in12k_in1k",
+            "deit_base_patch16_224",
+            "deit3_base_patch16_224.fb_in22k_ft_in1k",
+            "beit_base_patch16_224.in22k_ft_in22k_in1k",
+            "swin_small_patch4_window7_224.ms_in22k_ft_in1k",
+            "convnext_small.fb_in22k_ft_in1k",
+            "volo_d4_224.sail_in1k", ## - iso
+            "maxvit_base_tf_224.in1k",
+        ],
+        1024: [
+            "vit_large_patch16_224",
+            "vit_large_patch16_224.augreg_in21k_ft_in1k",
+            "vit_large_patch14_clip_336.laion2b_ft_in12k_in1k", #
+            "deit3_large_patch16_384.fb_in22k_ft_in1k", #
+            "eva02_large_patch14_448.mim_m38m_ft_in22k_in1k", #
+            "beit_large_patch16_384.in22k_ft_in22k_in1k", #
+            "beitv2_large_patch16_224.in1k_ft_in22k_in1k", #
+            "swin_base_patch4_window7_224.ms_in22k_ft_in1k", #
+            "convnext_base.fb_in22k_ft_in1k", # 
+            "convnextv2_base.fcmae_ft_in22k_in1k" #
+        ]
+    }
+    for k in meta.keys():
+        args.image_embed_dim = k
+        print(args.image_embed_dim)
+        for item in meta[k]:
+            args.image_encoder = item
+            model = train_separate_mapper(args)
+
