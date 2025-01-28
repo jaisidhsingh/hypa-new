@@ -288,7 +288,11 @@ def main(args):
 
 
 def mm_main(args):
-    out = {"image_encoder": "", "seed": args.seed, "eval": {}}
+    args.image_encoder = model_configs.ID_multi_mapper_configs[args.image_embed_dim][args.encoder_index]
+    print(args.image_encoder, args.text_encoder, args.encoder_index)
+    out = {"image_encoder": args.image_encoder, "seed": args.seed, "eval": {}}
+    out["text_encoder"] = args.text_encoder
+    
     for epoch in [1, 2, 5, 10, 20]:
         args.epoch = epoch
         benchmark_mapping = {
@@ -298,9 +302,7 @@ def mm_main(args):
         benchmarks = ["imagenet1k"] 
         metrics = {}
 
-        args.image_encoder = model_configs.ID_multi_mapper_configs[args.image_embed_dim][args.encoder_index]
-        out["image_encoder"] = args.image_encoder
-        out["text_encoder"] = args.text_encoder
+
 
         transform = ImageEncoder(args.image_encoder).transform
         model = MLP(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
@@ -350,6 +352,7 @@ if __name__ == "__main__":
 
     res = {}
     for index in range(args.num_encoders):
+        print(index)
         args.encoder_index = 0
         out = mm_main(args)
         out.update({"encoder_index": index})
