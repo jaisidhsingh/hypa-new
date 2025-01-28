@@ -168,7 +168,7 @@ def train_separate_mapper(args):
 
     bar.close()
     print("All done.")
-    return ckpt_save_folder
+    return model
     # return model.layers[0].weight.data, model.layers[0].bias.data, val_acc
 
 
@@ -210,4 +210,6 @@ if __name__ == "__main__":
     parser.add_argument("--data-scaling", type=float, default=1.0)
     # get args object
     args = parser.parse_args()
-    train_separate_mapper(args)
+    model = train_separate_mapper(args)
+    acc, loss = evaluate_mapper(args, model)
+    print(acc)
