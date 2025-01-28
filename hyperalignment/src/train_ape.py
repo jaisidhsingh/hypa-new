@@ -21,7 +21,7 @@ from configs.model_configs import model_configs
 from training import SeparateTrainer
 from training.schedulers import cosine_lr
 from training.loss_functions import ClipLoss
-from evaluation import eval_classification, image_classification_eval
+from hyperalignment.src.mm_evaluation import eval_classification, image_classification_eval
 warnings.simplefilter("ignore")
 
 

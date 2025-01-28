@@ -305,9 +305,7 @@ def mm_main(args):
 
         benchmarks = ["imagenet1k"] 
         metrics = {}
-
-
-
+        
         transform = ImageEncoder(args.image_encoder).transform
         model = MLP(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
         model = load_mm_ckpt(args, model)
