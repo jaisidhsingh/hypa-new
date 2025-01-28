@@ -117,9 +117,9 @@ if __name__ == "__main__":
     # get args
     args = parser.parse_args()
 
-    args.exp_name = "vits_deit3s_in22k"
+    args.exp_name = "deit3l_st5b"
     # args.encoder_index = 0
-    args.image_embed_dim = 384
+    args.image_embed_dim = 1024
     args.text_embed_dim = 768
     args.text_encoder = "sentence-t5-base"
     args.num_encoders = 1
