@@ -54,14 +54,14 @@ pyfile="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/src/learn_h
 #     --hnet-decoder-type="mlp";
 
 python3 $pyfile \
-    --experiment-name="hnet_30-10_fmlp_c-32_bs-4096_lr-3e-2" \
+    --experiment-name="hnet_30-10_fmlp_c-32_bs-512_lr-1e-2" \
     --num-image-encoders=30 \
     --encoder-batch-size=10 \
     --hnet-cond-emb-dim=32 \
     --cond-type="features" \
     --num-epochs=10 \
-    --learning-rate=3e-2 \
-    --batch-size=4096 \
+    --learning-rate=1e-2 \
+    --batch-size=512 \
     --scheduler="off" \
     --warmup-steps=100 \
     --emb-loss=False \
