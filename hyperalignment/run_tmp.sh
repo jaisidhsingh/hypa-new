@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=Ldim_6
+#SBATCH --job-name=Ldim_7
 #SBATCH --gres=gpu:rtx8000:1
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --partition=long
-#SBATCH --output=/home/mila/s/sparsha.mishra/projects/hypa-new/Ldim_6.out
-#SBATCH --error=/home/mila/s/sparsha.mishra/projects/hypa-new/Ldim_6.err
+#SBATCH --output=/home/mila/s/sparsha.mishra/projects/hypa-new/Ldim_7.out
+#SBATCH --error=/home/mila/s/sparsha.mishra/projects/hypa-new/Ldim_7.err
 
 module load anaconda/3
 
@@ -18,7 +18,7 @@ ulimit -Sn $(ulimit -Hn)
 
 pyfile="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/src/analysis.py"
 
-python3 $pyfile --num-workers=8 --image-embed-dim=1024 --batch-size=128 --offset=6 --end=7;
+python3 $pyfile --num-workers=8 --image-embed-dim=1024 --batch-size=128 --offset=7 --end=8;
 
 
 # python3 src/learn_hnet.py \
