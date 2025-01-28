@@ -179,7 +179,7 @@ def load_mm_ckpt(args, model):
     model.layers[0].weight.data = weight.to(args.device)
     model.layers[0].bias.data = bias.to(args.device)
     model = model.to(args.device)
-    model.mapper.eval()
+    model.eval()
     return model
 
 
