@@ -151,3 +151,20 @@ class MultiMapperEmbeddings(Dataset):
         assert text_embeddings.shape == torch.Size([end-start, self.text_embed_dim]), "Text embeddings prepared incorrectly!"
 
         return image_embeddings, text_embeddings
+
+
+class JointEmbeddings(Dataset):
+    def __init__(self, text_memmap_folder, image_memmap_folder, encoder_names, args):
+        self.image_memmap_paths = [os.path.join(image_memmap_folder, args.image_embed_dim, name) for name in encoder_names]
+        self.image_embedding_memmaps = [np.memmap(path, dtype=np.flot32, mode="r", shape=(595375, args.image_embed_dim)) for path in self.image_memmap_paths]
+        self.text_embedding_memmap = np.memmap(os.path.join(text_memmap_folder, args.text_embed_dim, args.text_encoder, "memmap.npy"), mode="r", dtype=np.float32, shape=(595375, args.text_embed_dim))
+        self.args = args
+    
+    def __len__(self):
+        return 558128
+    
+    def __getitem__(self, idx):
+        image_embeddings = [np.array(image_memmaps[idx]) for image_memmaps in self.image_embedding_memmaps]
+        image_embeddings = torch.from_numpy(np.stack(image_embeddings)).view(1, self.args.num_image_encoders, self.args.image_embed_dim)
+        text_embeddings = torch.from_numpy(np.array(self.text_embedding_memmap[idx]))
+        return image_embeddings, text_embeddings
