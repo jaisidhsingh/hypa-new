@@ -63,7 +63,7 @@ def train_multi_ape(args):
             for idx, text_embeddings in enumerate(text_loader):
                 bs = len(text_embeddings)
                 text_embeddings = text_embeddings.float().to(args.device)
-                text_embeddings /= text_embeddings.norm(dim=-1, keepdim=True)
+                # text_embeddings /= text_embeddings.norm(dim=-1, keepdim=True)
 
                 image_embeddings = torch.cat([next(image_loaders[name]).unsqueeze(0) for name in encoder_names], dim=0).to(args.device)
                 image_embeddings = image_embeddings.float().view(args.num_image_encoders, bs, args.image_embed_dim)
@@ -113,8 +113,8 @@ if __name__ == "__main__":
     # experiment args
     parser = argparse.ArgumentParser()
     # overall experiment settings
-    parser.add_argument("--experiment-name", type=str, default="test")
-    parser.add_argument("--experiment-type", type=str, default="multi_mapper")
+    parser.add_argument("--experiment-name", type=str, default="test_norm")
+    parser.add_argument("--experiment-type", type=str, default="multi_ape")
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--results-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results")
     parser.add_argument("--logs-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/logs")
