@@ -319,7 +319,8 @@ def mm_main(args):
         
         result = {f"epoch_{args.epoch}": metrics}
         out["eval"].update(result)
-    
+        print(out)
+     
     return out
 
 
