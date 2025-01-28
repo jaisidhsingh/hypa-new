@@ -269,7 +269,7 @@ if __name__ == "__main__":
     # model args
     parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-embed-dim", type=int, default=768)
-    parser.add_argument("--num-workers", type=int, default=8)
+    parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
     parser.add_argument("--image-encoder", type=str, default="vit_small_patch16_224")
     # get args
