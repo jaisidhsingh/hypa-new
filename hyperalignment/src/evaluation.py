@@ -357,7 +357,7 @@ if __name__ == "__main__":
     res = {}
     for index in range(args.num_encoders):
         print(index)
-        args.encoder_index = 0
+        args.encoder_index = index
         out = mm_main(args)
         out.update({"encoder_index": index})
         res[out["image_encoder"]] = out
