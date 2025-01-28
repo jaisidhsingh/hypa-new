@@ -9,7 +9,7 @@ import clip
 import torch
 from torch.utils.data import DataLoader
 
-from models import CustomVLM
+from models import CustomVLM, TextEncoder, ImageEncoder
 from models.param_decoders import MLP
 from configs.data_configs import data_configs
 from configs.model_configs import model_configs
@@ -140,9 +140,9 @@ def load_separate_ckpt(args, model):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints"
     path = os.path.join(folder, "ape", args.exp_name, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
     ckpt = torch.load(path)["model"]
-    model.mapper.load_state_dict(ckpt)
-    model.mapper = model.mapper.to(args.device)
-    model.mapper.eval()
+    model.load_state_dict(ckpt)
+    model = model.to(args.device)
+    model.eval()
     return model
 
 
@@ -154,17 +154,17 @@ def load_ood_ckpt(args, model):
     store = torch.load(path)
     # num_epochs = store["config"]["num_epochs"]
     [weight, bias] = store[f"epoch_1"]["mapper_params"]
-    model.mapper.layers[0].weight.data = weight.to(args.device)
-    model.mapper.layers[0].bias.data = bias.to(args.device)
-    model.mapper = model.mapper.to(args.device)
-    model.mapper.eval()
+    model.layers[0].weight.data = weight.to(args.device)
+    model.layers[0].bias.data = bias.to(args.device)
+    model = model.to(args.device)
+    model.eval()
     return model
 
 
 def load_mm_ckpt(args, model):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/basic_hnet"   # multi_mapper
     path = os.path.join(folder, args.exp_name, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
-    chunk_size = 12 // 3 #int(args.exp_name.split("_")[1]) // 3
+    chunk_size = args.num_encoders // args.encoder_batch #int(args.exp_name.split("_")[1]) // 3
     
     if args.image_embed_dim == 384:
         offset = 0
@@ -176,9 +176,9 @@ def load_mm_ckpt(args, model):
     index = int(offset * chunk_size) + args.encoder_index
     [weight, bias] = torch.load(path)["mapper_params"][index]
     print(weight.shape, bias.shape)
-    model.mapper.layers[0].weight.data = weight.to(args.device)
-    model.mapper.layers[0].bias.data = bias.to(args.device)
-    model.mapper = model.mapper.to(args.device)
+    model.layers[0].weight.data = weight.to(args.device)
+    model.layers[0].bias.data = bias.to(args.device)
+    model = model.to(args.device)
     model.mapper.eval()
     return model
 
@@ -211,6 +211,39 @@ def eval_classification(args, model, transform, dataset):
     # using_clip = args.clip_version != "off"
     accuracy, loss = image_classification_eval(model, loader, using_clip=False, device=args.device)
     return accuracy, loss
+
+
+@torch.no_grad()
+def emb_eval_classification(args, model, transform, dataset):
+    imagenet_folder = "/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/image_embeddings/icml/eval/imagenet1k"
+    path = os.path.join(imagenet_folder, f"dim_{args.image_embed_dim}", args.image_encoder, "embedded_data.pt")
+    data = torch.load(path)
+    
+    image_features = data["inputs"].cpu()
+    labels = data["labels"].cpu()
+    
+    root_mapping = {
+        "imagenet1k": "/home/mila/s/sparsha.mishra/scratch/imagenet/val_torchvision/val",
+        "cifar10": "/home/mila/s/sparsha.mishra/scratch/cifar10_torchvision",
+        "cifar100": "/home/mila/s/sparsha.mishra/scratch/cifar-100-python",
+    }
+    kwargs = {
+        "feature_dataset": dataset,
+        "root": root_mapping[dataset],
+        "transform": transform
+    }
+    dataset = ImageClassificationDataset(kwargs)
+    te = TextEncoder(args.text_encoder)
+    logit_scale = torch.tensor(np.log(100.0)).to(args.device)
+    class_prompt = [f"a photo of a {c}" for c in dataset.classes]
+    class_features = te.encode_text(class_prompt).to(args.device)
+
+    total = len(dataset)
+    assert total == image_features.shape[0], "[ERROR]"
+    sim = logit_scale * (image_features @ model(class_features).T)
+    corrects = (sim.argmax(dim=-1) == labels).sum().item()
+    accuracy = round(corrects/total * 100, 2)
+    return accuracy, 0
 
 
 def main(args):
@@ -254,6 +287,36 @@ def main(args):
     return result
 
 
+def mm_main(args):
+    out = {"image_encoder": "", "seed": args.seed, "eval": {}}
+    for epoch in [1, 2, 5, 10, 20]:
+        args.epoch = epoch
+        benchmark_mapping = {
+            "imagenet1k": emb_eval_classification,
+        }
+
+        benchmarks = ["imagenet1k"] 
+        metrics = {}
+
+        args.image_encoder = model_configs.ID_multi_mapper_configs[args.image_embed_dim][args.encoder_index]
+        out["image_encoder"] = args.image_encoder
+        out["text_encoder"] = args.text_encoder
+
+        transform = ImageEncoder(args.image_encoder).transform
+        model = MLP(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
+        model = load_mm_ckpt(args, model)
+        
+        for bench in benchmarks:
+            eval_fn = benchmark_mapping[bench]
+            metric = eval_fn(args, model, transform, bench)[0]
+            metrics[bench] = metric
+        
+        result = {f"epoch_{args.epoch}": metrics}
+        out["eval"].update(result)
+    
+    return out
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # main args
@@ -264,22 +327,42 @@ if __name__ == "__main__":
     parser.add_argument("--ood-results-path", type=str, default="ood_attempt_1.pt")
     parser.add_argument("--epoch", type=int, default=1)
     parser.add_argument("--encoder-index", type=int, default=0)
-    parser.add_argument("--benchmarks", type=str, default="cifar10,cifar100,imagenet1k")
+    parser.add_argument("--benchmarks", type=str, default="imagenet1k")
     parser.add_argument("--clip-version", type=str, default="off")
     # model args
     parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-embed-dim", type=int, default=768)
     parser.add_argument("--num-workers", type=int, default=4)
+    parser.add_argument("--num-encoders", type=int, default=6)
+    parser.add_argument("--encoder-batch", type=int, default=6)
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
     parser.add_argument("--image-encoder", type=str, default="vit_small_patch16_224")
     # get args
     args = parser.parse_args()
 
-    res = {"exp_name": args.exp_name, "seed": args.seed, "eval": {}}
-    for ep in [1, 2, 5, 10, 20]:
-        args.epoch = ep
-        out = main(args)
-        res["eval"].update(out)
+    args.exp_name = "mm_adapt_test"
+    args.encoder_index = 0
+    args.image_embed_dim = 384
+    args.text_embed_dim = 768
+    args.text_encoder = "sentence-t5-base"
+    args.num_encoders = 6
+    args.encoder_batch = 6
+
+    res = {}
+    for index in range(args.num_encoders):
+        args.encoder_index = 0
+        out = mm_main(args)
+        out.update({"encoder_index": index})
+        res[out["image_encoder"]] = out
     
     print(res)
+
+
+    # res = {"exp_name": args.exp_name, "seed": args.seed, "eval": {}}
+    # for ep in [1, 2, 5, 10, 20]:
+    #     args.epoch = ep
+    #     out = mm_main(args)
+    #     res["eval"].update(out)
+    
+    # print(res)
     
