@@ -91,7 +91,7 @@ class ConditionalHyperNetwork(nn.Module):
             self.decoder = ChunkedMlpDecoder(param_shapes[0], cond_emb_dim, kwargs["chunk_dim"], kwargs["hidden_layer_factors"])
         
         elif kwargs["decoder_type"] == "feather_map":
-            self.decoder = MlpDecoder(param_shapes[0], cond_emb_dim, kwargs["rank"], kwargs["hidden_layer_factors"])
+            self.decoder = FeatherMapDecoder(param_shapes[0], cond_emb_dim, kwargs["rank"], kwargs["hidden_layer_factors"])
 
         assert self.decoder is not None, "Decoder type not recognized."
         self.logit_scale = torch.tensor(np.log(100.0))
