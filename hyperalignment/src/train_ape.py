@@ -210,14 +210,13 @@ if __name__ == "__main__":
     parser.add_argument("--data-scaling", type=float, default=1.0)
     # get args object
     args = parser.parse_args()
-    args.image_encoder = "deit3_large_patch16_384.fb_in22k_ft_in1k"
-    args.image_embed_dim = 1024
-    args.text_encoder = "all-roberta-large-v1"
-    args.text_embed_dim = 1024
-    _ = train_separate_mapper(args)
+    # args.image_encoder = "deit3_large_patch16_384.fb_in22k_ft_in1k"
+    # args.image_embed_dim = 1024
+    # args.text_encoder = "all-roberta-large-v1"
+    # args.text_embed_dim = 1024
+    # _ = train_separate_mapper(args)
 
 
-    """
     meta = {
         384: [
             "vit_small_patch16_224",
@@ -256,10 +255,11 @@ if __name__ == "__main__":
             "convnextv2_base.fcmae_ft_in22k_in1k" #
         ]
     }
+    args.text_embed_dim = 384
+    args.text_encoder = "all-MiniLM-L12-v2"
     for k in meta.keys():
         args.image_embed_dim = k
         print(args.image_embed_dim)
         for item in meta[k]:
             args.image_encoder = item
             model = train_separate_mapper(args)
-    """
