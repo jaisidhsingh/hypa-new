@@ -76,7 +76,7 @@ def train_separate_mapper(args):
 
     # trackers
     bar = tqdm(total=args.num_epochs)
-    flop_counter = FlopCounterMode(model, display=True, depth=2)
+    flop_counter = FlopCounterMode(model, display=False, depth=2)
 
     # saving preparation
     ckpt_save_folder = os.path.join(args.checkpoint_folder, "APE_final", args.image_encoder, args.text_encoder, f"seed_{args.random_seed}")
@@ -210,6 +210,14 @@ if __name__ == "__main__":
     parser.add_argument("--data-scaling", type=float, default=1.0)
     # get args object
     args = parser.parse_args()
+    args.image_encoder = "deit3_large_patch16_384.fb_in22k_ft_in1k"
+    args.image_embed_dim = 1024
+    args.text_encoder = "all-MiniLM-L12-v2"
+    args.text_embed_dim = 384
+    _ = train_separate_mapper(args)
+
+
+    """
     meta = {
         384: [
             "vit_small_patch16_224",
@@ -254,4 +262,4 @@ if __name__ == "__main__":
         for item in meta[k]:
             args.image_encoder = item
             model = train_separate_mapper(args)
-
+    """
