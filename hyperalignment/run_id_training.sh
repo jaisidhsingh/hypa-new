@@ -20,7 +20,7 @@ pyfile="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/src/learn_h
 
 
 python3 $pyfile \
-    --experiment-name="fm_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2" \
+    --experiment-name="hnet_12-4_ckhmlp_c-32_bs-512_lr-1e-2" \
     --num-image-encoders=12 \
     --encoder-batch-size=4 \
     --hnet-cond-emb-dim=32 \
@@ -35,8 +35,8 @@ python3 $pyfile \
     --normalize-output=True \
     --dataset-scale=1.0 \
     --beta2=0.999 \
-    --rank=256 \
-    --hnet-decoder-type="feather_map";
+    --chunk-dim=256 \
+    --hnet-decoder-type="chunked_mlp";
 
 # python3 $pyfile \
 #     --experiment-name="hnet_24-8_fmlp_c-32_bs-512_lr-1e-2" \
