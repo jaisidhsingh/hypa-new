@@ -21,7 +21,7 @@ from configs.model_configs import model_configs
 from training import SeparateTrainer
 from training.schedulers import cosine_lr
 from training.loss_functions import ClipLoss
-from mm_evaluation import eval_classification, image_classification_eval
+from mm_evaluation import *
 warnings.simplefilter("ignore")
 
 
@@ -30,7 +30,7 @@ def evaluate_mapper(args, model):
     model.eval()
     vlm = CustomVLM(args.image_encoder, args.text_encoder)
     vlm.mapper = model.to(args.device)
-    acc, loss = eval_classification(args, vlm, vlm.image_encoder.transform, "imagenet1k")
+    acc, loss = emb_eval_classification(args, model, vlm.image_encoder.transform, "imagenet1k")
     return acc, loss
 
 
