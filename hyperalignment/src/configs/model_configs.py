@@ -171,12 +171,6 @@ model_configs.icml_encoder_configs = {
 }
 
 model_configs.hnet_decoder_configs = {
-    "attention": {
-        "decoder_type": "attention",
-        "num_heads": 8,
-        "num_layers": 6,
-        "expansion_factor": 2
-	},
     "mlp": {
         "decoder_type": "mlp",
         "hidden_layer_factors": [4, 16],
@@ -185,5 +179,10 @@ model_configs.hnet_decoder_configs = {
         "decoder_type": "chunked_mlp",
         "chunk_dim": 256,
         "hidden_layer_factors": [4, 16],
-	}
+	},
+    "feather_map": {
+        "decoder_type": "feather_map",
+        "rank": 32,
+        "hidden_layer_factors": [4, 16],
+	},
 }
