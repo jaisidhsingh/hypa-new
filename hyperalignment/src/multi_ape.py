@@ -1,4 +1,5 @@
 import os
+import sys
 import torch
 import argparse
 import numpy as np
@@ -67,6 +68,8 @@ def train_multi_ape(args):
 
                 image_embeddings = torch.cat([next(image_loaders[name]).unsqueeze(0) for name in encoder_names], dim=0).to(args.device)
                 image_embeddings = image_embeddings.float().view(args.num_image_encoders, bs, args.image_embed_dim)
+                print(image_embeddings[0, 0, :5])
+                sys.exit(0)
                 image_embeddings /= image_embeddings.norm(dim=-1, keepdim=True)
 
                 step = epoch * loader_len + idx
