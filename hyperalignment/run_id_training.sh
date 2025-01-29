@@ -20,9 +20,9 @@ pyfile="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/src/learn_h
 
 
 python3 $pyfile \
-    --experiment-name="hnet_18-6_fmlp_c-32_bs-512_lr-1e-2" \
-    --num-image-encoders=18 \
-    --encoder-batch-size=6 \
+    --experiment-name="lessb2_hnet_30-10_fmlp_c-32_bs-512_lr-1e-2" \
+    --num-image-encoders=30 \
+    --encoder-batch-size=10 \
     --hnet-cond-emb-dim=32 \
     --cond-type="features" \
     --num-epochs=20 \
@@ -34,6 +34,7 @@ python3 $pyfile \
     --emb-loss=False \
     --normalize-output=True \
     --dataset-scale=1.0 \
+    --beta2=0.95 \
     --hnet-decoder-type="mlp";
 
 # python3 $pyfile \
