@@ -21,8 +21,8 @@ pyfile="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/src/learn_h
 
 python3 $pyfile \
     --experiment-name="beta2_092_hnet_24-8_fmlp_c-32_bs-512_lr-1e-2" \
-    --num-image-encoders=12 \
-    --encoder-batch-size=4 \
+    --num-image-encoders=24 \
+    --encoder-batch-size=8 \
     --hnet-cond-emb-dim=32 \
     --cond-type="features" \
     --num-epochs=20 \
