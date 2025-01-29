@@ -28,7 +28,7 @@ def train_multi_ape(args):
         tmp_args = deepcopy(args)
         tmp_args.image_encoder = name
         image_datasets[name] = ImageEmbeddings(data_configs.separate_embedding_dataset_configs(tmp_args), split=None, args=None)
-        image_loaders[name] = DataLoader(image_datasets[name], batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, drop_last=True)
+        image_loaders[name] = DataLoader(image_datasets[name], batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, drop_last=True)
         loader_len = len(image_loaders[name])
     
     for k, v in image_loaders.items():
