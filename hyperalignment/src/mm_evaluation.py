@@ -345,7 +345,7 @@ if __name__ == "__main__":
     # get args
     args = parser.parse_args()
 
-    args.exp_name = "hnet_12-4_fmlp_c-32_bs-512_lr-1e-2"
+    args.exp_name = "allMiniLM_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2"
     args.encoder_index = 0
     args.image_embed_dim = 1024
     args.text_embed_dim = 768
