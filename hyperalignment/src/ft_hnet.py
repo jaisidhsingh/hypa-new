@@ -222,7 +222,7 @@ if __name__ == "__main__":
     args.image_encoder = "deit3_large_patch16_384.fb_in22k_ft_in1k"
     args.image_embed_dim = 1024
     args.encoder_index = -1
-    args.num_epochs = 10
+    args.num_epochs = 20
     args.learning_rate = 1e-1
     # args.text_encoder = "all-roberta-large-v1"
     # args.text_embed_dim = 1024
