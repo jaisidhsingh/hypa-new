@@ -223,7 +223,7 @@ if __name__ == "__main__":
     args.image_embed_dim = 1024
     args.encoder_index = -1
     args.num_epochs = 40
-    args.learning_rate = 1e-1
+    args.learning_rate = 5e-1
     # args.text_encoder = "all-roberta-large-v1"
     # args.text_embed_dim = 1024
     model = ft_hnet_mapper(args)
