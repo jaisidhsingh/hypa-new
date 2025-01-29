@@ -156,7 +156,7 @@ class FeatherMapDecoder(nn.Module):
         N = x.shape[0]
         A = self.A_decoder(x).view(N, -1, self.rank)
         B = self.B_decoder(x).view(N, -1, self.rank)
-        y = torch.einsum("nir,ntr->nit")
+        y = torch.einsum("nir,ntr->nit", A, B)
         weights = y[:, :, :self.text_dim].view(N, self.image_dim, self.text_dim)
         biases = y[:, :, self.text_dim:].view(N, self.image_dim)
         return weights, biases
