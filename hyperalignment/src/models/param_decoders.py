@@ -133,6 +133,33 @@ class ChunkedMlpDecoder(nn.Module):
         return x, bias 
 
 
+class FeatherMapDecoder(nn.Module):
+    def __init__(self, out_shape, dim, rank, hidden_layer_factors=[4, 16]):
+        super().__init__()
+        self.image_dim = out_shape[0]
+        self.text_dim = out_shape[1]
+        self.rank = rank
+
+        self.A_decoder = MLP(
+            dim,
+            [f*dim for f in hidden_layer_factors],
+            self.image_dim * self.rank
+        )
+
+        self.B_decoder = MLP(
+            dim,
+            [f*dim for f in hidden_layer_factors],
+            (self.text_dim + 1) * self.rank
+        )
+
+    def forward(self, x):
+        N = x.shape[0]
+        x = self.A_decoder(x) @ self.B_decoder(x)
+        weights = x[:, :, :self.text_dim].view(N, self.image_dim, self.text_dim)
+        biases = x[:, :, self.text_dim:].view(N, self.image_dim)
+        return weights, biases
+
+
 def test():
     decoder = AttentionDecoder((768, 384), 32, 12, 8)
 
