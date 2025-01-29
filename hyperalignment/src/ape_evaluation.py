@@ -120,7 +120,7 @@ if __name__ == "__main__":
     args.exp_name = "deit3_large_patch16_384.fb_in22k_ft_in1k"
     # args.encoder_index = 0
     args.image_embed_dim = 1024
-    args.text_embed_dim = 1024
+    args.text_embed_dim = 384
     args.text_encoder = "all-MiniLM-L12-v2"
     args.num_encoders = 1
     args.encoder_batch = 1
