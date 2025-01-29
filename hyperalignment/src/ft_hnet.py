@@ -49,7 +49,7 @@ def ft_hnet_mapper(args):
     model = model.to(args.device)
     print("Mapper loaded.")
 
-    ckpt = torch.load(os.path.join(args.checkpoint_folder, "multi_mapper", args.ckpt_name, f"seed_{args.random_seed}", "ckpt_10.pt"))["mapper_params"][args.encoder_index]
+    ckpt = torch.load(os.path.join(args.checkpoint_folder, "multi_mapper", args.ckpt_name, f"seed_{args.random_seed}", "ckpt_20.pt"))["mapper_params"][args.encoder_index]
     model.layers[0].weight.data = ckpt[0]
     model.layers[0].bias.data = ckpt[1]
     print("Loaded checkpoint.")
