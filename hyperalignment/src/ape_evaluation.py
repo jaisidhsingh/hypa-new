@@ -20,7 +20,7 @@ from data.classification_datasets import ImageClassificationDataset
 
 def load_ape_ckpt(args, model):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints"
-    path = os.path.join(folder, "ape", args.exp_name, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
+    path = os.path.join(folder, "APE_final", args.image_encoder, args.text_encoder, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
     ckpt = torch.load(path)["model"]
     model.load_state_dict(ckpt)
     model = model.to(args.device)
@@ -117,11 +117,11 @@ if __name__ == "__main__":
     # get args
     args = parser.parse_args()
 
-    args.exp_name = "deit3l_st5b"
+    args.exp_name = "deit3_large_patch16_384.fb_in22k_ft_in1k"
     # args.encoder_index = 0
     args.image_embed_dim = 1024
-    args.text_embed_dim = 768
-    args.text_encoder = "sentence-t5-base"
+    args.text_embed_dim = 1024
+    args.text_encoder = "all-roberta-large-v1"
     args.num_encoders = 1
     args.encoder_batch = 1
     args.encoder_index = 3
