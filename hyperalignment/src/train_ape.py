@@ -212,8 +212,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.image_encoder = "deit3_large_patch16_384.fb_in22k_ft_in1k"
     args.image_embed_dim = 1024
-    args.text_encoder = "all-MiniLM-L12-v2"
-    args.text_embed_dim = 384
+    args.text_encoder = "all-roberta-large-v1"
+    args.text_embed_dim = 1024
     _ = train_separate_mapper(args)
 
 
