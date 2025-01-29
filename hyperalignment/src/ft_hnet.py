@@ -215,7 +215,7 @@ if __name__ == "__main__":
     parser.add_argument("--eval-every", type=int, default=1)
     parser.add_argument("--data-scaling", type=float, default=1.0)
     #
-    parser.add_argument("--ckpt-name", type=int, default="hnet_12-4_fmlp_c-32_bs-512_lr-1e-2")
+    parser.add_argument("--ckpt-name", type=str, default="hnet_12-4_fmlp_c-32_bs-512_lr-1e-2")
     # get args object
     args = parser.parse_args()
     args.saving = False
