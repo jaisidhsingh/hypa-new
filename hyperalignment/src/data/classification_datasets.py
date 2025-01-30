@@ -9,6 +9,7 @@ class ImageClassificationDataset(Dataset):
 			"cifar10": torch_datasets.CIFAR10,
 			"cifar100": torch_datasets.CIFAR100,
 			"imagenet1k": torch_datasets.ImageFolder,
+			"stanford_cars": torch_datasets.StanfordCars
 		}
 		self.dataset_name = kwargs["feature_dataset"]
 		kwargs.pop("feature_dataset")

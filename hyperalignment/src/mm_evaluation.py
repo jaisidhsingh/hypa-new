@@ -296,6 +296,7 @@ def main(args):
         "cifar10": eval_classification,
         "cifar100": eval_classification,
         "imagenet1k": eval_classification,
+        "stanford_cars": eval_classification
     }
 
     benchmarks = args.benchmarks.split(",")
@@ -387,13 +388,13 @@ if __name__ == "__main__":
 
     args.exp_name = "hnet_30-10_fmlp_c-32_bs-512_lr-1e-2"
     # args.encoder_index = 7
-    args.image_embed_dim = 1024
+    args.image_embed_dim = 384
     args.image_encoder = model_configs.ID_multi_mapper_configs[args.image_embed_dim][args.encoder_index]
     args.text_embed_dim = 768
     args.text_encoder = "sentence-t5-base"
     args.num_encoders = 30
     args.encoder_batch = 10
-    args.benchmarks = "mscoco"
+    # args.benchmarks = "mscoco"
 
     args.epoch = 10
     main(args)

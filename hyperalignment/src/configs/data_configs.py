@@ -37,7 +37,8 @@ data_configs.image_caption_dataset_configs = {
 
 data_configs.image_classification_dataset_configs = {
     "cifar10": {"root": f"{data_configs.STORE}/cifar10_torchvision", "train": False, "download": False},
-    "imagenet": {"root": f"{data_configs.STORE}/imagenet/val_torchvision/val"}
+    "imagenet": {"root": f"{data_configs.STORE}/imagenet/val_torchvision/val"},
+    "stanford_cars": {"root": f"{data_configs.STORE}/stanford_cars", "split": "test", "download": False}
 }
 
 # This is a function to be called, i.e., `config = data_configs.joint_embedding_dataset_configs(args)`
