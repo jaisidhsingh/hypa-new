@@ -30,7 +30,7 @@ data_configs.image_caption_dataset_configs = {
         "path_appendage": "x"
 	},
     "flickr8k": {
-		"caption_path": f"{data_configs.STORE}/flickr8k/captions.txt",
+		"captions_path": f"{data_configs.STORE}/flickr8k/captions.txt",
         "image_folder": f"{data_configs.STORE}/flickr8k/Images"
 	}
 }
