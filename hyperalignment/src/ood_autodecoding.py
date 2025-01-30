@@ -122,6 +122,8 @@ def ft(args, w, b, dataset):
     init_acc, _ = evaluate_mapper(args, model)
     print("Hnet init acc", init_acc)
 
+    model.train()
+
     criterion = ClipLoss(args)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.ft_lr)
 
