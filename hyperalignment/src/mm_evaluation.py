@@ -250,6 +250,20 @@ def emb_eval_classification(args, model, transform, dataset):
     return accuracy, 0
 
 
+@torch.no_grad()
+def emb_eval_retrieval(args, model):
+    image_folder = "/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/image_embeddings/icml/eval/mscoco"
+    image_embeddings = torch.load(os.path.join(image_folder, f"dim_{args.image_embed_dim}", args.image_encoder, "embedded_data.pt"))["image_features"]
+    text_folder = "/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/text_embeddings/icml/eval/mscoco"
+    text_embeddings = torch.load(os.path.join(text_folder, f"dim_{args.text_embed_dim}", args.text_encoder, "embedded_data.pt"))["text_features"]
+
+    total = image_embeddings.shape[0]
+    sim = 100 * image_embeddings.to(args.device) @ model(text_embeddings.to(args.device)).view(args.text_embed_dim, 5, image_embeddings.shape[0])
+    labels = torch.arange(image_embeddings.shape[0]).long().to(args.device)
+    correct = (sim.argmax(dim=1).argmax(dim=-1) == labels).sum().item()
+    return round(correct/total * 100, 2), 0
+
+
 def main(args):
     benchmark_mapping = {
         "mscoco": eval_retrieval,
@@ -301,6 +315,7 @@ def mm_main(args):
         args.epoch = epoch
         benchmark_mapping = {
             "imagenet1k": emb_eval_classification,
+            "mscoco" :emb_eval_retrieval
         }
 
         benchmarks = ["imagenet1k"] 
@@ -345,13 +360,14 @@ if __name__ == "__main__":
     # get args
     args = parser.parse_args()
 
-    args.exp_name = "hnet_12-4_ckhmlp_c-32_bs-512_lr-1e-2"
+    args.exp_name = "hnet_30-10_fmlp_c-32_bs-512_lr-1e-2"
     args.encoder_index = 0
     args.image_embed_dim = 1024
     args.text_embed_dim = 768
     args.text_encoder = "sentence-t5-base"
-    args.num_encoders = 12
-    args.encoder_batch = 4
+    args.num_encoders = 30
+    args.encoder_batch = 10
+    args.benchmarks = "mscoco"
 
     res = {}
     for index in range(args.encoder_batch):
