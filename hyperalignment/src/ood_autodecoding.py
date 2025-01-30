@@ -174,7 +174,7 @@ if __name__ == "__main__":
     # hnet settings
     parser.add_argument("--hnet-ckpt-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper")
     parser.add_argument("--hnet-ckpt-epoch", type=int, default=10)
-    parser.add_argument("--hnet-ckpt-name", type=str, default="hnet_30-10_fmlp_c-32_bs-512_lr-1e-2")
+    parser.add_argument("--hnet-ckpt-name", type=str, default="hnet_12-4_fmlp_c-32_bs-512_lr-1e-2")
     parser.add_argument("--hnet-cond-emb-dim", type=int, default=32)
     parser.add_argument("--hnet-ckpt-num-ie", type=int, default=30)
     parser.add_argument("--largest-image-dim", type=int, default=1024)
