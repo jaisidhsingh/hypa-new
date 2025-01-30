@@ -82,8 +82,8 @@ def coco_captions_eval(model, loader, progress_bar=True, device="cuda", using_cl
             bar.set_postfix({"batch_index": idx})
             bar.update(1)
         
-    image_store = torch.cat(image_store, dim=0).view(5000, D_img)
-    text_store = torch.cat(text_store, dim=0).view(5000, 5, D_img)
+    image_store = torch.cat(image_store, dim=0).view(idx+1, D_img)
+    text_store = torch.cat(text_store, dim=0).view(idx+1, 5, D_img)
 
     mean_recalls = {"R@1": 0, "R@5": 0, "R@10": 0}
     for i in range(5):
