@@ -390,7 +390,7 @@ if __name__ == "__main__":
     args.encoder_batch = 10
     args.benchmarks = "mscoco"
 
-    args.epoch = 10
+    args.epoch = 20
     main(args)
 
     # res = {}
