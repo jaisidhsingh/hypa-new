@@ -43,7 +43,7 @@ def compute_retrieval(a2b_sims, return_ranks=False):
     if return_ranks:
         return report_dict, (ranks, top1)
     else:
-        return report_dict
+        return report_dict, 0
 
 
 @torch.no_grad()
@@ -88,11 +88,11 @@ def coco_captions_eval(model, loader, progress_bar=True, device="cuda", using_cl
     mean_recalls = {"R@1": 0, "R@5": 0, "R@10": 0}
     for i in range(1):
         sim = logit_scale * (image_store @ text_store[:, i, :].T)
-        res = compute_retrieval(sim.cpu().numpy())
+        res, _ = compute_retrieval(sim.cpu().numpy())
         for k in res.keys():
             mean_recalls[k] += res[k]
     
-    return mean_recalls
+    return mean_recalls, 0
 
 
 @torch.no_grad()
@@ -322,10 +322,9 @@ def mm_main(args):
         args.epoch = epoch
         benchmark_mapping = {
             "imagenet1k": emb_eval_classification,
-            "mscoco" :emb_eval_retrieval
         }
 
-        benchmarks = ["mscoco"]
+        benchmarks = ["imagenet1k"]
         metrics = {}
         
         transform = ImageEncoder(args.image_encoder).transform
@@ -376,13 +375,16 @@ if __name__ == "__main__":
     args.encoder_batch = 10
     args.benchmarks = "mscoco"
 
-    res = {}
-    for index in range(args.encoder_batch):
-        print(index)
-        args.encoder_index = index
-        out = mm_main(args)
-        out.update({"encoder_index": index})
-        res[out["image_encoder"]] = out
+    args.epoch = 10
+    main(args)
+
+    # res = {}
+    # for index in range(args.encoder_batch):
+    #     print(index)
+    #     args.encoder_index = index
+    #     out = mm_main(args)
+    #     out.update({"encoder_index": index})
+    #     res[out["image_encoder"]] = out
     
-    print(res)
+    # print(res)
  
