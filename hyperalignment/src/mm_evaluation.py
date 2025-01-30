@@ -195,8 +195,10 @@ def load_mm_ckpt(args, model, vlm=False):
 
 
 def eval_retrieval(args, model, transform, bench):
-    config = data_configs.image_caption_dataset_configs["mscoco_val"]
-    config.update({"transform": transform, "feature_dataset": "mscoco_val"})
+    if "mscoco" in bench:
+        bench = "mscoco_val"
+    config = data_configs.image_caption_dataset_configs[bench]
+    config.update({"transform": transform, "feature_dataset": bench})
 
     dataset = ImageCaptionDataset(config)
     loader = DataLoader(dataset, batch_size=1, pin_memory=True, num_workers=4, collate_fn=dataset.collate_fn, shuffle=False)
@@ -285,6 +287,7 @@ def emb_eval_retrieval(args, model, transform=None, d=None):
 def main(args):
     benchmark_mapping = {
         "mscoco": eval_retrieval,
+        "flickr8k": eval_retrieval,
         "cifar10": eval_classification,
         "cifar100": eval_classification,
         "imagenet1k": eval_classification,
@@ -385,7 +388,7 @@ if __name__ == "__main__":
     args.text_encoder = "sentence-t5-base"
     args.num_encoders = 30
     args.encoder_batch = 10
-    args.benchmarks = "mscoco"
+    args.benchmarks = "flickr8k"
 
     args.epoch = 10
     main(args)

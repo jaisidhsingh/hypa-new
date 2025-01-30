@@ -28,6 +28,10 @@ data_configs.image_caption_dataset_configs = {
     "cc3m558k": {
         "preprocessed_data_path": f"{data_configs.STORE}/LLaVA-CC3M-Pretrain-595K/metadata.json",
         "path_appendage": "x"
+	},
+    "flickr8k": {
+		"caption_path": f"{data_configs.STORE}/flickr8k/captions.txt",
+        "image_folder": f"{data_configs.STORE}/flickr8k/Images"
 	}
 }
 

@@ -7,6 +7,35 @@ from PIL import Image
 import json
 
 
+class Flickr8k(Dataset):
+    def __init__(self, captions_path, image_folder, transform=None):
+        self.num_samples = 8091
+        self.data = {}
+        with open(captions_path, "r") as f:
+            for line in f.readlines():
+                [image_name, caption] = line.split(",")
+                if image_name not in self.data:
+                    self.data[image_name] = []
+                self.data[image_name].append(caption)
+        
+        self.image_paths = [os.path.join(image_folder, name) for name in self.data.keys()]
+        self.image_names = list(self.data.keys())
+        self.transform = transform
+    
+    def __len__(self):
+        return self.num_samples
+    
+    def __getitem__(self, idx):
+        image_path = self.image_paths(idx)
+        image = Image.open(image_path).convert("RGB")
+
+        if self.transform is not None:
+            image = self.transform(image)
+        
+        captions = self.data[ self.image_names[idx] ]
+        return image, captions
+
+
 class CC3M300k(Dataset):
     def __init__(self, preprocessed_data_path, transform=None, path_appendage=None):
         data = torch.load(preprocessed_data_path)["test"]
@@ -70,9 +99,15 @@ class ImageCaptionDataset(Dataset):
         if "mscoco" in kwargs["feature_dataset"]:
             kwargs.pop("feature_dataset")
             self.dataset_helper = torch_datasets.CocoCaptions(**kwargs)
+        
+        elif "flickr8k" in kwargs["feature_dataset"]:
+            kwargs.pop("feature_dataset")
+            self.dataset_help = Flickr8k(**kwargs)
+
         elif kwargs["feature_dataset"] == "cc3m300k":
             kwargs.pop("feature_dataset")
             self.dataset_helper = CC3M300k(**kwargs)
+
         elif kwargs["feature_dataset"] == "cc3m558k":
             kwargs.pop("feature_dataset")
             self.dataset_helper = CC3M558k(**kwargs)
