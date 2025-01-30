@@ -133,6 +133,7 @@ if __name__ == "__main__":
     parser.add_argument("--learning-rate", type=float, default=1e-2)
     parser.add_argument("--logit-scale", type=float, default=100.0)
     parser.add_argument("--break-point", type=float, default=20000)
+    parser.add_argument("--mode", type=str, default="full")
 
     args = parser.parse_args()
     main(args)
