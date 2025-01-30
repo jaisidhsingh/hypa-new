@@ -141,6 +141,7 @@ def ft(args, w, b, dataset):
         optimizer.zero_grad()
         mapped_features = model(text_features)
         loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_features, mapped_features)
+        total += bs
 
         accuracy = round(corrects / total * 100, 2)
         running_loss = loss.item()
