@@ -140,13 +140,18 @@ def image_classification_eval(model, loader, progress_bar=True, device="cuda", u
     return accuracy, running_loss / len(loader)
 
 
-def load_separate_ckpt(args, model):
+def load_separate_ckpt(args, model, vlm=False):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints"
-    path = os.path.join(folder, "ape", args.exp_name, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
+    path = os.path.join(folder, "APE_final", args.image_encoder, args.text_encoder, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
     ckpt = torch.load(path)["model"]
-    model.load_state_dict(ckpt)
-    model = model.to(args.device)
-    model.eval()
+    if not vlm:
+        model.load_state_dict(ckpt)
+        model = model.to(args.device)
+        model.eval()
+    if vlm:
+        model.mapper.load_state_dict(ckpt)
+        model.mapper = model.mapper.to(args.device)
+        model.mapper.eval()
     return model
 
 
@@ -303,9 +308,9 @@ def main(args):
         model.mapper = MLP(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
         
         # if args.run_type == "sep":
-        #     model = load_separate_ckpt(args, model)
+        model = load_separate_ckpt(args, model, vlm=True)
         # elif args.run_type == "mm":
-        model = load_mm_ckpt(args, model, vlm=True)
+        # model = load_mm_ckpt(args, model, vlm=True)
         # elif args.run_type == "ood":
         #     model = load_ood_ckpt(args, model)
         
