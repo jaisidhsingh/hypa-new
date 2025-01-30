@@ -49,7 +49,7 @@ def main(args):
     print("Froze hypernetwork parameters.")
     
     dataset_config = data_configs.separate_embedding_dataset_configs(args)
-    dataset = SeparateEmbeddings(dataset_config, split="train", args=None)
+    dataset = SeparateEmbeddings(dataset_config, split="train", args=args)
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True)
     print("Loaded dataset for OOD image encoder.")
 
