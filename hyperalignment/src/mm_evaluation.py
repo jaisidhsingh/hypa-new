@@ -381,9 +381,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     args.exp_name = "hnet_30-10_fmlp_c-32_bs-512_lr-1e-2"
-    args.encoder_index = 3
+    args.encoder_index = 4
     args.image_embed_dim = 1024
-    args.image_encoder = "deit3_large_patch16_384.fb_in22k_ft_in1k"  #"eva02_large_patch14_448.mim_m38m_ft_in22k_in1k"
+    args.image_encoder = "eva02_large_patch14_448.mim_m38m_ft_in22k_in1k"
     args.text_embed_dim = 768
     args.text_encoder = "sentence-t5-base"
     args.num_encoders = 30
