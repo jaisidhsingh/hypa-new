@@ -100,7 +100,7 @@ def embed_coco_images(args):
 
 @torch.no_grad()
 def embed_coco_captions(args):
-    model = TextEncoder(args.text_encoder).to(args.device)
+    model = TextEncoder(args.text_encoder)
 
     config = data_configs.image_caption_dataset_configs["mscoco_val"]
     config.update({"transform": None, "feature_dataset": "mscoco_val"})
