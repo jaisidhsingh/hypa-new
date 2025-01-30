@@ -162,7 +162,7 @@ def load_ood_ckpt(args, model):
     return model
 
 
-def load_mm_ckpt(args, model):
+def load_mm_ckpt(args, model, vlm=False):
     folder = f"/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper"   # multi_mapper
     path = os.path.join(folder, args.exp_name, f"seed_{args.seed}", f"ckpt_{args.epoch}.pt")
     chunk_size = args.num_encoders // 3 #int(args.exp_name.split("_")[1]) // 3
@@ -177,8 +177,13 @@ def load_mm_ckpt(args, model):
     index = int(offset * chunk_size) + args.encoder_index
     [weight, bias] = torch.load(path)["mapper_params"][index]
     # print(weight.shape, bias.shape)
-    model.layers[0].weight.data = weight.to(args.device)
-    model.layers[0].bias.data = bias.to(args.device)
+    if not vlm:
+        model.layers[0].weight.data = weight.to(args.device)
+        model.layers[0].bias.data = bias.to(args.device)
+    if vlm:
+        model.mapper.layers[0].weight.data = weight.to(args.device)
+        model.mapper.layers[0].bias.data = bias.to(args.device)
+    
     model = model.to(args.device)
     model.eval()
     return model
@@ -291,7 +296,7 @@ def main(args):
         # if args.run_type == "sep":
         #     model = load_separate_ckpt(args, model)
         # elif args.run_type == "mm":
-        model = load_mm_ckpt(args, model)
+        model = load_mm_ckpt(args, model, vlm=True)
         # elif args.run_type == "ood":
         #     model = load_ood_ckpt(args, model)
         
