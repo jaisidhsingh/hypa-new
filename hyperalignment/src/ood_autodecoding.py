@@ -108,19 +108,20 @@ def adapt(args):
     return pred_weight.squeeze(0), pred_bias.squeeze(0), dataset
 
 
-def ft(args, w, b, dataset):
+def ft(args, w, b, dataset, baseline=False):
     loader = DataLoader(dataset, batch_size=args.ft_batch_size, num_workers=args.num_workers, pin_memory=True)
     model = MLP(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
     model.eval()
     rand_acc, _ = evaluate_mapper(args, model)
     print("Random init acc", rand_acc)
 
-    model.layers[0].weight.data = w
-    model.layers[0].bias.data = b
-    model.eval()
+    if not baseline:
+        model.layers[0].weight.data = w
+        model.layers[0].bias.data = b
+        model.eval()
 
-    init_acc, _ = evaluate_mapper(args, model)
-    print("Hnet init acc", init_acc)
+        init_acc, _ = evaluate_mapper(args, model)
+        print("Hnet init acc", init_acc)
 
     model.train()
 
@@ -165,6 +166,8 @@ def main(args):
     print(w.shape, b.shape)
     a1, a2, a3 = ft(args, w, b, dataset)
     print(a1, a2, a3)
+    print("NOW RAND INIT + 1ep FT")
+    _ = ft(args, w, b, dataset, baseline=True)
 
 
 
