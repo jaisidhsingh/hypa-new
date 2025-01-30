@@ -228,7 +228,7 @@ def eval_classification(args, model, transform, dataset):
     dataset = ImageClassificationDataset(kwargs)
     # print(dataset.classes)
     # print(dataset.classes[0])
-    loader = DataLoader(dataset, batch_size=1024, num_workers=args.num_workers, pin_memory=True)
+    loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True)
     # using_clip = args.clip_version != "off"
     accuracy, loss = image_classification_eval(model, loader, using_clip=False, device=args.device)
     return accuracy, loss
@@ -381,6 +381,7 @@ if __name__ == "__main__":
     # model args
     parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-embed-dim", type=int, default=768)
+    parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--num-encoders", type=int, default=6)
     parser.add_argument("--encoder-batch", type=int, default=6)
