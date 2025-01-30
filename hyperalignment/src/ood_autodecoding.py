@@ -135,26 +135,27 @@ def ft(args, w, b, dataset, baseline=False):
 
     running_loss = 0
     total = 0
-    for idx, (image_features, text_features) in enumerate(loader):
-        bs = image_features.shape[0]
-        image_features = image_features.float().to(args.device).view(bs, args.image_embed_dim)
-        image_features /= image_features.norm(dim=-1, keepdim=True)
+    for epoch in range(args.ft_epochs):
+        for idx, (image_features, text_features) in enumerate(loader):
+            bs = image_features.shape[0]
+            image_features = image_features.float().to(args.device).view(bs, args.image_embed_dim)
+            image_features /= image_features.norm(dim=-1, keepdim=True)
 
-        text_features = text_features.float().to(args.device).view(bs, args.text_embed_dim)
-        
-        optimizer.zero_grad()
-        mapped_features = model(text_features)
-        loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_features, mapped_features)
-        total += bs
+            text_features = text_features.float().to(args.device).view(bs, args.text_embed_dim)
+            
+            optimizer.zero_grad()
+            mapped_features = model(text_features)
+            loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_features, mapped_features)
+            total += bs
 
-        accuracy = round(corrects / total * 100, 2)
-        running_loss = loss.item()
+            accuracy = round(corrects / total * 100, 2)
+            running_loss = loss.item()
 
-        loss.backward()
-        optimizer.step()
+            loss.backward()
+            optimizer.step()
 
-        bar.set_postfix({"Acc": accuracy, "loss": running_loss})
-        bar.update(1)
+            bar.set_postfix({"Acc": accuracy, "loss": running_loss})
+            bar.update(1)
     
     model.eval()
     final_acc, _ = evaluate_mapper(args, model)
@@ -206,6 +207,7 @@ if __name__ == "__main__":
     parser.add_argument("--mode", type=str, default="full")
     parser.add_argument("--ft-batch-size", type=int, default=int(pow(2, 14)))
     parser.add_argument("--ft-lr", type=float, default=1e-2)
+    parser.add_argument("--ft-epoch", type=int, default=5)
 
     args = parser.parse_args()
     main(args)
