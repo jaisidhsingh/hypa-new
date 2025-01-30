@@ -226,7 +226,7 @@ def eval_classification(args, model, transform, dataset):
         "transform": transform
     }
     dataset = ImageClassificationDataset(kwargs)
-    print(dataset.classes)
+    # print(dataset.classes)
     # print(dataset.classes[0])
     loader = DataLoader(dataset, batch_size=1024, num_workers=args.num_workers, pin_memory=True)
     # using_clip = args.clip_version != "off"
@@ -319,6 +319,7 @@ def main(args):
         
         for bench in benchmarks:
             eval_fn = benchmark_mapping[bench]
+            print(args.image_encoder)
             metric = eval_fn(args, model, model.image_encoder.transform, bench)[0]
             metrics[bench] = metric
 
