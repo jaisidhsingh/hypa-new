@@ -86,11 +86,14 @@ def coco_captions_eval(model, loader, progress_bar=True, device="cuda", using_cl
     text_store = torch.cat(text_store, dim=0).view(5000, 5, D_img)
 
     mean_recalls = {"R@1": 0, "R@5": 0, "R@10": 0}
-    for i in range(1):
+    for i in range(5):
         sim = logit_scale * (image_store @ text_store[:, i, :].T)
         res, _ = compute_retrieval(sim.cpu().numpy())
         for k in res.keys():
             mean_recalls[k] += res[k]
+    
+    for k in mean_recalls.keys():
+        mean_recalls[k] /= 5
     
     return mean_recalls, 0
 
