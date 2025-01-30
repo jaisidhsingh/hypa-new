@@ -388,7 +388,7 @@ if __name__ == "__main__":
     args.text_encoder = "sentence-t5-base"
     args.num_encoders = 30
     args.encoder_batch = 10
-    args.benchmarks = "flickr8k"
+    args.benchmarks = "mscoco"
 
     args.epoch = 10
     main(args)
