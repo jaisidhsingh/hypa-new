@@ -150,7 +150,7 @@ def ft(args, w, b, dataset):
 
 def main(args):
     w, b, dataset = adapt(args)
-    model = ft(args, w, b)
+    model = ft(args, w, b, dataset)
     acc, loss = evaluate_mapper(args, model)
     print(acc)
 
