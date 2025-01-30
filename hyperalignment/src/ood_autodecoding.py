@@ -105,7 +105,7 @@ def adapt(args):
     torch.save(store, os.path.join(save_folder, args.save_path))
 
     print("Done!")
-    return pred_weight, pred_weight, dataset
+    return pred_weight.squeeze(0), pred_weight.squeeze(0), dataset
 
 
 def ft(args, w, b, dataset):
@@ -113,12 +113,14 @@ def ft(args, w, b, dataset):
     model = MLP(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
     model.eval()
     rand_acc, _ = evaluate_mapper(args, model)
+    print("Random init acc", rand_acc)
 
     model.layers[0].weight.data = w
     model.layers[0].bias.data = b
     model.eval()
 
     init_acc, _ = evaluate_mapper(args, model)
+    print("Hnet init acc", init_acc)
 
     criterion = ClipLoss(args)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.ft_lr)
@@ -151,6 +153,7 @@ def ft(args, w, b, dataset):
     
     model.eval()
     final_acc, _ = evaluate_mapper(args, model)
+    print("Hnet init + 1p FT acc", final_acc)
     return rand_acc, init_acc, final_acc
 
 
