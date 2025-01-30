@@ -20,7 +20,7 @@ def per_family(dim, indices, device, train_lim=4):
         store[idx] = features
     
     training_set_indices = [x for x in range(train_lim)]
-    heldout_set_indices = [y for y in range(len(models) - train_lim)]
+    heldout_set_indices = [y for y in range(train_lim, len(models))]
 
     linear_cka_store = torch.zeros((len(training_set_indices), len(heldout_set_indices)))
     rbf_cka_store = torch.zeros((len(training_set_indices), len(heldout_set_indices)))
@@ -28,8 +28,8 @@ def per_family(dim, indices, device, train_lim=4):
 
     for i in training_set_indices:
         for j in heldout_set_indices:
-            linear_cka_store[i][j] = cka.linear_CKA(store[i], store[j]).cpu().item()
-            rbf_cka_store[i][j] = cka.kernel_CKA(store[i], store[j]).cpu().item()
+            linear_cka_store[i][j - train_lim] = cka.linear_CKA(store[i], store[j]).cpu().item()
+            rbf_cka_store[i][j - train_lim] = cka.kernel_CKA(store[i], store[j]).cpu().item()
     
     return {"linear": linear_cka_store, "rbf": rbf_cka_store}
 
