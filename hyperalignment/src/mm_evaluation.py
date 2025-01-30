@@ -256,6 +256,7 @@ def emb_eval_retrieval(args, model, transform=None, d=None):
     image_embeddings = torch.load(os.path.join(image_folder, f"dim_{args.image_embed_dim}", args.image_encoder, "embedded_data.pt"))["image_features"]
     text_folder = "/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/text_embeddings/icml/eval/mscoco"
     text_embeddings = torch.load(os.path.join(text_folder, f"dim_{args.text_embed_dim}", args.text_encoder, "embedded_data.pt"))["text_features"]
+    print(image_embeddings.shape, text_embeddings.shape)
 
     total = image_embeddings.shape[0]
     sim = 100 * image_embeddings.to(args.device) @ model(text_embeddings.to(args.device)).view(args.text_embed_dim, 5, image_embeddings.shape[0])
