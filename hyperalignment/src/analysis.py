@@ -68,7 +68,7 @@ def embed_coco_images(args):
     model = ImageEncoder(args.image_encoder).to(args.device)
 
     config = data_configs.image_caption_dataset_configs["mscoco_val"]
-    config.update({"transform": ImageEncoder.transform, "feature_dataset": "mscoco_val"})
+    config.update({"transform": model.transform, "feature_dataset": "mscoco_val"})
 
     dataset = ImageCaptionDataset(config)
     loader = DataLoader(dataset, batch_size=args.batch_size, pin_memory=True, num_workers=args.num_workers, collate_fn=dataset.collate_fn, shuffle=False)
