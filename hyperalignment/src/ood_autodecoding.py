@@ -17,7 +17,7 @@ from training.loss_functions import ClipLoss
 from configs.data_configs import data_configs
 from configs.model_configs import model_configs
 from torch.utils.flop_counter import FlopCounterMode
-from train_ape import evaluate_mapper
+from ft_hnet import evaluate_mapper
 
 
 def adapt(args):
@@ -111,12 +111,17 @@ def adapt(args):
 def ft(args, w, b, dataset):
     loader = DataLoader(dataset, batch_size=args.ft_batch_size, num_workers=args.num_workers, pin_memory=True)
     model = MLP(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
+    model.eval()
+    rand_acc, _ = evaluate_mapper(args, model)
+
     model.layers[0].weight.data = w
     model.layers[0].bias.data = b
-    model.train()
+    model.eval()
+
+    init_acc, _ = evaluate_mapper(args, model)
 
     criterion = ClipLoss(args)
-    optimizer = torch.optim.AdamW(model.parameters, lr=args.ft_lr)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.ft_lr)
 
     flop_counter = FlopCounterMode(model, display=True, depth=2)
     bar = tqdm(total=len(loader))
@@ -145,14 +150,14 @@ def ft(args, w, b, dataset):
         bar.update(1)
     
     model.eval()
-    return model
+    final_acc, _ = evaluate_mapper(args, model)
+    return rand_acc, init_acc, final_acc
 
 
 def main(args):
     w, b, dataset = adapt(args)
-    model = ft(args, w, b, dataset)
-    acc, loss = evaluate_mapper(args, model)
-    print(acc)
+    a1, a2, a3 = ft(args, w, b, dataset)
+    print(a1, a2, a3)
 
 
 
