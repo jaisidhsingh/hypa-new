@@ -104,7 +104,7 @@ class ImageCaptionDataset(Dataset):
         
         elif "flickr8k" in kwargs["feature_dataset"]:
             kwargs.pop("feature_dataset")
-            self.dataset_help = Flickr8k(**kwargs)
+            self.dataset_helper = Flickr8k(**kwargs)
 
         elif kwargs["feature_dataset"] == "cc3m300k":
             kwargs.pop("feature_dataset")
