@@ -115,7 +115,7 @@ if __name__ == "__main__":
     parser.add_argument("--hnet-ckpt-epoch", type=int, default=10)
     parser.add_argument("--hnet-ckpt-name", type=str, default="hnet_30-10_fmlp_c-32_bs-512_lr-1e-2")
     parser.add_argument("--hnet-cond-emb-dim", type=int, default=32)
-    parser.add_argument("--hnet-ckpt-num-ie", type=int, default=12)
+    parser.add_argument("--hnet-ckpt-num-ie", type=int, default=30)
     parser.add_argument("--largest-image-dim", type=int, default=1024)
     parser.add_argument("--largest-text-dim", type=int, default=768)
     parser.add_argument("--image-embed-dims", type=str, default="384,768,1024")
