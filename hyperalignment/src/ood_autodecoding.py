@@ -159,6 +159,7 @@ def ft(args, w, b, dataset):
 
 def main(args):
     w, b, dataset = adapt(args)
+    print(w.shape, b.shape)
     a1, a2, a3 = ft(args, w, b, dataset)
     print(a1, a2, a3)
 
