@@ -381,7 +381,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     args.exp_name = "hnet_30-10_fmlp_c-32_bs-512_lr-1e-2"
-    args.encoder_index = 6
+    # args.encoder_index = 7
     args.image_embed_dim = 1024
     args.image_encoder = model_configs.ID_multi_mapper_configs[args.image_embed_dim][args.encoder_index]
     args.text_embed_dim = 768
