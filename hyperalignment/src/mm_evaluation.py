@@ -311,9 +311,9 @@ def main(args):
         model.mapper = MLP(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
         
         # if args.run_type == "sep":
-        model = load_separate_ckpt(args, model, vlm=True)
+        # model = load_separate_ckpt(args, model, vlm=True)
         # elif args.run_type == "mm":
-        # model = load_mm_ckpt(args, model, vlm=True)
+        model = load_mm_ckpt(args, model, vlm=True)
         # elif args.run_type == "ood":
         #     model = load_ood_ckpt(args, model)
         
