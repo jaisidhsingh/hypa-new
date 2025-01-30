@@ -288,12 +288,12 @@ def main(args):
         model = CustomVLM(args.image_encoder, args.text_encoder)
         model.mapper = MLP(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
         
-        if args.run_type == "sep":
-            model = load_separate_ckpt(args, model)
-        elif args.run_type == "mm":
-            model = load_mm_ckpt(args, model)
-        elif args.run_type == "ood":
-            model = load_ood_ckpt(args, model)
+        # if args.run_type == "sep":
+        #     model = load_separate_ckpt(args, model)
+        # elif args.run_type == "mm":
+        model = load_mm_ckpt(args, model)
+        # elif args.run_type == "ood":
+        #     model = load_ood_ckpt(args, model)
         
         for bench in benchmarks:
             eval_fn = benchmark_mapping[bench]
