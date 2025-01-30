@@ -70,7 +70,7 @@ def ape_main(args):
     out = {"image_encoder": args.image_encoder, "seed": args.seed, "eval": {}}
     out["text_encoder"] = args.text_encoder
     
-    for epoch in [1, 2, 5, 10, 20]:
+    for epoch in [10]:
         args.epoch = epoch
         benchmark_mapping = {
             "imagenet1k": emb_eval_classification,
@@ -118,7 +118,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     args.exp_name = "eva02_large_patch14_448.mim_m38m_ft_in22k_in1k"
-    # args.encoder_index = 0
     args.image_embed_dim = 1024
     args.text_embed_dim = 768
     args.text_encoder = "sentence-t5-base"
@@ -127,9 +126,8 @@ if __name__ == "__main__":
     args.encoder_index = 4
 
     res = {}
-    for index in range(args.num_encoders):
-        print(index)
-        # args.encoder_index = index
+    for index in range(10):
+        args.encoder_index = index
         out = ape_main(args)
         out.update({"encoder_index": args.encoder_index})
         res[out["image_encoder"]] = out
