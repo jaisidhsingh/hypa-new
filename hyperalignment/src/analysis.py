@@ -144,11 +144,11 @@ def main_imagenet(args):
         embed_imagenet(args)
 
 def main_coco(args):
-    # encoder_names = model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim]["image_encoders"][args.offset:args.end]
-    # for name in encoder_names:
-    #     print("Embedding imagenet for", name)
-    #     args.image_encoder = name
-    embed_coco_captions(args)
+    encoder_names = model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim]["image_encoders"][:]
+    for name in encoder_names:
+        print("Embedding imagenet for", name)
+        args.image_encoder = name
+        embed_coco_images(args)
 
 
 
