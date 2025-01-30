@@ -198,6 +198,7 @@ def eval_retrieval(args, model, transform, bench):
     loader = DataLoader(dataset, batch_size=1024, pin_memory=True, num_workers=4, collate_fn=dataset.collate_fn, shuffle=False)
     using_clip = args.clip_version != "off"
     recalls = coco_captions_eval(model, loader, using_clip=using_clip, device=args.device)
+    print(recalls)
     return recalls, 0
 
 
