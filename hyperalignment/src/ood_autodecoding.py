@@ -158,6 +158,8 @@ def ft(args, w, b, dataset, baseline=False):
     model.eval()
     final_acc, _ = evaluate_mapper(args, model)
     print("Hnet init + 1p FT acc", final_acc)
+    if baseline:
+        init_acc = 0
     return rand_acc, init_acc, final_acc
 
 
