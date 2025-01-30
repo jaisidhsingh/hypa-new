@@ -341,7 +341,7 @@ def mm_main(args):
     out = {"image_encoder": args.image_encoder, "seed": args.seed, "eval": {}}
     out["text_encoder"] = args.text_encoder
     
-    for epoch in [1, 2, 5, 10, 20]:
+    for epoch in [10]:
         args.epoch = epoch
         benchmark_mapping = {
             "imagenet1k": emb_eval_classification,
@@ -400,15 +400,15 @@ if __name__ == "__main__":
     # args.benchmarks = "mscoco"
 
     args.epoch = 10
-    main(args)
+    # main(args)
 
-    # res = {}
-    # for index in range(args.encoder_batch):
-    #     print(index)
-    #     args.encoder_index = index
-    #     out = mm_main(args)
-    #     out.update({"encoder_index": index})
-    #     res[out["image_encoder"]] = out
+    res = {}
+    for index in range(args.encoder_batch):
+        print(index)
+        args.encoder_index = index
+        out = mm_main(args)
+        out.update({"encoder_index": index})
+        res[out["image_encoder"]] = out
     
-    # print(res)
+    print(res)
  
