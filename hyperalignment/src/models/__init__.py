@@ -35,17 +35,23 @@ class ImageEncoder(nn.Module):
 
 
 class TextEncoder():
-	def __init__(self, model_name, device="cuda"):
-		self.model_name = model_name
-		self.device = device
+    def __init__(self, model_name, device="cuda"):
+        self.model_name = model_name
+        self.device = device
 
-		self.model = SentenceTransformer(model_name).to(device)
-		self.model.eval()
+        self.model = SentenceTransformer(model_name).to(device)
+        self.model.eval()
 
-	def encode_text(self, sentences):
-		text_features = self.model.encode(sentences)
-		text_features = torch.from_numpy(text_features)
-		return F.normalize(text_features, dim=-1)
+    def to(self, x):
+        self.model.to(x)
+
+    def __call__(self, x):
+        return self.encode_text(x)
+
+    def encode_text(self, sentences):
+        text_features = self.model.encode(sentences)
+        text_features = torch.from_numpy(text_features)
+        return F.normalize(text_features, dim=-1)
 
 
 class CustomVLM():

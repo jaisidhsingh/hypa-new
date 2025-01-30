@@ -122,7 +122,7 @@ def embed_coco_captions(args):
                 stack.append(text_features)
             
         store["text_features"].append(torch.cat(stack, dim=1).view(bs, 5, args.text_embed_dim))
-        bar.set_description(f"{args.image_encoder}")
+        bar.set_description(f"{args.text_encoder}")
         bar.update(1)
     
     bar.close()
