@@ -121,7 +121,7 @@ if __name__ == "__main__":
     parser.add_argument("--image-embed-dims", type=str, default="384,768,1024")
     # OOD image encoder settings
     parser.add_argument("--results-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results")
-    parser.add_argument("--image-encoder", type=str, default="eva02_small_patch14_224.mim_in1k")
+    parser.add_argument("--image-encoder", type=str, default="eva02_small_patch14_224.mim_in22k")
     parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
     parser.add_argument("--text-embed-dim", type=int, default=768)
