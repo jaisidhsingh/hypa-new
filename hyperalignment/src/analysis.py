@@ -163,7 +163,7 @@ if __name__ == "__main__":
     parser.add_argument("--end", type=int, default=1)
 
     parser.add_argument("--text-embed-dim", type=int, default=384)
-    parser.add_argument("--text-encoder", typ=str, default="all-MiniLM-L12-v2")
+    parser.add_argument("--text-encoder", type=str, default="all-MiniLM-L12-v2")
     parser.add_argument("--results-folder2", type=str, default="/network/scratch/s/sparsha.mishra/hyperalignment/results/image_embeddings/icml/eval/mscoco")
     parser.add_argument("--results-folder3", type=str, default="/network/scratch/s/sparsha.mishra/hyperalignment/results/text_embeddings/icml/eval/mscoco")
     
