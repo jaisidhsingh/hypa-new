@@ -136,12 +136,20 @@ def embed_coco_captions(args):
     torch.save(store, save_path)
 
 
-def main(args):
+def main_imagenet(args):
     encoder_names = model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim]["image_encoders"][args.offset:args.end]
     for name in encoder_names:
         print("Embedding imagenet for", name)
         args.image_encoder = name
         embed_imagenet(args)
+
+def main_coco(args):
+    # encoder_names = model_configs.ID_experiment_configs["multi_mapper"][args.image_embed_dim]["image_encoders"][args.offset:args.end]
+    # for name in encoder_names:
+    #     print("Embedding imagenet for", name)
+    #     args.image_encoder = name
+    embed_coco_captions(args)
+
 
 
 if __name__ == "__main__":
@@ -160,4 +168,4 @@ if __name__ == "__main__":
     parser.add_argument("--results-folder3", type=str, default="/network/scratch/s/sparsha.mishra/hyperalignment/results/text_embeddings/icml/eval/mscoco")
     
     args = parser.parse_args()
-    main(args)
+    main_coco(args)
