@@ -118,12 +118,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     args.exp_name = "eva02_large_patch14_448.mim_m38m_ft_in22k_in1k"
-    args.image_embed_dim = 1024
+    # args.image_embed_dim = 768
     args.text_embed_dim = 768
     args.text_encoder = "sentence-t5-base"
     args.num_encoders = 1
     args.encoder_batch = 1
-    args.encoder_index = 4
+    # args.encoder_index = 4
 
     res = {}
     for index in range(10):
