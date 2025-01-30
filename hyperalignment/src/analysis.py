@@ -118,7 +118,7 @@ def embed_coco_captions(args):
             stack = []
             for j in range(5):
                 inputs = [item[j] for item in captions]
-                text_features = model(inputs).unsqueeze(1)
+                text_features = model.encode_text(inputs).unsqueeze(1)
                 stack.append(text_features)
             
         store["text_features"].append(torch.cat(stack, dim=1).view(bs, 5, args.text_embed_dim))
