@@ -259,11 +259,11 @@ def emb_eval_retrieval(args, model, transform=None, d=None):
     print(image_embeddings.shape, text_embeddings.shape)
 
     total = image_embeddings.shape[0]
-    mapped_text_embeddings = model(text_embeddings.to(args.device))
+    mapped_features = model(text_embeddings.to(args.device))
     mapped_features /= mapped_features.norm(dim=-1, keepdim=True)
     
-    sim = 100 * torch.einsum("bd,cnd->bnc", image_embeddings.to(args.device), mapped_text_embeddings)
-    acc = compute_retrieval(sim)["R@1"]
+    sim = 100 * torch.einsum("bd,cnd->bnc", image_embeddings.to(args.device), mapped_features)
+    acc = compute_retrieval(sim[:, 0, :])["R@1"]
     print(acc)
     # sim = 100 * image_embeddings.to(args.device) @ model(text_embeddings.to(args.device)).view(args.image_embed_dim, 5, image_embeddings.shape[0])
     # labels = torch.arange(image_embeddings.shape[0]).long().to(args.device)
