@@ -14,7 +14,8 @@ class Flickr8k(Dataset):
         with open(captions_path, "r") as f:
             for line in f.readlines():
                 entry = line.split(",")
-                print(entry)
+                image_name = entry[0]
+                caption = entry[-1].replace("\n", "")
                 if image_name not in self.data:
                     self.data[image_name] = []
                 self.data[image_name].append(caption)
