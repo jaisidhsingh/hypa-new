@@ -12,6 +12,8 @@ def per_family(dim, indices, device, train_lim=4):
     imagenet_folder = "/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/image_embeddings/icml/eval/imagenet1k"
     
     store = torch.zeros((len(models), len(indices), dim)).to(device)
+    print(store.shape)
+
     for idx, model in enumerate(models):
         path = os.path.join(imagenet_folder, f"dim_{dim}", model, "embedded_data.pt")
         features = torch.load(path)["inputs"][indices].to(device)
