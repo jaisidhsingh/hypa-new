@@ -218,6 +218,7 @@ def eval_classification(args, model, transform, dataset):
         "imagenet1k": "/home/mila/s/sparsha.mishra/scratch/imagenet/val_torchvision/val",
         "cifar10": "/home/mila/s/sparsha.mishra/scratch/cifar10_torchvision",
         "cifar100": "/home/mila/s/sparsha.mishra/scratch/cifar-100-python",
+        "stanford_cars": "/home/mila/s/sparsha.mishra/scratch/stanford_cars",
     }
     kwargs = {
         "feature_dataset": dataset,
