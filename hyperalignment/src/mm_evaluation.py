@@ -251,7 +251,7 @@ def emb_eval_classification(args, model, transform, dataset):
 
 
 @torch.no_grad()
-def emb_eval_retrieval(args, model):
+def emb_eval_retrieval(args, model, transform=None, d=None):
     image_folder = "/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/image_embeddings/icml/eval/mscoco"
     image_embeddings = torch.load(os.path.join(image_folder, f"dim_{args.image_embed_dim}", args.image_encoder, "embedded_data.pt"))["image_features"]
     text_folder = "/home/mila/s/sparsha.mishra/scratch/hyperalignment/results/text_embeddings/icml/eval/mscoco"
