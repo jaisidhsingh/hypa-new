@@ -318,7 +318,7 @@ def mm_main(args):
             "mscoco" :emb_eval_retrieval
         }
 
-        benchmarks = ["imagenet1k"] 
+        benchmarks = ["mscoco"]
         metrics = {}
         
         transform = ImageEncoder(args.image_encoder).transform
