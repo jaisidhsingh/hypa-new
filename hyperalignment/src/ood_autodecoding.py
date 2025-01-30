@@ -23,17 +23,8 @@ def main(args):
 
     param_shapes = [[args.largest_image_dim, args.largest_text_dim], [args.largest_image_dim]]
     image_embed_dims = [int(x) for x in args.image_embed_dims.split(",")]
-    hidden_layer_factors = [int(x) for x in args.hidden_layer_factors.split(",")]
 
-    # embedding = nn.Embedding(1, args.hnet_cond_emb_dim)
-    # # nn.init.normal_(embedding, mean=0, std=1/math.sqrt(args.hnet_cond_emb_dim))
-    # # embedding.requires_grad = True
-    # for param in embedding.parameters():
-    #     param.requires_grad = True
-    # embedding = embedding.to(args.device)
-    # print("Initialized embedding to auto-decode.")
-
-    decoder_type = "chunked_mlp" #args.hnet_ckpt_name.split("_")[2]
+    decoder_type = "mlp"
     kwargs = model_configs.hnet_decoder_configs[decoder_type]
 
     hnet = ConditionalHyperNetwork(
@@ -46,29 +37,24 @@ def main(args):
     hnet = hnet.to(args.device)
     print("Initialized hypernetwork (decoder) with saved checkpoint:", args.hnet_ckpt_name)
 
-    # freeze the hypernetwork which decodes the conditional embedding that we are optimizing
-    # for p in hnet.parameters():
-    #     p.requires_grad = False #True
-    # # set to eval mode 
-    # hnet.eval()
-    # print("Froze hypernetwork parameters.")
-
-    # # Initialise the embedding to be learnt as the avg of the hnet's embeddings
-    # embedding.weight.data = hnet.cond_embs.weight.data[:, :].mean(dim=0).unsqueeze(0)
+    if args.mode == "proj":
+        for n, p in hnet.named_parameters():
+            if "in_proj" in n:
+                p.requires_grad = True
+            else:
+                p.requires_grad = False
+    
+    # set to eval mode 
+    hnet.eval()
+    print("Froze hypernetwork parameters.")
     
     dataset_config = data_configs.separate_embedding_dataset_configs(args)
     dataset = SeparateEmbeddings(dataset_config, split="train", args=None)
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=True)
     print("Loaded dataset for OOD image encoder.")
 
-    # opts = [p for p in embedding.parameters()] + [p for p in hnet.parameters()]
-
-    optimizer = torch.optim.SGD(hnet.parameters(), lr=args.learning_rate)
-    # optimizer = torch.optim.Adam(opts, lr=args.learning_rate)
-    criterion = ClipLoss(args)
-
+    optimizer = torch.optim.AdamW(hnet.parameters(), lr=args.learning_rate)
     image_embed_dim = args.image_embed_dim
-    logit_scale = torch.tensor(math.log(args.logit_scale)).to(args.device)
 
     bar = tqdm(total=int(args.num_epochs * len(loader)))
     store = {}
@@ -80,45 +66,38 @@ def main(args):
             running_loss = 0.0
             correct, total = 0, 0
 
-            if True:
-                for idx, (image_embeddings, text_embeddings) in enumerate(loader):
-                    image_embeddings = image_embeddings.to(args.device)
-                    text_embeddings = text_embeddings.to(args.device)
+            for idx, (image_embeddings, text_embeddings) in enumerate(loader):
+                image_embeddings = image_embeddings.to(args.device)
+                D_img = image_embeddings.shape[-1]
+                text_embeddings = text_embeddings.to(args.device)
 
-                    optimizer.zero_grad()
-                    # cond_emb = embedding(torch.tensor([0]).to(args.device))
+                optimizer.zero_grad()
 
-                    cond_id = torch.zeros((1, args.largest_image_dim)).to(args.device)
-                    cond_id[:, :384] = image_embeddings.mean(dim=0).unsqueeze(0)
-                    loss, corrects = hnet(cond_id, image_embeddings.unsqueeze(1), text_embeddings, image_embed_dim, normalize_output=True, nolookup=True)
+                cond_id = torch.zeros((1, args.largest_image_dim)).to(args.device)
+                cond_id[:, :D_img] = image_embeddings.mean(dim=0).unsqueeze(0)
+                loss, corrects = hnet(cond_id, image_embeddings.unsqueeze(1), text_embeddings, image_embed_dim, normalize_output=True, nolookup=True)
 
-                    # pred_weight = pred_weight.squeeze(0)
-                    # pred_bias = pred_bias.squeeze(0)
-                    # mapped_text_embeddings = text_embeddings @ pred_weight.T + pred_bias
+                correct += corrects[0]
+                total += image_embeddings.shape[0]
+                accuracy = round(correct/total * 100, 2)
 
-                    # loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_embeddings, mapped_text_embeddings)
-                    
-                    correct += corrects[0]
-                    total += image_embeddings.shape[0]
-                    accuracy = round(correct/total * 100, 2)
+                loss.backward()
+                optimizer.step()
 
-                    loss.backward()
-                    optimizer.step()
+                running_loss = round(loss.item(), 2)
+                bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
+                bar.update(1)
 
-                    running_loss = round(loss.item(), 2)
-                    bar.set_description(f"Epoch {epoch+1}/{args.num_epochs}, Loss: {running_loss}, Accuracy: {accuracy}%")
-                    bar.update(1)
-
-                    if idx == 12903:
-                        break
+                if idx == args.break_point:
+                    break
         
-        pred_weight, pred_bias = hnet(cond_id, image_embeddings.unsqueeze(1), text_embeddings, image_embed_dim, normalize_output=True, nolookup=True, just_params=True)
-        store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
+    pred_weight, pred_bias = hnet(cond_id, image_embeddings.unsqueeze(1), text_embeddings, image_embed_dim, normalize_output=True, nolookup=True, just_params=True)
+    store[f"epoch_{epoch+1}"] = {"mapper_params": [pred_weight.squeeze(0), pred_bias.squeeze(0)], "loss": running_loss, "accuracy": accuracy}
 
     store["config"] = vars(args)
-    args.save_path = args.image_encoder + "_ood.pt"
+    args.save_path = args.image_encoder + "_full_ood.pt"
 
-    save_folder = os.path.join(args.hnet_ckpt_folder, "ood_attempts")
+    save_folder = os.path.join(args.hnet_ckpt_folder, "icml_ood")
     os.makedirs(save_folder, exist_ok=True)
 
     torch.save(store, os.path.join(save_folder, args.save_path))
@@ -133,17 +112,16 @@ if __name__ == "__main__":
     parser.add_argument("--save-path", type=str, default="x")
     # hnet settings
     parser.add_argument("--hnet-ckpt-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/checkpoints/multi_mapper")
-    parser.add_argument("--hnet-ckpt-epoch", type=int, default=1)
-    parser.add_argument("--hnet-ckpt-name", type=str, default="ie_12-4_mlp_c-32_norm_chk-256_inproj")
+    parser.add_argument("--hnet-ckpt-epoch", type=int, default=10)
+    parser.add_argument("--hnet-ckpt-name", type=str, default="hnet_30-10_fmlp_c-32_bs-512_lr-1e-2")
     parser.add_argument("--hnet-cond-emb-dim", type=int, default=32)
     parser.add_argument("--hnet-ckpt-num-ie", type=int, default=12)
     parser.add_argument("--largest-image-dim", type=int, default=1024)
     parser.add_argument("--largest-text-dim", type=int, default=768)
     parser.add_argument("--image-embed-dims", type=str, default="384,768,1024")
-    parser.add_argument("--hidden-layer-factors", type=str, default="4,16")
     # OOD image encoder settings
     parser.add_argument("--results-folder", type=str, default="/home/mila/s/sparsha.mishra/scratch/hyperalignment/results")
-    parser.add_argument("--image-encoder", type=str, default="flexivit_small.300ep_in1k")
+    parser.add_argument("--image-encoder", type=str, default="eva02_small_patch14_224.mim_in1k")
     parser.add_argument("--image-embed-dim", type=int, default=384)
     parser.add_argument("--text-encoder", type=str, default="sentence-t5-base")
     parser.add_argument("--text-embed-dim", type=int, default=768)
@@ -152,8 +130,9 @@ if __name__ == "__main__":
     parser.add_argument("--num-epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--num-workers", type=int, default=4)
-    parser.add_argument("--learning-rate", type=float, default=1e-4)
+    parser.add_argument("--learning-rate", type=float, default=1e-2)
     parser.add_argument("--logit-scale", type=float, default=100.0)
+    parser.add_argument("--break-point", type=float, default=20000)
 
     args = parser.parse_args()
     main(args)
