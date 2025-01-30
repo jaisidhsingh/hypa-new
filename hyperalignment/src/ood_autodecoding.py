@@ -17,8 +17,10 @@ from training.loss_functions import ClipLoss
 from configs.data_configs import data_configs
 from configs.model_configs import model_configs
 from torch.utils.flop_counter import FlopCounterMode
+from train_ape import evaluate_mapper
 
-def main(args):
+
+def adapt(args):
     torch.manual_seed(args.random_seed)
 
     param_shapes = [[args.largest_image_dim, args.largest_text_dim], [args.largest_image_dim]]
@@ -103,6 +105,55 @@ def main(args):
     torch.save(store, os.path.join(save_folder, args.save_path))
 
     print("Done!")
+    return pred_weight, pred_weight, dataset
+
+
+def ft(args, w, b, dataset):
+    loader = DataLoader(dataset, batch_size=args.ft_batch_size, num_workers=args.num_workers, pin_memory=True)
+    model = MLP(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
+    model.layers[0].weight.data = w
+    model.layers[0].bias.data = b
+    model.train()
+
+    criterion = ClipLoss(args)
+    optimizer = torch.optim.AdamW(model.parameters, lr=args.ft_lr)
+
+    flop_counter = FlopCounterMode(model, display=True, depth=2)
+    bar = tqdm(total=len(loader))
+    logit_scale = torch.tensor(np.log(100.0)).to(args.device)
+
+    running_loss = 0
+    total = 0
+    for idx, (image_features, text_features) in enumerate(loader):
+        bs = image_features.shape[0]
+        image_features = image_features.float().to(args.device).view(bs, args.image_embed_dim)
+        image_features /= image_features.norm(dim=-1, keepdim=True)
+
+        text_features = text_features.float().to(args.device).view(bs, args.text_embed_dim)
+        
+        optimizer.zero_grad()
+        mapped_features = model(text_features)
+        loss, corrects = criterion.compute_loss_and_accuracy(logit_scale, image_features, mapped_features)
+
+        accuracy = round(corrects / total * 100, 2)
+        running_loss = loss.item()
+
+        loss.backward()
+        optimizer.step()
+
+        bar.set_postfix({"Acc": accuracy, "loss": running_loss})
+        bar.update(1)
+    
+    model.eval()
+    return model
+
+
+def main(args):
+    w, b, dataset = adapt(args)
+    model = ft(args, w, b)
+    acc, loss = evaluate_mapper(args, model)
+    print(acc)
+
 
 
 if __name__ == "__main__":
@@ -132,9 +183,11 @@ if __name__ == "__main__":
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--learning-rate", type=float, default=1e-2)
     parser.add_argument("--logit-scale", type=float, default=100.0)
-    parser.add_argument("--break-point", type=float, default=20000)
+    parser.add_argument("--break-point", type=float, default=100)
     parser.add_argument("--data-scaling", type=float, default=1.0)
     parser.add_argument("--mode", type=str, default="full")
+    parser.add_argument("--ft-batch-size", type=int, default=int(pow(2, 14)))
+    parser.add_argument("--ft-lr", type=float, default=1e-2)
 
     args = parser.parse_args()
     main(args)
