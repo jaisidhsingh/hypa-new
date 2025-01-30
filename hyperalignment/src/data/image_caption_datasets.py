@@ -28,7 +28,7 @@ class Flickr8k(Dataset):
         return self.num_samples
     
     def __getitem__(self, idx):
-        image_path = self.image_paths(idx)
+        image_path = self.image_paths[idx]
         image = Image.open(image_path).convert("RGB")
 
         if self.transform is not None:
