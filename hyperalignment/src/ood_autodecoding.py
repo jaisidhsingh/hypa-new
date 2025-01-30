@@ -135,7 +135,7 @@ def ft(args, w, b, dataset, baseline=False):
 
     running_loss = 0
     total = 0
-    for epoch in range(args.ft_epochs):
+    for epoch in range(args.ft_epoch):
         for idx, (image_features, text_features) in enumerate(loader):
             bs = image_features.shape[0]
             image_features = image_features.float().to(args.device).view(bs, args.image_embed_dim)
