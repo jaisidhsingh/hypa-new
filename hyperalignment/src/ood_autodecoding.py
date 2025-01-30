@@ -126,7 +126,8 @@ def ft(args, w, b, dataset, baseline=False):
     model.train()
 
     criterion = ClipLoss(args)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.ft_lr)
+    lr = args.ft_lr if not baseline else 1e-2
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
 
     flop_counter = FlopCounterMode(model, display=True, depth=2)
     bar = tqdm(total=len(loader))
