@@ -260,7 +260,7 @@ def emb_eval_retrieval(args, model, transform=None, d=None):
 
     total = image_embeddings.shape[0]
     mapped_text_embeddings = model(text_embeddings.to(args.device))
-    sim = 100 * torch.einsum("bd,bnd->bnb", image_embeddings.to(args.device), mapped_text_embeddings)
+    sim = 100 * torch.einsum("bd,cnd->bnc", image_embeddings.to(args.device), mapped_text_embeddings)
     # sim = 100 * image_embeddings.to(args.device) @ model(text_embeddings.to(args.device)).view(args.image_embed_dim, 5, image_embeddings.shape[0])
     labels = torch.arange(image_embeddings.shape[0]).long().to(args.device)
     correct = (sim.argmax(dim=1).argmax(dim=-1) == labels).sum().item()
