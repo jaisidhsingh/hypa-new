@@ -105,7 +105,7 @@ def adapt(args):
     torch.save(store, os.path.join(save_folder, args.save_path))
 
     print("Done!")
-    return pred_weight.squeeze(0), pred_weight.squeeze(0), dataset
+    return pred_weight.squeeze(0), pred_bias.squeeze(0), dataset
 
 
 def ft(args, w, b, dataset):
