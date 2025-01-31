@@ -8,11 +8,11 @@ from configs.model_configs import model_configs
 
 
 def count_hnet_flops(bs, include_backward=True):
-    kwargs = model_configs.hnet_decoder_configs["mlp"]
+    kwargs = model_configs.hnet_decoder_configs["chunked_mlp"]
 
     model =  ConditionalHyperNetwork(
         [[1024, 768], [1024]], cond_emb_dim=32,
-        num_cond_embs=12, image_embed_dims=[384,768,1024], kwargs=kwargs 
+        num_cond_embs=1, image_embed_dims=[1024], kwargs=kwargs 
     )
     print(model)
     param_counts = 0
@@ -23,7 +23,7 @@ def count_hnet_flops(bs, include_backward=True):
     
     opt = torch.optim.AdamW(model.parameters(), lr=1e-2)
     x = torch.randn(bs, 32)
-    y = torch.randn(1, bs, 384)
+    y = torch.randn(1, bs, 1024)
     z = torch.randn(1, 768)
     logit_scale = torch.tensor(np.log(100.0))
     flop_counter = FlopCounterMode(model, display=True, depth=4)
@@ -32,7 +32,7 @@ def count_hnet_flops(bs, include_backward=True):
         for i in range(1):
             if include_backward:
                 opt.zero_grad()
-                weights, biases = model(cond_id=x, image_embed_dim=384, normalize_output=True, nolookup=True)
+                weights, biases = model(cond_id=torch.randn(bs, 1024), image_features=None, text_features=None, image_embed_dim=1024, normalize_output=True, nolookup=True, just_params=True)
 
                 mapped_text_features = model.map_features(weights, biases, z)
                 loss, corrects = model.compute_loss(logit_scale, y, mapped_text_features, emb_loss=False)
@@ -40,15 +40,15 @@ def count_hnet_flops(bs, include_backward=True):
                 loss.backward()
                 opt.step()
             else:
-                weights, biases = model(cond_id=x, image_embed_dim=384, normalize_output=True, nolookup=True)
+                weights, biases = model(cond_id=x, image_embed_dim=1024, normalize_output=True, nolookup=True)
 
 
 def count_ape_flops(bs, include_backward=True):
-    model = MLP(768, [], 384)
+    model = MLP(768, [], 1024)
     
     opt = torch.optim.AdamW(model.parameters(), lr=1e-2)
     x = torch.randn(bs, 768)
-    y = torch.randn(bs, 384)
+    y = torch.randn(bs, 1024)
     logit_scale = torch.tensor(np.log(100.0))
     flop_counter = FlopCounterMode(model, display=True, depth=4)
     criterion = ClipLoss(None)
