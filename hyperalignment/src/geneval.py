@@ -84,6 +84,7 @@ def main(args):
         model = load_mm_ckpt(args, model, vlm=True)
     
     prompt_features = model.encode_text([prompts[args.class_name]])
+    prompt_features /= prompt_features.norm(dim=-1, keepdim=True)
     image_feature_store = []
     for i in range(5):
         path = os.path.join("/home/mila/s/sparsha.mishra/projects/diff", args.class_name, names[args.class_name] + str(i) + ".png")
@@ -93,6 +94,7 @@ def main(args):
         image_feature_store.append(image_features)
     
     image_feature_store = torch.stack(image_feature_store).view(5, args.image_embed_dim)
+    image_feature_store /= image_feature_store.norm(dim=-1)
     sim = 100 * (image_feature_store @ prompt_features.T)
     sim = sim.cpu().view(5,).numpy().tolist()
     f = [(j, item) for j, item in enumerate(sim)]
