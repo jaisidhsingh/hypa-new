@@ -88,7 +88,7 @@ def main(args):
     for i in range(5):
         path = os.path.join("/home/mila/s/sparsha.mishra/projects/diff", args.class_name, names[args.class_name] + str(i) + ".png")
         image = Image.open(path).convert("RGB")
-        image = model.image_encoder.transform(image).unsqueeze(0)
+        image = model.image_encoder.transform(image).unsqueeze(0).to(args.device)
         image_features = model.encode_image(image)
         image_feature_store.append(image_features)
     
