@@ -20,7 +20,7 @@ pyfile="/home/mila/s/sparsha.mishra/projects/hypa-new/hyperalignment/src/learn_h
 
 
 python3 $pyfile \
-    --experiment-name="hnet_12-4_ckhmlp-128_c-32_bs-512_lr-1e-2" \
+    --experiment-name="s1_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2" \
     --num-image-encoders=12 \
     --encoder-batch-size=4 \
     --hnet-cond-emb-dim=32 \
@@ -28,15 +28,35 @@ python3 $pyfile \
     --num-epochs=20 \
     --learning-rate=1e-2 \
     --batch-size=512 \
-    --random-seed=0 \
+    --random-seed=1 \
     --scheduler="off" \
     --warmup-steps=100 \
     --emb-loss=False \
     --normalize-output=True \
     --dataset-scale=1.0 \
-    --beta2=0.999 \
+    --beta2=0.95 \
     --chunk-dim=128 \
-    --hnet-decoder-type="chunked_mlp";
+    --hnet-decoder-type="mlp";
+
+
+python3 $pyfile \
+    --experiment-name="s2_hnet_12-4_fmlp_c-32_bs-512_lr-1e-2" \
+    --num-image-encoders=12 \
+    --encoder-batch-size=4 \
+    --hnet-cond-emb-dim=32 \
+    --cond-type="features" \
+    --num-epochs=20 \
+    --learning-rate=1e-2 \
+    --batch-size=512 \
+    --random-seed=1 \
+    --scheduler="off" \
+    --warmup-steps=100 \
+    --emb-loss=False \
+    --normalize-output=True \
+    --dataset-scale=1.0 \
+    --beta2=0.95 \
+    --chunk-dim=128 \
+    --hnet-decoder-type="mlp";
 
 # python3 $pyfile \
 #     --experiment-name="hnet_24-8_fmlp_c-32_bs-512_lr-1e-2" \

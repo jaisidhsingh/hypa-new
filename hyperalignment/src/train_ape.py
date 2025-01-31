@@ -255,8 +255,8 @@ if __name__ == "__main__":
             "convnextv2_base.fcmae_ft_in22k_in1k" #
         ]
     }
-    args.text_embed_dim = 384
-    args.text_encoder = "all-MiniLM-L12-v2"
+    args.text_embed_dim = 768
+    args.text_encoder = "sentence-t5-base"
     for k in meta.keys():
         args.image_embed_dim = k
         print(args.image_embed_dim)
