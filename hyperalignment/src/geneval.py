@@ -121,7 +121,7 @@ def comp(args):
     elif args.run_type == "mm":
         model = load_mm_ckpt(args, model, vlm=True)
     
-    for j, prompt in prompts:
+    for j, prompt in enumerate(prompts):
         prompt_features = model.encode_text([prompt])
         prompt_features /= prompt_features.norm(dim=-1, keepdim=True)
         image_feature_store = []
