@@ -63,7 +63,7 @@ def load_mm_ckpt(args, model, vlm=False):
     return model
 
 @torch.no_grad()
-def main(args):
+def cb(args):
     prompts = {
         "dog": "High-contrast black and white photo of dog emphasizing dramatic lighting.",
         "cat": "cat image with a pleasing color palette using analogous colors that sit next to each other on the color wheel.",
@@ -103,6 +103,44 @@ def main(args):
     print(f)
 
 
+@torch.no_grad()
+def comp(args):
+    prompts = [
+        "A red gnome sitting at a table that is decked with cutlery, flowers, wine, and cheese.",
+        "A living room with a TV on the left, a green rug on the bottom, a chair on the right, and a painting of a snowman on the front wall.",
+        "Scene of a highway with trucks in the left lane, cars in the middle lane, and a police blockade in the right lane.",
+        "A desert with an oasis in the center and a group of camels on the right.",
+        "Top view of a desk with books on the right, a laptop in the center, a lamp on the right and a keyboard in front of the laptop."
+        ] 
+    args.image_encoder = model_configs.ID_multi_mapper_configs[args.image_embed_dim][args.encoder_index]
+    model = CustomVLM(args.image_encoder, args.text_encoder)
+    model.mapper = MLP(args.text_embed_dim, [], args.image_embed_dim).to(args.device)
+    
+    if args.run_type == "sep":
+        model = load_separate_ckpt(args, model, vlm=True)
+    elif args.run_type == "mm":
+        model = load_mm_ckpt(args, model, vlm=True)
+    
+    for j, prompt in prompts:
+        prompt_features = model.encode_text([prompt])
+        prompt_features /= prompt_features.norm(dim=-1, keepdim=True)
+        image_feature_store = []
+        for i in range(5):
+            path = os.path.join("/home/mila/s/sparsha.mishra/projects/diff", args.class_name, f"{j}_" + str(i) + ".png")
+            image = Image.open(path).convert("RGB")
+            image = model.image_encoder.transform(image).unsqueeze(0).to(args.device)
+            image_features = model.encode_image(image)
+            image_feature_store.append(image_features)
+    
+        image_feature_store = torch.stack(image_feature_store).view(5, args.image_embed_dim)
+        image_feature_store /= image_feature_store.norm(dim=-1, keepdim=True)
+        sim = 100 * (image_feature_store @ prompt_features.T)
+        sim = sim.cpu().view(5,).numpy().tolist()
+        f = [(j, item) for j, item in enumerate(sim)]
+        f.sort(key=lambda x: x[1])
+        print(f)
+
+
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -136,5 +174,5 @@ if __name__ == "__main__":
     args.text_encoder = "sentence-t5-base"
     args.num_encoders = 30
     args.encoder_batch = 10
-    main(args)
+    comp(args)
  
