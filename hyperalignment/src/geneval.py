@@ -94,7 +94,7 @@ def main(args):
         image_feature_store.append(image_features)
     
     image_feature_store = torch.stack(image_feature_store).view(5, args.image_embed_dim)
-    image_feature_store /= image_feature_store.norm(dim=-1)
+    image_feature_store /= image_feature_store.norm(dim=-1, keepdim=True)
     sim = 100 * (image_feature_store @ prompt_features.T)
     sim = sim.cpu().view(5,).numpy().tolist()
     f = [(j, item) for j, item in enumerate(sim)]
