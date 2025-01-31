@@ -62,7 +62,7 @@ def load_mm_ckpt(args, model, vlm=False):
     
     return model
 
-
+@torch.no_grad()
 def main(args):
     prompts = {
         "dog": "High-contrast black and white photo of dog emphasizing dramatic lighting.",

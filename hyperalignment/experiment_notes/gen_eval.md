@@ -12,4 +12,8 @@
 
 # Car 
 
-1. Depict car in a photo with a high degree of visual realism. 
+1. Depict car in a photo with a high degree of visual realism.
+
+## Compositional
+
+1. A red gnome sitting at a table decked with cutlery, flowers, wine, and cheese.
